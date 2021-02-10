@@ -6,7 +6,7 @@ const router = express.Router();
 /* GET all users. */
 router.get('/', async (req, res, next) => {
   try {
-    console.log("Querying database");
+    console.log("Querying database...");
     const dbResponse = await pool.query("SELECT * FROM person");
     /* Simulate database response
     const allUsers = [
