@@ -2,21 +2,32 @@
 
 This work in progress project will meet the need for a free and open-source personal budgeting software which is accessible from any device.
 
-## Local Development Installation
+## Local Install for Developers
 
-1. Install [npm](https://www.npmjs.com/) and [postgreSQL](https://www.postgresql.org/) on your local machine.
+1. Install [npm](https://www.npmjs.com/), [yarn](https://classic.yarnpkg.com/), and [postgreSQL](https://www.postgresql.org/) on your local machine.
 
-2. Start a PosgreSQL localhost server on the default port (5432)
+2. Clone this repo: ```git clone https://github.com/bclewi5555/budget-free.git```
 
-3. Initialize database with sample data using ```database.sql``` (in the server directory) for reference
+3. Start up a PosgreSQL database on the default port (5432)
 
-4. Clone this repo: ```git clone https://github.com/bclewi5555/budget-free.git```
+4. Initialize database with sample data using ```database.sql``` (in the server directory) for reference
 
 ## Run Development Server
 
 1. Navigate to the server directory
 
-2. Run: ```npm run start```
+2. Create a new environment config file named ```.env``` with the contents below, replacing ```secretpassword``` with your actual database user password.
+```
+PORT=3001
+
+PGUSER=postgres
+PGHOST=localhost
+PGPASSWORD=secretpassword
+PGDATABASE=budgetfree
+PGPORT=5432 
+```
+
+3. Run: ```npm run start```
 
 ## Run Development Client
 
