@@ -8,19 +8,17 @@ This work in progress project will meet the need for a free and open-source pers
 
 2. Clone this repo: ```git clone https://github.com/bclewi5555/budget-free.git```
 
-3. Navigate to the budget-free project directory
-
 ## How to Start the Server
 
 1. Navigate to the server directory
 
-2. Run: ```npm start```
+2. Run: ```npm run start```
 
 ## How to Start the Client
 
 1. Navigate to the client directory in a new terminal
 
-2. Run: ```npm start```
+2. Run: ```yarn start```
 
 ## Project Description
 

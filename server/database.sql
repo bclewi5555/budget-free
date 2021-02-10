@@ -4,9 +4,9 @@ POSTGRESQL COMMANDS FOR REFERENCE
 ===================================
 
 MacOS Terminal Commands ( -- MacOS: <command> )
-    Dependencies:
+    MacOS Dependencies:
         Postgres App for MacOS
-        Add psql PATH to .bash 
+        Add psql PATH to .bash
 */
 
 -- Connect to default database
@@ -30,8 +30,6 @@ CREATE TABLE person (
 Insert into user
 https://www.postgresql.org/docs/13/functions-uuid.html
 */
-INSERT INTO person (id, username, email, password)
-values (gen_random_uuid(), "username", "email", "hashedPassword");
 
 INSERT INTO person (id, username, email, password)
 values (gen_random_uuid(), 'AlexaAllistair1', 'aa1@example.com', 'avlg47avwgt#sing');
