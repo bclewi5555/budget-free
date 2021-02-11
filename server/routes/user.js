@@ -39,4 +39,20 @@ router.post('/', async (req, res) => {
     }
 });
 
+/* DELETE / Delete user by id. */
+router.delete('/', async (req, res) => {
+  console.log(req.params.id);
+  try {
+    const result = await db.query(
+      "DELETE FROM person WHERE id = $1",
+      [req.params.id]
+    );
+    res.status(204).json({
+      status: "sucess",
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 module.exports = router;
