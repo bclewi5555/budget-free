@@ -35,6 +35,23 @@ PGPORT=5432
 
 2. Run: ```yarn start```
 
+## API
+
+#### User
+
+CRUD Restful API at the ```/user``` endpoint to work with the ```person``` table (user table is reserved) in the ```budgetfree``` database.
+
+- CREATE person using ```POST``` at ```http://localhost:3001/user``` with ```res.body.username```, ```res.body.email```, and ```res.body.password```
+- READ person by id using ```GET``` at ```http://localhost:3001/user/:id``` with ```res.params.id```
+- READ all person entries using ```GET``` at ```http://localhost:3001/user```
+- UPDATE person username by id using ```PUT``` at ```http://localhost:3001/user/:id``` with ```res.params.id``` and ```res.body.username```
+- UPDATE person email by id using ```PUT``` at ```http://localhost:3001/user/:id``` with ```res.params.id``` and ```res.body.email```
+- UPDATE person password by id using ```PUT``` at ```http://localhost:3001/user/:id``` with ```res.params.id``` and ```res.body.password```
+- UPDATE person username and email by id using ```PUT``` at ```http://localhost:3001/user/:id``` with ```res.params.id```, ```res.body.username```, and ```res.body.email```
+- DELETE person by id  using ```DELETE``` at ```http://localhost:3001/user/:id``` with ```res.params.id```
+
+See ```server > routes > user.js``` for details
+
 ## Project Description
 
 This project will be a free, open-source, and secure web-based application which can be run from a compatible browser on any device. The app will adopt the envelope system budgeting strategy (as opposed to “set and forget”) in order to empower users to better understand and control their finances. Users can organize monthly budgets with categories (Income, Food, Utilities, etc.), each customizable with a list of subcategories, also known as envelopes (Power, Water, Internet, ...) which transactions can be added to. Budget owners can invite others to join their budget and revoke shared access at any time, create dependent collaborators (children for example) as well as import or export their budget data.
