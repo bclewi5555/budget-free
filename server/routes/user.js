@@ -23,6 +23,25 @@ router.post('/', async (req, res) => {
   }
 });
 
+/* GET / Read user by id. */
+router.get('/:id', async (req, res) => {
+  try {
+    const result = await db.query(
+      "SELECT * FROM person WHERE id = $1", 
+      [req.params.id]
+    );
+    res.status(200).json({
+      status: "success",
+      results: result.rows.length,
+      data: {
+        user: result.rows
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 /* GET / Read all users. */
 router.get('/', async (req, res) => {
     try {
