@@ -32,10 +32,10 @@ https://www.postgresql.org/docs/13/functions-uuid.html
 */
 
 INSERT INTO person (id, username, email, password)
-values (gen_random_uuid(), 'AlexaAllistair1', 'aa1@example.com', 'avlg47avwgt#sing');
+values (gen_random_uuid(), 'AlexaAllistair1', 'aa1@example.com', 'y5E$g&jSWfp42As');
 
 INSERT INTO person (id, username, email, password)
-values (gen_random_uuid(), 'BobBurns2', 'bb2@example.com"', 'avlg47avwgt#sing');
+values (gen_random_uuid(), 'BobBurns2', 'bb2@example.com', 'v4tl$KanIr8@dF');
 
 INSERT INTO person (id, username, email, password)
 values (gen_random_uuid(), 'CourtneyCopeland3', 'cc3@example.com', 'avlg47avwgt#sing');
