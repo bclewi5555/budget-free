@@ -35,9 +35,9 @@ PGPORT=5432
 
 2. Run: ```yarn start```
 
-## API
+## Server API Reference
 
-#### User
+### User API
 
 CRUD Restful API at the ```/user``` endpoint to work with the ```person``` table (user table is reserved) in the ```budgetfree``` database.
 
