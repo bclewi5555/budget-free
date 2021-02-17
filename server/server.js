@@ -1,16 +1,21 @@
-const express = require('express');
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
+const express = require('express');
 const morgan = require('morgan');
+const path = require('path');
 const sassMiddleware = require('node-sass-middleware');
+const session = require('express-session');
 
 const indexRouter = require('./routes/index');
-const userRouter = require('./routes/user');
+const usersRouter = require('./routes/users');
 
 const app = express();
 
-app.use(cors());
+let corsOptions = {
+  origin: `http://localhost:${process.env.PORT}`
+};
+
+app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -23,7 +28,13 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/user', userRouter);
+app.use('/api', indexRouter);
+app.use('/api/users', usersRouter);
+
+const db = require('./models');
+const User = db.users;
+db.sequelize.sync({ force: true }).then(() => {
+  console.log('Drop and re-sync db.');
+});
 
 module.exports = app;
