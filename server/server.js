@@ -1,13 +1,24 @@
+/*
+======================================================
+Backend Server
+======================================================
+*/
+
+// Module dependencies
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
 const express = require('express');
 const morgan = require('morgan');
-const path = require('path');
-const sassMiddleware = require('node-sass-middleware');
-const session = require('express-session');
+const passport = require('passport');
 
+// Route dependencies
+const authRouter = require('./routes/auth');
+const budgetRouter = require('./routes/budget');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+
+// Model dependencies
+const db = require('./models');
 
 const app = express();
 
@@ -15,23 +26,22 @@ let corsOptions = {
   origin: `http://localhost:${process.env.PORT}`
 };
 
+// Module middleware
+app.use(cookieParser());
 app.use(cors(corsOptions));
-app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(sassMiddleware({
-  src: path.join(__dirname, 'public'),
-  dest: path.join(__dirname, 'public'),
-  indentedSyntax: true, // true = .sass and false = .scss
-  sourceMap: true
-}));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(morgan('dev'));
 
+// API endpoints
 app.use('/api', indexRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 
-const db = require('./models');
+// Secure API endpoints
+app.use('/api/budget', passport.authenticate('jwt', { session: false }), budgetRouter);
+
+// Instantiate database from model
 const User = db.users;
 db.sequelize.sync({ force: true }).then(() => {
   console.log('Drop and re-sync db.');
