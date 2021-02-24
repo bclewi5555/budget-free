@@ -6,51 +6,65 @@ This work in progress project will meet the need for a free and open-source pers
 
 1. Install [npm](https://www.npmjs.com/), [yarn](https://classic.yarnpkg.com/), and [postgreSQL](https://www.postgresql.org/) on your local machine.
 
-2. Clone this repo: ```git clone https://github.com/bclewi5555/budget-free.git```
+2. Clone this repo: `git clone https://github.com/bclewi5555/budget-free.git`
 
-3. Start up a PosgreSQL database on the default port (5432)
-
-4. Initialize database with sample data using ```database.sql``` (in the server directory) for reference
+3. Start up an empty PosgreSQL database named `budgetfree` from the default user (`postgres`) on the default port (`5432`)
 
 ## Run Development Server
 
 1. Navigate to the server directory
 
-2. Create a new environment config file named ```.env``` with the contents below, replacing ```secretpassword``` with your actual database user password.
+2. Create a new environment config file named `.env` with the contents below, replacing `secretpassword` and `secretsession` with your actual database user password and session secret.
 ```
 PORT=3001
 
-PGUSER=postgres
+PGPORT=5432
 PGHOST=localhost
-PGPASSWORD=secretpassword
+PGUSER=postgres
 PGDATABASE=budgetfree
-PGPORT=5432 
+PGPASSWORD=secretpassword
+
+SESSION_SECRET=secretsession
 ```
 
-3. Run: ```npm run start```
+3. Run: `npm run start`
 
 ## Run Development Client
 
 1. Navigate to the client directory in a new terminal
 
-2. Run: ```yarn start```
+2. Run: `yarn start`
 
 ## Server API Reference
 
-### User API
+### Signup
+`POST` `http://localhost:3001/api/v1/auth/signup`
+#### Request Body (JSON)
+```
+{
+    "email": "aa1@example.com",
+    "password": "password",
+    "username": "AlexaAllistair1",
+    "firstName": "Alexa",
+    "lastName": "Allistair"
+}
+```
+#### Example Response `200 OK`
+```
+{
+    "id": "26ef6595-7d14-402f-a616-e1f514b408c7",
+    "email": "aa1@example.com",
+    "passwordHash":
+"$2b$10$Zx4Xe6sPRq2W1jwGR2eFSefNkGKbza2dRFjMpOrFx1wm2X5oj5WCm",
+    "username": "AlexaAllistair1",
+    "firstName": "Alexa",
+    "lastName": "Allistair",
+    "updatedAt": "2021-02-24T03:12:17.140Z",
+    "createdAt": "2021-02-24T03:12:17.140Z"
+}
+```
 
-CRUD Restful API at the ```/user``` endpoint to work with the ```person``` table (user table is reserved) in the ```budgetfree``` database.
-
-- CREATE person using ```POST``` at ```http://localhost:3001/user``` with ```res.body.username```, ```res.body.email```, and ```res.body.password```
-- READ person by id using ```GET``` at ```http://localhost:3001/user/:id``` with ```res.params.id```
-- READ all person entries using ```GET``` at ```http://localhost:3001/user```
-- UPDATE person username by id using ```PUT``` at ```http://localhost:3001/user/:id``` with ```res.params.id``` and ```res.body.username```
-- UPDATE person email by id using ```PUT``` at ```http://localhost:3001/user/:id``` with ```res.params.id``` and ```res.body.email```
-- UPDATE person password by id using ```PUT``` at ```http://localhost:3001/user/:id``` with ```res.params.id``` and ```res.body.password```
-- UPDATE person username and email by id using ```PUT``` at ```http://localhost:3001/user/:id``` with ```res.params.id```, ```res.body.username```, and ```res.body.email```
-- DELETE person by id  using ```DELETE``` at ```http://localhost:3001/user/:id``` with ```res.params.id```
-
-See ```server > routes > user.js``` for details
+See `server > controller > auth.js` for details
 
 ## Project Description
 
