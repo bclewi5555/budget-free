@@ -9,7 +9,7 @@ module.exports = {
   USER: process.env.PGUSER,
   PASSWORD: process.env.PGPASSWORD,
   DB: process.env.PGDATABASE,
-  dialect: "postgres",
+  dialect: 'postgres',
   pool: {
     max: 5, // max number of connections
     min: 0, // min number of connections

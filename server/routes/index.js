@@ -1,16 +1,17 @@
 /*
 ======================================================
-API index router
+Index API router
 ======================================================
 */
 
 // Module dependencies
 const express = require('express');
 
+// Controller dependencies
+const controller = require('../controllers/index');
+
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-  res.json({title: 'Express', message: 'Hello world!'});
-});
+router.get('/', controller.serveIndex);
 
 module.exports = router;

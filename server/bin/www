@@ -8,7 +8,9 @@ This file was created by express-generator
 */
 
 // Module dependencies
-require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 var debug = require('debug')('server:server');
 var http = require('http');

@@ -1,6 +1,6 @@
 /*
 ======================================================
-Users API router
+User API router
 ======================================================
 */
 
@@ -8,13 +8,12 @@ Users API router
 const express = require('express');
 
 // Controller dependencies
-const users = require("../controllers/users.js");
+const controller = require("../controllers/user.js");
 
 const router = express.Router();
 
-router.post("/", users.create);
-router.get("/:id", users.findOne);
-router.put("/:id", users.update);
-router.delete("/:id", users.delete);
+//router.get("/:id", controller.getUser);
+//router.put("/:id", controller.update);
+//router.delete("/:id", controller.delete);
 
 module.exports = router;

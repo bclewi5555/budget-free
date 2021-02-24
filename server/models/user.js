@@ -1,6 +1,6 @@
 /*
 ======================================================
-Users table model
+User table model
 ======================================================
 */
 
@@ -8,27 +8,35 @@ Users table model
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, Sequelize) => {
-  const Users = sequelize.define('users', {
+  const User = sequelize.define('users', {
     id: {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
-    },
-    username: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true
     },
     email: {
       type: Sequelize.STRING,
       allowNull: false,
       unique: true
     },
-    hashedPassword: {
+    passwordHash: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    username: {
+      type: Sequelize.STRING,
+      allowNull: true,
+      unique: true
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
 
-  return Users;
+  return User;
 };
