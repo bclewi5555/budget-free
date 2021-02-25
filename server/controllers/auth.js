@@ -21,11 +21,22 @@ exports.signup = async (req, res) => {
       res.status(400).send({ message: 'Null email or password is not allowed.' });
       return;
     }
+
+    // Check if user is already signed up
+    const emailTaken = await db.users.findOne(
+      { where: { 'email': req.body.email } }
+    );
+    console.log(`emailTaken: ${emailTaken}`);
+    if (emailTaken) {
+      console.log('That email is already taken.');
+      res.status(400).send({ message: 'That email is already taken.' });
+      return;
+    }
   
     try {
       // Enrypt password
       const hash = await bcrypt.hash(req.body.password, 10);
-      console.log(`hashedPassword: ${hash}`);
+      //console.log(`hashedPassword: ${hash}`);
   
       // Create user object
       const user = {
@@ -36,17 +47,17 @@ exports.signup = async (req, res) => {
         firstName: req.body.firstName,
         lastName: req.body.lastName
       };
-      console.log(`user: ${user}`);
+      //console.log(`user: ${JSON.stringify(user)}`);
   
       // Save user to database via Sequelize ORM create() function
-      await db.users.create(user).then((user) => {res.json(user)});
-      console.log('New user registered.');
+      await db.users.create(user).then((user) => { res.json(user) });
+      console.log('\nNew user registered.');
       
-      // Redirect to login page
+      // If successful, redirect to login page
       //res.redirect('/app/login');
   
     } catch (e) {
-      // If error, redirect to signup page
+      // If error, redirect back to signup page
       console.log(e);
       //res.redirect('/app/signup');
     }
@@ -56,36 +67,43 @@ exports.signup = async (req, res) => {
   
 /* 
 ----------------
-AUTHENTICATE USER
+AUTHENTICATE USER FOR LOGIN
 ----------------
 */
 exports.authenticate = async (username, password, done) => {
+  console.log(`req.body.username: ${username}`);
+  console.log(`req.body.password: ${password}`);
   /*
   username (email) and password come from req.body as defined by passport
 
   Axios example:
   axios.post('api/v1/auth/login', { username: 'user', password: 'secret' });
   */
-  const callback = async (err, user) => {
-    if (err) {
-      return done(err);
-    }
-    if (!user) {
-      return done(null, false, {message: 'Incorrect username.'});
-    }
-  
-    const match = await bcrypt.compare(password, user.passwordHash);
-    if (!match) {
-      return done(null, false, {message: 'Incorrect password'});
-    }
-    return done(null, user);
-  }
-  
-  await db.users.findOne( // sequelize query generator: returns (err, user)
-    { where: { email: username } }, 
-    callback
-  );
 
+
+  /*
+  Sequelize query generator
+  Equivalent to a findOneByEmail()
+  */
+  const user = await db.users.findOne(
+    { where: { 'email': username } }
+  );
+  console.log(`user: ${JSON.stringify(user)}`);
+
+  if (!user) {
+    console.log('Incorrect username');
+    return done(null, false, {message: 'Incorrect username'});
+  }
+
+  const match = await bcrypt.compare(password, user.passwordHash);
+  console.log(`match: ${match}`);
+  if (!match) {
+    console.log('Incorrect password');
+    return done(null, false, {message: 'Incorrect password'});
+  }
+
+  console.log('User authenticated and issued new session.');
+  return done(null, user);
 }
 
 /* 
@@ -94,7 +112,7 @@ SERIALIZE USER
 ----------------
 */
 exports.serializeUser = (user, done) => {
-  done(null, user.id);
+  done(null, user.id); // null err
 };
 
 /* 
@@ -102,10 +120,22 @@ exports.serializeUser = (user, done) => {
 DESERIALIZE USER
 ----------------
 */
-exports.deserializeUser = (id, done) => {
+exports.deserializeUser = async (id, done) => {
+
+  try {
+    const user = await db.users.findByPk(id);
+    return done(null, user);
+  }
+  catch(err) {
+    return done(err, null);
+  }
+
+  /*
   db.users.findByPk(id, (err, user) => {
     done(err, user);
   });
+  */
+
 };
 
 /* 
@@ -114,13 +144,23 @@ PRE-AUTH FOR USER LOG IN
 ----------------
 */
 exports.preAuth = (req, res, next) => {
+  console.log('\nChecking if user is authenticated...');
+  console.log(`JSON.stringify(req.body) : ${JSON.stringify(req.body)}`);
+
+  console.log(`JSON.stringify(req.isAuthenticated()) : ${JSON.stringify(req.isAuthenticated())}`);
   if (req.isAuthenticated()) {
-      req.logout();
-      req.session.destroy();
-      res.clearCookie('connect.sid');
+    console.log('User is already authenticated.');
+    console.log('req.logout();');
+    req.logout();
+    console.log(`JSON.stringify(req.session) : ${JSON.stringify(req.session)}`);
+    req.session.destroy();
+    res.clearCookie('connect.sid');
+    console.log(`JSON.stringify(res) : ${JSON.stringify(res)}`);
   }
+  console.log('User is not authenticated');
   next();
 };
+
 
 /* 
 ----------------
@@ -128,19 +168,28 @@ POST-AUTH FOR USER LOG IN
 ----------------
 */
 exports.postAuth = (req, res) => {
-  res.status(200).json({ user: req.user });
+  res.status(200).json({
+    message: 'User logged in',
+    user: req.user 
+  });
 }
-
 
 /* 
 ----------------
 LOG OUT USER
 ----------------
 */
-exports.logout = async (req, res) => {
-  sessionStore.destroy(req.sessionID, (e) => console.log(e));
-  req.logout();
-  req.session.destroy();
-  res.clearCookie('connect.sid');
-  return res.status(200).json({ message: 'User logged out' });
+exports.logout = (req, res, next) => {
+  try {
+    //sessionStore.destroy(req.sessionID, (e) => console.log(e));
+    req.logout();
+    req.session.destroy();
+    res.clearCookie('connect.sid');
+    res.status(200).json({ message: 'User logged out' });
+  }
+  catch(e) {
+    console.log(e);
+    res.status(400).json({ error: e });
+  }
+  next();
 };

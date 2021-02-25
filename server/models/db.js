@@ -19,7 +19,10 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     min: dbConfig.pool.min,
     acquire: dbConfig.pool.acquire,
     idle: dbConfig.pool.idle
-  }
+  },
+  logging: false
+  //logging: console.log
+  //logging: (...msg) => console.log(msg)
 });
 
 // Test connection

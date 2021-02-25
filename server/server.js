@@ -8,7 +8,7 @@ Backend Server
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
-const flash = require('express-flash');
+const flash = require('connect-flash');
 const morgan = require('morgan');
 const passport = require('passport');
 const session = require('express-session');
@@ -31,7 +31,6 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(flash());
 app.use(morgan('dev'));
 
 // Session middleware
@@ -52,6 +51,7 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24 * 14 // 14 days
   } 
 }));
+app.use(flash());
 
 // Passport middleware
 app.use(passport.initialize());
