@@ -14,17 +14,22 @@ This work in progress project will meet the need for a free and open-source pers
 
 1. Navigate to the server directory
 
-2. Create a new environment config file named `.env` with the contents below, replacing `secretpassword` and `secretsession` with your actual database user password and session secret.
+2. Create a new environment config file named `.env` with the contents below, replacing `secret` with your actual postgres user password and session secret.
 ```
-PORT=3001
+PORT=3000
+NODE_ENV=development
 
 PGPORT=5432
-PGHOST=localhost
 PGUSER=postgres
+PGHOST=localhost
 PGDATABASE=budgetfree
-PGPASSWORD=secretpassword
+PGPASSWORD=secret
 
-SESSION_SECRET=secretsession
+SESSION_LIFETIME=3600000
+SESSION_SECRET=secret
+
+SESSION_STORE_CLEANUP_INTERVAL=900000
+SESSION_STORE_EXPIRATION=86400000
 ```
 
 3. Run: `npm run start`
@@ -38,7 +43,7 @@ SESSION_SECRET=secretsession
 ## Server API Reference
 
 ### Signup
-`POST` `http://localhost:3001/api/v1/auth/signup`
+`POST` `/api/v1/auth/signup`
 #### Request Body (JSON)
 ```
 {
