@@ -7,21 +7,27 @@ Passport authentication API router
 // Module dependencies
 const express = require('express');
 const passport = require('passport');
-
-// Controller dependencies
-const controller = require('../controllers/auth.js');
-
-// Configuration dependencies
-require('../config/auth');
-
 const router = express.Router();
 
-router.post('/signup', controller.signup);
+// Controller dependencies
+const controller = require('../controllers/auth');
+
 router.post('/login',
-  controller.preAuth,
-  passport.authenticate('local'),
-  controller.postAuth
+  controller.redirectAuthenticatedUsers,
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash: true
+  })
 );
-router.get('/logout', controller.logout);
+
+router.delete('/logout',
+  controller.logout
+);
+
+router.post('/signup',
+  controller.redirectAuthenticatedUsers,
+  controller.signup
+);
 
 module.exports = router;

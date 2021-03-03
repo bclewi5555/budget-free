@@ -8,18 +8,21 @@ Database Model
 const Sequelize = require("sequelize");
 
 // Database configuration dependencies
-const dbConfig = require("../config/db.js");
+const config = require("../config/db.js");
 
 // Instantiate sequelize object
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-  host: dbConfig.HOST,
-  dialect: dbConfig.dialect,
+const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
+  host: config.HOST,
+  dialect: config.dialect,
   pool: {
-    max: dbConfig.pool.max,
-    min: dbConfig.pool.min,
-    acquire: dbConfig.pool.acquire,
-    idle: dbConfig.pool.idle
-  }
+    max: config.pool.max,
+    min: config.pool.min,
+    acquire: config.pool.acquire,
+    idle: config.pool.idle
+  },
+  logging: false
+  //logging: console.log
+  //logging: (...msg) => console.log(msg)
 });
 
 // Test connection
