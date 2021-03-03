@@ -67,19 +67,20 @@ app.use(express.json());
 // parse requests with content-type: application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 const sessionOptions = {
-  key: 'sid',
-  //proxy: true, // if you do SSL outside of node
-  resave: false,
-  saveUninitialized: false,
-  secret: process.env.SESSION_SECRET,
-  store: sessionStore,
   cookie: {
     httpOnly: false,
     maxAge: parseInt(process.env.SESSION_LIFETIME),
     path: '/',
     sameSite: false,
     secure: false
-  }
+  },
+  key: 'sid',
+  //proxy: true, // if you do SSL outside of node
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.SESSION_SECRET,
+  store: sessionStore,
+  unset: 'destroy'
 };
 if (process.env.NODE_ENV === 'production') {
   sessionOptions.cookie.httpOnly = true;
