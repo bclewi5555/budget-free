@@ -6,6 +6,7 @@ Authentication controller
 
 // Module dependencies
 const bcrypt = require('bcrypt');
+const { session } = require('passport');
 
 // Model dependencies
 const db = require('../models/db');
@@ -28,8 +29,10 @@ exports.login = (req, res, passport) => {
 exports.logout = (req, res) => {
   console.log('\n[Auth Controller] Logging out...');
   req.logOut();
-  console.log('[Auth Controller] Done: Logged out.');
-  res.redirect('/login');
+  req.session.destroy((err) => {
+    console.log('[Auth Controller] Done: Logged out.');
+    res.redirect('/login');
+  });
 };
 
 exports.redirectAuthenticatedUsers = (req, res, next) => {

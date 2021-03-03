@@ -43,7 +43,7 @@ SESSION_STORE_EXPIRATION=86400000
 ## Server API Reference
 
 ### Signup
-`POST` `/api/v1/auth/signup`
+`POST` `/signup`
 #### Request Body (JSON)
 ```
 {
@@ -69,7 +69,27 @@ SESSION_STORE_EXPIRATION=86400000
 }
 ```
 
-See `server > controller > auth.js` for details
+### Login
+`POST` `/login`
+#### Request Body (JSON)
+```
+{
+    "email": "aa1@example.com",
+    "password": "password"
+}
+```
+OR
+```
+{
+    "email": "AlexaAllistair1",
+    "password": "password"
+}
+```
+
+### Logout
+`POST` `/logout?_method=DELETE`
+
+For details, see `server > controller > auth.js` and `server > views`
 
 ## Project Description
 

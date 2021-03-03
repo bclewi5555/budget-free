@@ -68,6 +68,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const sessionOptions = {
   key: 'sid',
+  //proxy: true, // if you do SSL outside of node
   resave: false,
   saveUninitialized: false,
   secret: process.env.SESSION_SECRET,
