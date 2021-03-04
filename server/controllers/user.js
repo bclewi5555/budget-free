@@ -13,6 +13,22 @@ https://sequelize.org/master/variable/index.html#static-variable-Op
 */
 const Op = db.Sequelize.Op;
 
+exports.getUserFullName = async (req, res) => {
+  try {
+    const data = await db.users.findOne({
+      where: {
+        id: req.session.passport.user
+      }
+    });
+    console.log(data.dataValues.username);
+    res.send({ currentUser: data.dataValues.username });
+  }
+  catch (e) {
+    console.log(e.message);
+    res.status(500).send({ message: e.message });
+  }
+};
+
 /* 
 ----------------
 READ USER BY ID
