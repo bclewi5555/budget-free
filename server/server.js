@@ -22,7 +22,6 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const morgan = require('morgan');
 const passport = require('passport');
-const path = require('path');
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
@@ -37,7 +36,6 @@ const db = require('./models/db');
 
 // Route dependencies
 const authRouter = require('./routes/auth');
-const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
 
 /*
@@ -46,7 +44,6 @@ Server Setup
 ------------------------
 */
 const app = express();
-app.set('view-engine', 'ejs');
 const sessionStore = new SequelizeStore({
   db: db.sequelize,
   tableName: 'sessions',
@@ -115,12 +112,9 @@ db.sequelize.sync({ force: true }).then(() => {
 Route Configuration
 ------------------------
 */
-
 // serve React static files
 //app.get('/', express.static(path.join(__dirname, '../client/build')));
-
-app.use('/', indexRouter);
-app.use('/user', userRouter);
+app.use('/api/v1/user', userRouter);
 app.use('/api/v1/auth', authRouter);
 
 module.exports = app;

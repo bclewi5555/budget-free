@@ -5,8 +5,7 @@
   "main": "server.js",
   "private": true,
   "scripts": {
-    "start": "npm ./bin/www",
-    "devStart": "concurrently \"nodemon ./bin/www\" \"cd ../client && yarn start\"",
+    "start": "concurrently \"nodemon ./bin/www\" \"cd ../client && npm run start\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

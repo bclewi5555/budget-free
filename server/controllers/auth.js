@@ -6,7 +6,6 @@ Authentication controller
 
 // Module dependencies
 const bcrypt = require('bcrypt');
-const { session } = require('passport');
 
 // Model dependencies
 const db = require('../models/db');
@@ -45,13 +44,27 @@ exports.redirectAuthenticatedUsers = (req, res, next) => {
   next();
 };
 
-exports.requireAuthentication = (req, res, next) => {
-  console.log('\n[Auth Controller] Passport please...');
+exports.requireApiAuthentication = (req, res, next) => {
+  console.log('\n[Auth Controller] Authenticating...');
   if (req.isAuthenticated()) {
-    console.log('[Auth Controller] Access Granted: Your Passport looks good.');
+    console.log('[Auth Controller] Access Granted.');
     return next();
   }
-  console.log('[Auth Controller] Acces Denied: Your Passport doesn\'t look right. Redirecting...');
+  console.log('[Auth Controller] Acces Denied.');
+  res.send({ 
+    error: {
+      message: '[Auth Controller] Acces Denied.'
+    }
+  });
+};
+
+exports.requireViewAuthentication = (req, res, next) => {
+  console.log('\n[Auth Controller] Authenticating...');
+  if (req.isAuthenticated()) {
+    console.log('[Auth Controller] Access Granted.');
+    return next();
+  }
+  console.log('[Auth Controller] Acces Denied. Redirecting...');
   res.redirect('/login');
 };
 

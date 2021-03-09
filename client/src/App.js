@@ -1,34 +1,30 @@
-import React from 'react';
-import axios from 'axios';
-//import logo from './logo.svg';
-import './App.css';
+//import './App.css';
+import { useState } from 'react';
+import { Switch, Route } from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute';
+import Budget from './components/Budget';
+import LoginForm from './components/LoginForm';
+import SignupForm from './components/SignupForm';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentUser: ''
-    };
-  }
-  
-  componentDidMount() {
-    axios.get(`/user/name`)
-      .then(res => {
-        this.setState({ currentUser: res.data.currentUser });
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
-  }
-  
+function App() {
+  const [isAuth, setIsAuth] = useState(false);
 
-  render() {
-    return (
-      <div className="App">
-        <h1>Hello {this.state.currentUser}!</h1>
-      </div>
-    );
+  function handleClick() {
+    setIsAuth(false);
   }
+
+  return (
+    <div className='App'>
+      {isAuth ? <button onClick={handleClick}>Sign Out</button> : null}
+      <header className='App-header'>
+        <Switch>
+          <Route path="/signup" component={SignupForm} />
+          <Route path="/login" component={LoginForm} />
+          <PrivateRoute isAuth={isAuth} exact={true} path="/" component={Budget} />
+        </Switch>
+      </header>
+    </div>
+  );
 
 }
 

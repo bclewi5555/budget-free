@@ -13,11 +13,10 @@ const authController = require('../controllers/auth');
 
 const router = express.Router();
 
-router.get("/name", 
-  authController.requireAuthentication,
-  controller.getUserFullName
+router.get("/", 
+  authController.requireApiAuthentication,
+  controller.getUser
 );
-//router.get("/:id", controller.getUser);
 //router.put("/:id", controller.update);
 //router.delete("/:id", controller.delete);
 

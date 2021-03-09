@@ -6,22 +6,28 @@ User controller
 
 // Model dependencies
 const db = require('../models/db');
-
 /*
 Sequelize Operators for queries
 https://sequelize.org/master/variable/index.html#static-variable-Op
 */
 const Op = db.Sequelize.Op;
 
-exports.getUserFullName = async (req, res) => {
+exports.getUser = async (req, res) => {
   try {
     const data = await db.users.findOne({
       where: {
-        id: req.session.passport.user
+        id: req.session.passport.user // id of active session
       }
     });
-    console.log(data.dataValues.username);
-    res.send({ currentUser: data.dataValues.username });
+    res.send({ 
+      user: {
+        id: data.dataValues.id,
+        email: data.dataValues.email,
+        username: data.dataValues.username,
+        firstName: data.dataValues.firstName,
+        lastName: data.dataValues.lastName
+      }
+    });
   }
   catch (e) {
     console.log(e.message);
