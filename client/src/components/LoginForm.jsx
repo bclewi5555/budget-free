@@ -64,7 +64,7 @@ export default function LoginForm() {
     setPassword(e.target.value);
   }
 
-  function handleSubmit() {
+  function handleClick() {
     AuthService.login(email, password);
   }
 
@@ -78,7 +78,7 @@ export default function LoginForm() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form onSubmit={handleSubmit} className={classes.form} noValidate>
+        <form className={classes.form} noValidate>
           <TextField
             onChange={handleEmailChange}
             variant="outlined"
@@ -108,7 +108,8 @@ export default function LoginForm() {
             label="Remember me"
           />
           <Button
-            type="submit"
+            type="button"
+            onClick={handleClick}
             fullWidth
             variant="contained"
             color="primary"
