@@ -22,7 +22,7 @@ const AuthService = {
   async login(identifier, password) {
     // server expects an email property with a value of either email or username
     try {
-      await axios.post('/api/v1/auth/login',
+      await axios.post('http://localhost:5000/api/v1/auth/login',
         {
           email: identifier,
           password: password,
@@ -35,7 +35,7 @@ const AuthService = {
 
   async logout() {
     try {
-      await axios.get('/api/v1/auth/logout');
+      await axios.get('http://localhost:5000/api/v1/auth/logout');
     } catch (err) {
       console.log(err);
     }
