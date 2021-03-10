@@ -18,19 +18,27 @@ const AuthService = {
       console.log(err);
     }
   },
-  
-  login(identifier, password) {
+
+  async login(identifier, password) {
     // server expects an email property with a value of either email or username
-    axios.post('/api/v1/auth/login',
-      {
-        email: identifier, 
-        password: password,
-      }
-    );
+    try {
+      await axios.post('/api/v1/auth/login',
+        {
+          email: identifier,
+          password: password,
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
   },
-  
-  logout() {
-    axios.get('/api/v1/auth/logout');
+
+  async logout() {
+    try {
+      await axios.get('/api/v1/auth/logout');
+    } catch (err) {
+      console.log(err);
+    }
   }
 
 };

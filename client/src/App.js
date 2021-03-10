@@ -5,11 +5,13 @@ import PrivateRoute from './components/PrivateRoute';
 import Budget from './components/Budget';
 import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
+import AuthService from './services/AuthService';
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
 
   function handleClick() {
+    AuthService.logout();
     setIsAuth(false);
   }
 
