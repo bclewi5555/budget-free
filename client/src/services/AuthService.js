@@ -35,7 +35,7 @@ const AuthService = {
 
   async logout() {
     try {
-      await axios.get('http://localhost:5000/api/v1/auth/logout');
+      await axios.delete('http://localhost:5000/api/v1/auth/logout');
     } catch (err) {
       console.log(err);
     }

@@ -18,8 +18,8 @@ exports.login = (req, res, passport) => {
   //console.log(`[Auth Controller] passport: ${JSON.stringify(passport)}`);
   passport.authenticate('local', 
     {
-      successRedirect: '/',
-      failureRedirect: '/login',
+      //successRedirect: '/',
+      //failureRedirect: '/login',
       failureFlash: true
     }
   );
@@ -30,10 +30,11 @@ exports.logout = (req, res) => {
   req.logOut();
   req.session.destroy((err) => {
     console.log('[Auth Controller] Done: Logged out.');
-    res.redirect('/login');
+    //res.redirect('/login');
   });
 };
 
+/* For views only
 exports.redirectAuthenticatedUsers = (req, res, next) => {
   //console.log('\n[Auth Controller] Redirecting authenticated users...');
   if (req.isAuthenticated()) {
@@ -43,6 +44,7 @@ exports.redirectAuthenticatedUsers = (req, res, next) => {
   //console.log('[Auth Controller] Done: No users to redirect.');
   next();
 };
+*/
 
 exports.requireApiAuthentication = (req, res, next) => {
   console.log('\n[Auth Controller] Authenticating...');
@@ -58,6 +60,7 @@ exports.requireApiAuthentication = (req, res, next) => {
   });
 };
 
+/*
 exports.requireViewAuthentication = (req, res, next) => {
   console.log('\n[Auth Controller] Authenticating...');
   if (req.isAuthenticated()) {
@@ -67,6 +70,7 @@ exports.requireViewAuthentication = (req, res, next) => {
   console.log('[Auth Controller] Acces Denied. Redirecting...');
   res.redirect('/login');
 };
+*/
 
 exports.signup = async (req, res) => {
   console.log('\n[Auth Controller] Signing up...');
