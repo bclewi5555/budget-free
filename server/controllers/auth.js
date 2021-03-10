@@ -118,12 +118,12 @@ exports.signup = async (req, res) => {
 
     console.log('[Auth Controller] Done: Signed up new user.');
     // If successful, redirect to login page
-    res.redirect('/login');
+    //res.redirect('/login');
 
   } catch (err) {
     // If error, redirect back to signup page
     console.log(`[Auth Controller] Error: ${err.message}`);
-    res.redirect('/register');
+    //res.redirect('/register');
   }
 
 }

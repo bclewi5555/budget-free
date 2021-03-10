@@ -26,7 +26,6 @@ router.delete('/logout',
 );
 
 router.post('/signup',
-  controller.redirectAuthenticatedUsers,
   controller.signup
 );
 
