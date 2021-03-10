@@ -58,9 +58,7 @@ Middleware Configuration
 ------------------------
 */
 app.use(morgan('dev'));
-app.use(cors({
-  origin: `http://localhost:${process.env.PORT}`
-}));
+app.use(cors());
 // parse requests with content-type: application/json
 app.use(express.json());
 // parse requests with content-type: application/x-www-form-urlencoded

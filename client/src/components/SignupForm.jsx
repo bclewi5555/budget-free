@@ -79,7 +79,12 @@ export default function SignupForm() {
     setLastName(e.target.value);
   }
 
-  function handleSubmit() {
+  function handleClick() {
+    console.log(`email: ${email}`);
+    console.log(`password: ${password}`);
+    console.log(`username: ${username}`);
+    console.log(`firstName: ${firstName}`);
+    console.log(`lastName: ${lastName}`);
     AuthService.signup(email, password, username, firstName, lastName);
   }
 
@@ -93,12 +98,12 @@ export default function SignupForm() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form onSubmit={handleSubmit} className={classes.form} noValidate>
+        <form className={classes.form} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
                 onChange={handleFirstNameChange}
-                autoComplete="fname"
+                autoComplete="given-name"
                 name="firstName"
                 variant="outlined"
                 required
@@ -117,7 +122,7 @@ export default function SignupForm() {
                 id="lastName"
                 label="Last Name"
                 name="lastName"
-                autoComplete="lname"
+                autoComplete="family-name"
               />
             </Grid>
             <Grid item xs={12}>
@@ -165,7 +170,8 @@ export default function SignupForm() {
             </Grid>
           </Grid>
           <Button
-            type="submit"
+            type="button"
+            onClick={handleClick}
             fullWidth
             variant="contained"
             color="primary"

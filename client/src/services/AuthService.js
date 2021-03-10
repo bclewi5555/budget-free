@@ -2,17 +2,21 @@ import axios from 'axios';
 
 const AuthService = {
 
-  signup(email, username, password, firstName, lastName) {
-    console.log('[AuthService] Signing Up...');
-    axios.post('/api/v1/auth/signup',
-      {
-        email: email,
-        username: username,
-        password: password,
-        firstName: firstName,
-        lastName: lastName
-      }
-    );
+  async signup(email, password, username, firstName, lastName) {
+    try {
+      const res = await axios.post('http://localhost:5000/api/v1/auth/signup',
+        {
+          email: email,
+          username: username,
+          password: password,
+          firstName: firstName,
+          lastName: lastName
+        }
+      );
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
   },
   
   login(identifier, password) {
