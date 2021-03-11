@@ -13,25 +13,29 @@ const db = require('../models/db');
 // Config dependencies
 require('../config/auth');
 
-exports.login = (req, res, passport) => {
-  //console.log('\n[Auth Controller] Authenticating with Passport...');
-  //console.log(`[Auth Controller] passport: ${JSON.stringify(passport)}`);
-  passport.authenticate('local', 
-    {
-      //successRedirect: '/',
-      //failureRedirect: '/login',
-      failureFlash: true
-    }
-  );
+exports.login = (req, res) => {
+  console.log('\n[Auth Controller] Issued Session ID: '+req.sessionID);
+  res.json({sessionID: req.sessionID});
 };
 
 exports.logout = (req, res) => {
-  console.log('\n[Auth Controller] Logging out...');
-  req.logOut();
-  req.session.destroy((err) => {
-    console.log('[Auth Controller] Done: Logged out.');
-    //res.redirect('/login');
-  });
+  if (!req.sessionID) {
+    return res.status(500).send('No authenticated user to log out.');
+  }
+  try {
+    const destroyedSessionID = req.sessionID;
+    console.log('\n[Auth Controller] Logging out...');
+    req.logOut();
+    req.session.destroy((err) => {
+      console.log('[Auth Controller] Done: Logged out.');
+      console.log('[Auth Controller] Destroyed Session ID: '+destroyedSessionID);
+      res.json({destroyedSessionID: destroyedSessionID});
+      //res.redirect('/login');
+    });
+  } catch(err) {
+    console.error(err.message);
+    res.status(500).json(err.message);
+  }
 };
 
 /* For views only
@@ -118,15 +122,15 @@ exports.signup = async (req, res) => {
 
     // Save user to database
     await db.users.create(user);
-    //console.log('New user registered.');
-
     console.log('[Auth Controller] Done: Signed up new user.');
+    res.json(user);
     // If successful, redirect to login page
     //res.redirect('/login');
 
   } catch (err) {
+    console.error(`[Auth Controller] Error: ${err.message}`);
+    res.status(500).json(err.message);
     // If error, redirect back to signup page
-    console.log(`[Auth Controller] Error: ${err.message}`);
     //res.redirect('/register');
   }
 

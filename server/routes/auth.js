@@ -17,10 +17,11 @@ router.post('/login',
     //successRedirect: '/',
     //failureRedirect: '/login',
     failureFlash: true
-  })
+  }),
+  controller.login
 );
 
-router.delete('/logout',
+router.post('/logout',
   controller.logout
 );
 

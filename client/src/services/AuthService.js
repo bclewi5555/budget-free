@@ -1,43 +1,58 @@
 import axios from 'axios';
 
+//const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const AuthService = {
 
-  async signup(email, password, username, firstName, lastName) {
+  signup(email, password, username, firstName, lastName) {
     try {
-      const res = await axios.post('http://localhost:5000/api/v1/auth/signup',
+      const res = axios.post(/*API_BASE_URL+*/'/api/v1/auth/signup',
         {
           email: email,
-          username: username,
           password: password,
+          username: username,
           firstName: firstName,
           lastName: lastName
         }
       );
-      console.log(res);
+      console.log(res.data);
+      return res;
     } catch (err) {
       console.log(err);
+      return false;
     }
   },
 
-  async login(identifier, password) {
+  login(identifier, password) {
     // server expects an email property with a value of either email or username
+    console.log('[AuthService] Loggin in...');
     try {
-      await axios.post('http://localhost:5000/api/v1/auth/login',
+      const res = axios.post(/*API_BASE_URL+*/'/api/v1/auth/login',
         {
           email: identifier,
           password: password,
         }
       );
+      console.log(res.data);
+      sessionStorage.setItem('isAuth', true);
+      return res;
     } catch (err) {
       console.log(err);
+      sessionStorage.setItem('isAuth', false);
+      return false;
     }
   },
 
-  async logout() {
+  logout() {
     try {
-      await axios.delete('http://localhost:5000/api/v1/auth/logout');
+      const res = axios.post(/*API_BASE_URL+*/'/api/v1/auth/logout');
+      console.log(res.data);
+      sessionStorage.setItem('isAuth', false);
+      return res;
     } catch (err) {
       console.log(err);
+      sessionStorage.setItem('isAuth', false);
+      return false;
     }
   }
 

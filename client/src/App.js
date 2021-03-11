@@ -7,12 +7,15 @@ import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
 import AuthService from './services/AuthService';
 
+//console.log(sessionStorage); // for reference
+
 function App() {
   const [isAuth, setIsAuth] = useState(false);
 
   function handleClick() {
     AuthService.logout();
     setIsAuth(false);
+    window.location.href = '/login';
   }
 
   return (

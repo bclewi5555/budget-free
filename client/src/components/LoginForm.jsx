@@ -50,9 +50,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LoginForm() {
+export default function LoginForm(props) {
   const classes = useStyles();
-  
+
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -65,7 +66,12 @@ export default function LoginForm() {
   }
 
   function handleClick() {
-    AuthService.login(email, password);
+    setIsLoading(true);
+    const res = AuthService.login(email, password);
+    if (res) {
+      window.location.href = '/';
+    }
+    window.location.href = '/login';
   }
 
   return (
@@ -114,6 +120,7 @@ export default function LoginForm() {
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={isLoading}
           >
             Sign In
           </Button>

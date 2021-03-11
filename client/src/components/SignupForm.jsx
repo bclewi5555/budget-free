@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SignupForm() {
   const classes = useStyles();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
@@ -80,12 +81,12 @@ export default function SignupForm() {
   }
 
   function handleClick() {
-    console.log(`email: ${email}`);
-    console.log(`password: ${password}`);
-    console.log(`username: ${username}`);
-    console.log(`firstName: ${firstName}`);
-    console.log(`lastName: ${lastName}`);
-    AuthService.signup(email, password, username, firstName, lastName);
+    setIsLoading(true);
+    const res = AuthService.signup(email, password, username, firstName, lastName);
+    if (res) {
+      window.location.href = '/login';
+    }
+    window.location.href = '/signup';
   }
 
   return (
@@ -176,6 +177,7 @@ export default function SignupForm() {
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={isLoading}
           >
             Sign Up
           </Button>

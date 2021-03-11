@@ -13,7 +13,7 @@ const db = require('../models/db');
 
 exports.configurePassport = (passport) => {
   const _authenticateUser = async (email, password, next) => {
-    console.log('[Passport] Authenticating...');
+    console.log('\n[Passport] Authenticating...');
     
     // Validate User
     const user = await db.users.findOne({
@@ -63,7 +63,7 @@ exports.configurePassport = (passport) => {
   passport.use(new LocalStrategy(
     { 
       usernameField: 'email',
-      //passwordField: 'password',
+      passwordField: 'password',
       //session: true,
       //passReqToCallback: true
     }, 

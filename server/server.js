@@ -19,7 +19,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
 const flash = require('connect-flash');
-const methodOverride = require('method-override');
+//const methodOverride = require('method-override'); // replaced DELETE with POST
 const morgan = require('morgan');
 const passport = require('passport');
 const session = require('express-session');
@@ -58,7 +58,22 @@ Middleware Configuration
 ------------------------
 */
 app.use(morgan('dev'));
-app.use(cors());
+/* When restricting Cross Origin Resources to a dynamic white list
+const whitelist = [
+  'http://localhost:'+process.env.PORT,
+  'http://localhost:'+process.env.REACT_APP_PORT
+];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}
+*/
+app.use(cors(/*corsOptions*/));
 // parse requests with content-type: application/json
 app.use(express.json());
 // parse requests with content-type: application/x-www-form-urlencoded
@@ -76,7 +91,7 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   secret: process.env.SESSION_SECRET,
-  store: sessionStore,
+  store: sessionStore, // Sequelize manages session table in database
   unset: 'destroy'
 };
 if (process.env.NODE_ENV === 'production') {
@@ -93,7 +108,7 @@ app.use(session(sessionOptions));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(methodOverride('_method'));
+//app.use(methodOverride('_method')); // replaced DELETE with POST
 app.use(flashMessageMiddleware.flashMessages);
 
 /*
