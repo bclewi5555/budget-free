@@ -1,7 +1,9 @@
 import { Redirect, Route } from 'react-router-dom';
+//import AuthService from '../services/AuthService';
+
 export default function PrivateRoute(props) {
 
-  if (props.isAuth) {
+  if (/*AuthService.validateSession()*/props.isAuth) {
     return(
       <Route 
         exact={props.exact}

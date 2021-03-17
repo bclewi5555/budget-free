@@ -18,6 +18,43 @@ exports.login = (req, res) => {
   res.json({sessionID: req.sessionID});
 };
 
+exports.validateSession = async (req, res) => {
+  if (!req.sessionID) {
+    return res.status(401);
+  }
+  try {
+
+    // validate session
+    console.log('\n[Auth Controller] Validating session...');
+    const validSession = await db.sessions.findOne({
+      where: {sid: req.sessionID}
+    });
+    if (!validSession) {
+      return res.status(401).send('Invalid session');
+    }
+    console.log(validSession);
+    console.log('[Auth Controller] Session validated.');
+
+    // validate user
+    console.log('[Auth Controller] Validating user...');
+    const userID = validSession.data.passport.user;
+    console.log(userID);
+    const validUser = await db.users.findOne({
+      where: {id: userID}
+    });
+    if (!validUser) {
+      return res.status(401).send('Invalid user');
+    }
+    console.log('[Auth Controller] User validated.');
+
+    res.status(200).send('OK');
+
+  } catch(err) {
+    console.log(err.message);
+    res.status(500).json(err.message);
+  }
+};
+
 exports.logout = (req, res) => {
   if (!req.sessionID) {
     return res.status(500).send('No authenticated user to log out.');
@@ -121,9 +158,9 @@ exports.signup = async (req, res) => {
     //console.log(`user: ${JSON.stringify(user)}`);
 
     // Save user to database
-    await db.users.create(user);
+    const newUser = await db.users.create(user);
     console.log('[Auth Controller] Done: Signed up new user.');
-    res.json(user);
+    res.json({id: newUser.id});
     // If successful, redirect to login page
     //res.redirect('/login');
 

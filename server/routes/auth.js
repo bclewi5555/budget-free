@@ -12,6 +12,10 @@ const router = express.Router();
 // Controller dependencies
 const controller = require('../controllers/auth');
 
+router.post('/signup',
+  controller.signup
+);
+
 router.post('/login',
   passport.authenticate('local', {
     //successRedirect: '/',
@@ -21,12 +25,12 @@ router.post('/login',
   controller.login
 );
 
-router.post('/logout',
-  controller.logout
+router.post('/session',
+  controller.validateSession
 );
 
-router.post('/signup',
-  controller.signup
+router.post('/logout',
+  controller.logout
 );
 
 module.exports = router;

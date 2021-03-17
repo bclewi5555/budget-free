@@ -22,6 +22,7 @@ const flash = require('connect-flash');
 //const methodOverride = require('method-override'); // replaced DELETE with POST
 const morgan = require('morgan');
 const passport = require('passport');
+const path = require('path');
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
@@ -126,7 +127,7 @@ Route Configuration
 ------------------------
 */
 // serve React static files
-//app.get('/', express.static(path.join(__dirname, '../client/build')));
+app.get('/', express.static(path.join(__dirname, '../client/build')));
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/auth', authRouter);
 
