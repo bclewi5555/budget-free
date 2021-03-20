@@ -16,7 +16,7 @@ cookie-parser longer needed as of express-session 1.5.0
 https://www.npmjs.com/package/express-session
 const cookieParser = require('cookie-parser');
 */
-const cors = require('cors');
+//const cors = require('cors'); // not needed for local proxy?
 const express = require('express');
 const flash = require('connect-flash');
 //const methodOverride = require('method-override'); // replaced DELETE with POST
@@ -74,7 +74,7 @@ const corsOptions = {
   }
 }
 */
-app.use(cors(/*corsOptions*/));
+//app.use(cors(/*corsOptions*/));
 // parse requests with content-type: application/json
 app.use(express.json());
 // parse requests with content-type: application/x-www-form-urlencoded

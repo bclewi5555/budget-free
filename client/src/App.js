@@ -11,16 +11,25 @@ import AuthService from './services/AuthService';
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleClick() {
-    AuthService.logout();
-    setIsAuth(false);
-    window.location.href = '/login';
+  async function handleClick() {
+    setIsLoading(true);
+    try {
+      const res = await AuthService.logout();
+      if (res) {
+        setIsAuth(false);
+        setIsLoading(false);
+        window.location.href = '/login';
+      }
+    } catch (err) {
+      return err.message
+    }
   }
 
   return (
     <div className='App'>
-      {isAuth ? <button onClick={handleClick}>Sign Out</button> : null}
+      {isAuth ? <button onClick={handleClick} disabled={isLoading}>Sign Out</button> : null}
       <header className='App-header'>
         <Switch>
           <Route path="/signup" component={SignupForm} />

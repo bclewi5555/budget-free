@@ -1,11 +1,10 @@
-//import axios from 'axios';
-
-//const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+import axios from 'axios';
 
 const AuthService = {
 
   async signup(email, password, username, firstName, lastName) {
     try {
+      /*
       const res = await fetch('/api/v1/auth/signup', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -17,8 +16,8 @@ const AuthService = {
           lastName: lastName
         })
       });
-      /*
-      const res = axios.post('/api/v1/auth/signup',
+      */
+      const res = await axios.post('/api/v1/auth/signup',
         {
           email: email,
           password: password,
@@ -27,11 +26,8 @@ const AuthService = {
           lastName: lastName
         }
       );
-      */
-      console.log(res.json());
       console.log(res.data);
-      return await res.json();
-      //return res;
+      return res;
     } catch (err) {
       console.log(err);
       return false;
@@ -42,6 +38,7 @@ const AuthService = {
     // server expects an email property with a value of either email or username
     console.log('[AuthService] Loggin in...');
     try {
+      /*
       const res = await fetch('/api/v1/auth/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -50,18 +47,16 @@ const AuthService = {
           password: password
         })
       });
-      /*
-      const res = axios.post('/api/v1/auth/login',
+      */
+      const res = await axios.post('/api/v1/auth/login',
         {
           email: identifier,
           password: password,
         }
       );
-      */
-      console.log(res.json());
       console.log(res.data);
       sessionStorage.setItem('sid', res.data);
-      return await res.json();
+      return res;
       //return res;
     } catch (err) {
       console.log(err);
@@ -72,15 +67,16 @@ const AuthService = {
 
   async validateSession() {
     try {
+      /*
       const res = await fetch('/api/v1/auth/session', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'}
       });
-      //const res = axios.post('/api/v1/auth/session');
+      */
+      const res = await axios.post('/api/v1/auth/session');
       if (!res.status(200)) {
         return false;
       }
-      console.log(res.json());
       console.log(res.data);
       return true;
     } catch (err) {
@@ -92,16 +88,16 @@ const AuthService = {
 
   async logout() {
     try {
+      /*
       const res = await fetch('/api/v1/auth/logout', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'}
       });
-      //const res = axios.post(/*API_BASE_URL+*/'/api/v1/auth/logout');
-      console.log(res.json());
+      */
+      const res = await axios.post('/api/v1/auth/logout');
       console.log(res.data);
       sessionStorage.removeItem('sid');
-      return await res.json();
-      //return res;
+      return res;
     } catch (err) {
       console.log(err);
       return false;

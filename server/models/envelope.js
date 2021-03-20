@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
           deferrable: Deferrable.INITIALLY_IMMEDIATE
       }
     },
-    type: {
+    type: { // is this a fund?
       type: DataTypes.STRING,
       allowNull: false
     },

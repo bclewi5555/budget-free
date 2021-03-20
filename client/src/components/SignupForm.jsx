@@ -80,13 +80,18 @@ export default function SignupForm() {
     setLastName(e.target.value);
   }
 
-  function handleClick() {
+  async function handleClick() {
     setIsLoading(true);
-    const res = AuthService.signup(email, password, username, firstName, lastName);
-    if (res) {
-      window.location.href = '/login';
+    try {
+      const res = await AuthService.signup(email, password, username, firstName, lastName);
+      if (res) {
+        setIsLoading(false);
+        window.location.href = '/login';
+      }
+    } catch (err) {
+      console.log(err);
+      window.location.href = '/signup';
     }
-    window.location.href = '/signup';
   }
 
   return (

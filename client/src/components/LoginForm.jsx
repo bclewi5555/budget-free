@@ -65,13 +65,18 @@ export default function LoginForm(props) {
     setPassword(e.target.value);
   }
 
-  function handleClick() {
+  async function handleClick() {
     setIsLoading(true);
-    const res = AuthService.login(email, password);
-    if (res) {
-      window.location.href = '/';
+    try {
+      const res = await AuthService.login(email, password);
+      if (res) {
+        setIsLoading(false);
+        window.location.href = '/';
+      }
+    } catch (err) {
+      console.log(err.message);
+      window.location.href = '/login';
     }
-    window.location.href = '/login';
   }
 
   return (
