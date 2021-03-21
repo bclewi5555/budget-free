@@ -16,12 +16,13 @@ cookie-parser longer needed as of express-session 1.5.0
 https://www.npmjs.com/package/express-session
 const cookieParser = require('cookie-parser');
 */
-const cors = require('cors');
+//const cors = require('cors'); // not needed for local proxy?
 const express = require('express');
 const flash = require('connect-flash');
-const methodOverride = require('method-override');
+//const methodOverride = require('method-override'); // replaced DELETE with POST
 const morgan = require('morgan');
 const passport = require('passport');
+const path = require('path');
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
@@ -36,7 +37,7 @@ const db = require('./models/db');
 
 // Route dependencies
 const authRouter = require('./routes/auth');
-const indexRouter = require('./routes/index');
+const userRouter = require('./routes/user');
 
 /*
 ------------------------
@@ -44,7 +45,6 @@ Server Setup
 ------------------------
 */
 const app = express();
-app.set('view-engine', 'ejs');
 const sessionStore = new SequelizeStore({
   db: db.sequelize,
   tableName: 'sessions',
@@ -59,9 +59,22 @@ Middleware Configuration
 ------------------------
 */
 app.use(morgan('dev'));
-app.use(cors({
-  origin: `http://localhost:${process.env.PORT}`
-}));
+/* When restricting Cross Origin Resources to a dynamic white list
+const whitelist = [
+  'http://localhost:'+process.env.PORT,
+  'http://localhost:'+process.env.REACT_APP_PORT
+];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}
+*/
+//app.use(cors(/*corsOptions*/));
 // parse requests with content-type: application/json
 app.use(express.json());
 // parse requests with content-type: application/x-www-form-urlencoded
@@ -79,7 +92,7 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   secret: process.env.SESSION_SECRET,
-  store: sessionStore,
+  store: sessionStore, // Sequelize manages session table in database
   unset: 'destroy'
 };
 if (process.env.NODE_ENV === 'production') {
@@ -96,7 +109,7 @@ app.use(session(sessionOptions));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(methodOverride('_method'));
+//app.use(methodOverride('_method')); // replaced DELETE with POST
 app.use(flashMessageMiddleware.flashMessages);
 
 /*
@@ -113,18 +126,9 @@ db.sequelize.sync({ force: true }).then(() => {
 Route Configuration
 ------------------------
 */
-app.route('/')
-  .get(indexRouter);
-
-app.route('/login')
-  .get(indexRouter)
-  .post(authRouter);
-
-app.route('/signup')
-  .get(indexRouter)
-  .post(authRouter);
-
-app.route('/logout')
-  .delete(authRouter);
+// serve React static files
+app.get('/', express.static(path.join(__dirname, '../client/build')));
+app.use('/api/v1/user', userRouter);
+app.use('/api/v1/auth', authRouter);
 
 module.exports = app;

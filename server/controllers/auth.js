@@ -6,7 +6,6 @@ Authentication controller
 
 // Module dependencies
 const bcrypt = require('bcrypt');
-const { session } = require('passport');
 
 // Model dependencies
 const db = require('../models/db');
@@ -14,27 +13,69 @@ const db = require('../models/db');
 // Config dependencies
 require('../config/auth');
 
-exports.login = (req, res, passport) => {
-  //console.log('\n[Auth Controller] Authenticating with Passport...');
-  //console.log(`[Auth Controller] passport: ${JSON.stringify(passport)}`);
-  passport.authenticate('local', 
-    {
-      successRedirect: '/',
-      failureRedirect: '/login',
-      failureFlash: true
+exports.login = (req, res) => {
+  console.log('\n[Auth Controller] Issued Session ID: '+req.sessionID);
+  res.json({sessionID: req.sessionID});
+};
+
+exports.validateSession = async (req, res) => {
+  if (!req.sessionID) {
+    return res.status(401);
+  }
+  try {
+
+    // validate session
+    console.log('\n[Auth Controller] Validating session...');
+    const validSession = await db.sessions.findOne({
+      where: {sid: req.sessionID}
+    });
+    if (!validSession) {
+      return res.status(401).send('Invalid session');
     }
-  );
+    console.log(validSession);
+    console.log('[Auth Controller] Session validated.');
+
+    // validate user
+    console.log('[Auth Controller] Validating user...');
+    const userID = validSession.data.passport.user;
+    console.log(userID);
+    const validUser = await db.users.findOne({
+      where: {id: userID}
+    });
+    if (!validUser) {
+      return res.status(401).send('Invalid user');
+    }
+    console.log('[Auth Controller] User validated.');
+
+    res.status(200).send('OK');
+
+  } catch(err) {
+    console.log(err.message);
+    res.status(500).json(err.message);
+  }
 };
 
 exports.logout = (req, res) => {
-  console.log('\n[Auth Controller] Logging out...');
-  req.logOut();
-  req.session.destroy((err) => {
-    console.log('[Auth Controller] Done: Logged out.');
-    res.redirect('/login');
-  });
+  if (!req.sessionID) {
+    return res.status(500).send('No authenticated user to log out.');
+  }
+  try {
+    const destroyedSessionID = req.sessionID;
+    console.log('\n[Auth Controller] Logging out...');
+    req.logOut();
+    req.session.destroy((err) => {
+      console.log('[Auth Controller] Done: Logged out.');
+      console.log('[Auth Controller] Destroyed Session ID: '+destroyedSessionID);
+      res.json({destroyedSessionID: destroyedSessionID});
+      //res.redirect('/login');
+    });
+  } catch(err) {
+    console.error(err.message);
+    res.status(500).json(err.message);
+  }
 };
 
+/* For views only
 exports.redirectAuthenticatedUsers = (req, res, next) => {
   //console.log('\n[Auth Controller] Redirecting authenticated users...');
   if (req.isAuthenticated()) {
@@ -44,16 +85,33 @@ exports.redirectAuthenticatedUsers = (req, res, next) => {
   //console.log('[Auth Controller] Done: No users to redirect.');
   next();
 };
+*/
 
-exports.requireAuthentication = (req, res, next) => {
-  console.log('\n[Auth Controller] Passport please...');
+exports.requireApiAuthentication = (req, res, next) => {
+  console.log('\n[Auth Controller] Authenticating...');
   if (req.isAuthenticated()) {
-    console.log('[Auth Controller] Access Granted: Your Passport looks good.');
+    console.log('[Auth Controller] Access Granted.');
     return next();
   }
-  console.log('[Auth Controller] Acces Denied: Your Passport doesn\'t look right. Redirecting...');
+  console.log('[Auth Controller] Acces Denied.');
+  res.send({ 
+    error: {
+      message: '[Auth Controller] Acces Denied.'
+    }
+  });
+};
+
+/*
+exports.requireViewAuthentication = (req, res, next) => {
+  console.log('\n[Auth Controller] Authenticating...');
+  if (req.isAuthenticated()) {
+    console.log('[Auth Controller] Access Granted.');
+    return next();
+  }
+  console.log('[Auth Controller] Acces Denied. Redirecting...');
   res.redirect('/login');
 };
+*/
 
 exports.signup = async (req, res) => {
   console.log('\n[Auth Controller] Signing up...');
@@ -100,17 +158,17 @@ exports.signup = async (req, res) => {
     //console.log(`user: ${JSON.stringify(user)}`);
 
     // Save user to database
-    await db.users.create(user);
-    //console.log('New user registered.');
-
+    const newUser = await db.users.create(user);
     console.log('[Auth Controller] Done: Signed up new user.');
+    res.json({id: newUser.id});
     // If successful, redirect to login page
-    res.redirect('/login');
+    //res.redirect('/login');
 
   } catch (err) {
+    console.error(`[Auth Controller] Error: ${err.message}`);
+    res.status(500).json(err.message);
     // If error, redirect back to signup page
-    console.log(`[Auth Controller] Error: ${err.message}`);
-    res.redirect('/register');
+    //res.redirect('/register');
   }
 
 }
