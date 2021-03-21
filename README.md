@@ -2,19 +2,15 @@
 
 This work in progress project will meet the need for a free and open-source personal budgeting software which is accessible from any device.
 
-## Local Install for Developers
+## Local Install and Config for Developers
 
-1. Install [npm](https://www.npmjs.com/), [yarn](https://classic.yarnpkg.com/), and [postgreSQL](https://www.postgresql.org/) on your local machine.
+1. Install [npm](https://www.npmjs.com/) and [postgreSQL](https://www.postgresql.org/) on your local machine.
 
 2. Clone this repo: `git clone https://github.com/bclewi5555/budget-free.git`
 
-3. Start up an empty PosgreSQL database named `budgetfree` from the default user (`postgres`) on the default port (`5432`)
+3. Navigate to the server directory
 
-## Run Development Server
-
-1. Navigate to the server directory
-
-2. Create a new environment config file named `.env` with the contents below, replacing `secret` with your actual postgres user password and session secret.
+4. Create a new environment config file named `.env` with the contents below, replacing `secret` with your actual postgres user password and session secret.
 ```
 PORT=3000
 NODE_ENV=development
@@ -32,13 +28,11 @@ SESSION_STORE_CLEANUP_INTERVAL=900000
 SESSION_STORE_EXPIRATION=86400000
 ```
 
-3. Run: `npm run start`
+5. Start up an empty PosgreSQL database named `budgetfree` from the default user (`postgres`) on the default port (`5432`)
 
-## Run Development Client
+## Launch App for Local Development
 
-1. Navigate to the client directory in a new terminal
-
-2. Run: `yarn start`
+`npm run start`
 
 ## Server API Reference
 
@@ -87,7 +81,7 @@ OR
 ```
 
 ### Logout
-`POST` `/logout?_method=DELETE`
+`POST` `/logout`
 
 For details, see `server > controller > auth.js` and `server > views`
 
