@@ -84,7 +84,7 @@ const sessionOptions = {
     httpOnly: false,
     maxAge: parseInt(process.env.SESSION_LIFETIME),
     path: '/',
-    sameSite: false,
+    sameSite: true,
     secure: false
   },
   key: 'sid',

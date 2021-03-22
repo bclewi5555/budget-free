@@ -1,32 +1,32 @@
 import axios from 'axios';
 
+//console.log(sessionStorage); // for reference
+
 const AuthService = {
 
-  async signup(email, password, username, firstName, lastName) {
+  _isAuth: false,
+
+  isAuth() {
+    return this._isAuth ? true : false;
+  },
+
+  async signup(user) {
+    console.log('[AuthService] Signing up...');
     try {
-      /*
-      const res = await fetch('/api/v1/auth/signup', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          username: username,
-          firstName: firstName,
-          lastName: lastName
-        })
-      });
-      */
       const res = await axios.post('/api/v1/auth/signup',
         {
-          email: email,
-          password: password,
-          username: username,
-          firstName: firstName,
-          lastName: lastName
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          username: user.username,
+          password: user.password
         }
       );
-      console.log(res.data);
+      if (res.status !== 200) {
+        console.log(res);
+        return false;
+      }
+      console.log('[AuthService] Done: Signed up user with ID: '+res.data.id);
       return res;
     } catch (err) {
       console.log(err);
@@ -34,69 +34,63 @@ const AuthService = {
     }
   },
 
-  async login(identifier, password) {
+  async login(user) {
     // server expects an email property with a value of either email or username
-    console.log('[AuthService] Loggin in...');
+    console.log('[AuthService] Logging in...');
     try {
-      /*
-      const res = await fetch('/api/v1/auth/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          email: identifier,
-          password: password
-        })
-      });
-      */
       const res = await axios.post('/api/v1/auth/login',
         {
-          email: identifier,
-          password: password,
+          identifier: user.identifier,
+          password: user.password,
         }
       );
-      console.log(res.data);
-      sessionStorage.setItem('sid', res.data);
+      if (res.status !== 200) {
+        console.log(res);
+        return false;
+      }
+      sessionStorage.setItem('sid', res.data.sessionID);
+      this._isAuth = true;
+      console.log('[AuthService] Done: Issued and Stored Session ID: '+sessionStorage.getItem('sid'));
       return res;
-      //return res;
     } catch (err) {
       console.log(err);
       sessionStorage.setItem('sid', null);
+      this._isAuth = false;
       return false;
     }
   },
 
   async validateSession() {
+    console.log('[AuthService] Validating session...');
     try {
-      /*
-      const res = await fetch('/api/v1/auth/session', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'}
-      });
-      */
       const res = await axios.post('/api/v1/auth/session');
-      if (!res.status(200)) {
+      console.log(res);
+      if (res.status !== 200) {
+        console.log(res);
         return false;
       }
-      console.log(res.data);
-      return true;
+      this._isAuth = true;
+      return res;
     } catch (err) {
       console.log(err);
+      this._isAuth = false;
       return false;
     }
 
   },
 
   async logout() {
+    console.log('[AuthService] Logging out...');
     try {
-      /*
-      const res = await fetch('/api/v1/auth/logout', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'}
-      });
-      */
       const res = await axios.post('/api/v1/auth/logout');
-      console.log(res.data);
+      if (res.status !== 200) {
+        console.log(res);
+        return false;
+      }
+      const destroyedSessionID = sessionStorage.getItem('sid');
       sessionStorage.removeItem('sid');
+      this._isAuth = false;
+      console.log('[AuthService] Done: Destroyed Session ID: '+destroyedSessionID);
       return res;
     } catch (err) {
       console.log(err);

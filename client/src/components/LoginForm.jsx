@@ -1,5 +1,6 @@
 // modules
 import React, { useState } from 'react';
+import { Redirect, Link as RouterLink } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -22,7 +23,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+        BudgetFree
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -53,12 +54,14 @@ const useStyles = makeStyles((theme) => ({
 export default function LoginForm(props) {
   const classes = useStyles();
 
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [redirect, setRedirect] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
 
-  function handleEmailChange(e) {
-    setEmail(e.target.value);
+  function handleIdentifierChange(e) {
+    setIdentifier(e.target.value);
   }
 
   function handlePasswordChange(e) {
@@ -68,15 +71,30 @@ export default function LoginForm(props) {
   async function handleClick() {
     setIsLoading(true);
     try {
-      const res = await AuthService.login(email, password);
-      if (res) {
-        setIsLoading(false);
-        window.location.href = '/';
+      const res = await AuthService.login(
+        {
+          identifier: identifier, 
+          password: password
+        }
+      );
+      if (res.status !== 200) {
+        console.log(res);
+        setError(res.status);
+      } else {
+        setRedirect('/');
       }
     } catch (err) {
-      console.log(err.message);
-      window.location.href = '/login';
+      console.log(err);
+      setError(err.message);
+      setIsLoading(false);
     }
+  }
+
+  if (redirect !== '') {
+    console.log('Redirect: '+redirect);
+    return (
+      <Redirect to={redirect} />
+    );
   }
 
   return (
@@ -91,14 +109,14 @@ export default function LoginForm(props) {
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
-            onChange={handleEmailChange}
+            onChange={handleIdentifierChange}
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            id="email"
+            id="identifier"
             label="Email Address or Username"
-            name="email"
+            name="identifier"
             autoComplete="email"
             autoFocus
           />
@@ -136,12 +154,13 @@ export default function LoginForm(props) {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="/signup" variant="body2">
+              <Link component={RouterLink} to='/signup' variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
           </Grid>
         </form>
+        { error ? <h3>{error}</h3> : null}
       </div>
       <Box mt={8}>
         <Copyright />

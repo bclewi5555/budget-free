@@ -14,14 +14,14 @@ if (process.env.NODE_ENV !== 'production') {
 
 var debug = require('debug')('server:server');
 var http = require('http');
-var server = require('../server');
+var app = require('../app');
 
 // Get port from environment and store in Express.
 var port = normalizePort(process.env.PORT);
-server.set('port', port);
+app.set('port', port);
 
 // Create HTTP server.
-var httpServer = http.createServer(server);
+var httpServer = http.createServer(app);
 
 // Listen on provided port, on all network interfaces.
 httpServer.listen(port, () => {

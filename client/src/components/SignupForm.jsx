@@ -1,5 +1,6 @@
 // modules
 import React, { useState } from 'react';
+import { Redirect, Link as RouterLink } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -53,13 +54,15 @@ const useStyles = makeStyles((theme) => ({
 export default function SignupForm() {
   const classes = useStyles();
 
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const [redirect, setRedirect] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+ 
   function handleEmailChange(e) {
     setEmail(e.target.value);
   }
@@ -83,15 +86,31 @@ export default function SignupForm() {
   async function handleClick() {
     setIsLoading(true);
     try {
-      const res = await AuthService.signup(email, password, username, firstName, lastName);
-      if (res) {
-        setIsLoading(false);
-        window.location.href = '/login';
+      const user = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        username: username,
+        password: password
+      };
+      const res = await AuthService.signup(user);
+      if (res.status !== 200) {
+        console.log(res);
+        setError(res.status);
       }
+      setRedirect('/login');
     } catch (err) {
       console.log(err);
-      window.location.href = '/signup';
+      setError(err.message);
     }
+    setIsLoading(false);
+  }
+
+  if (redirect !== '') {
+    console.log('Redirect: '+redirect);
+    return (
+      <Redirect to={redirect} />
+    );
   }
 
   return (
@@ -188,12 +207,13 @@ export default function SignupForm() {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="/login" variant="body2">
+              <Link component={RouterLink} to='/login' variant="body2" >
                 Already have an account? Sign in
               </Link>
             </Grid>
           </Grid>
         </form>
+        { error ? <h3>{error}</h3> : null}
       </div>
       <Box mt={5}>
         <Copyright />

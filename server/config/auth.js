@@ -12,15 +12,15 @@ const LocalStrategy = require('passport-local').Strategy;
 const db = require('../models/db');
 
 exports.configurePassport = (passport) => {
-  const _authenticateUser = async (email, password, next) => {
+  const _authenticateUser = async (identifier, password, next) => {
     console.log('\n[Passport] Authenticating...');
     
     // Validate User
     const user = await db.users.findOne({
       where: {
         [db.Sequelize.Op.or]: [
-          { email: email },
-          { username: email }
+          { email: identifier },
+          { username: identifier }
         ]
       }
     });
@@ -62,7 +62,7 @@ exports.configurePassport = (passport) => {
   // will be set at `req.user` in route handlers after authentication.
   passport.use(new LocalStrategy(
     { 
-      usernameField: 'email',
+      usernameField: 'identifier', // value could be email or username
       passwordField: 'password',
       //session: true,
       //passReqToCallback: true

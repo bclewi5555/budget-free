@@ -1,19 +1,16 @@
 import { Redirect, Route } from 'react-router-dom';
-//import AuthService from '../services/AuthService';
 
-export default function PrivateRoute(props) {
+import AuthService from '../services/AuthService';
 
-  if (/*AuthService.validateSession()*/props.isAuth) {
-    return(
-      <Route 
-        exact={props.exact}
-        path={props.path}
-        component={props.component}
-      />
-    );
-  }
-  return(
-    <Redirect to='/login' />
-  );
-  
+export default function PrivateRoute({ children, ...rest }) {
+  return (
+    <Route {...rest} render={({ location }) => {
+      return AuthService.isAuth() === true
+        ? children
+        : <Redirect to={{
+            pathname: '/login',
+            state: { from: location }
+          }} />
+    }} />
+  )
 }
