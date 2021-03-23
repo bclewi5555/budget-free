@@ -1,6 +1,8 @@
 // modules
 import React, { useState } from 'react';
 import { Redirect, Link as RouterLink } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -51,60 +53,67 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const validationSchema = yup.object({
+  firstName: yup.string('Enter your first name')
+    .max(255, 'Cannot be more than 255 characters')
+    .required('First name is required'),
+  lastName: yup.string('Enter your last name')
+    .max(255, 'Cannot be more than 255 characters')
+    .required('Last name is required'),
+  email: yup.string('Enter your email')
+    .email('Enter a valid email')
+    .max(255, 'Cannot be more than 255 characters')
+    .required('Email is required'),
+  emailConfirmation: yup.string()
+    .oneOf([yup.ref('email'), null], 'Emails must match')
+    .required('Email confirmation is required'),
+  username: yup.string('Enter your username')
+    .max(255, 'Cannot be more than 255 characters')
+    .required('Username is required'),
+  password: yup.string('Enter your password')
+    .min(10, 'Password must have at least 10 characters')
+    .max(255, 'Cannot be more than 255 characters')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{10,})/,
+      "Must contain at least 10 characters, one uppercase, one lowercase, one number, and one special case character"
+     )
+    .required('Password is required'),
+  passwordConfirmation: yup.string()
+    .oneOf([yup.ref('password'), null], 'Passwords must match')
+    .required('Password confirmation is required'),
+  subscription: yup.boolean()
+});
+
 export default function SignupForm() {
+  const [redirect, setRedirect] = useState('');
   const classes = useStyles();
 
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [redirect, setRedirect] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
- 
-  function handleEmailChange(e) {
-    setEmail(e.target.value);
-  }
-
-  function handlePasswordChange(e) {
-    setPassword(e.target.value);
-  }
-
-  function handleUsernameChange(e) {
-    setUsername(e.target.value);
-  }
-
-  function handleFirstNameChange(e) {
-    setFirstName(e.target.value);
-  }
-
-  function handleLastNameChange(e) {
-    setLastName(e.target.value);
-  }
-
-  async function handleClick() {
-    setIsLoading(true);
-    try {
-      const user = {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        username: username,
-        password: password
-      };
-      const res = await AuthService.signup(user);
-      if (res.status !== 200) {
-        console.log(res);
-        setError(res.status);
+  const formik = useFormik({
+    initialValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      emailConfirmation: '',
+      username: '',
+      password: '',
+      passwordConfirmation: '',
+      subscription: false
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      const res = await AuthService.signup({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        username: values.username,
+        password: values.password,
+        subscription: values.subscription
+      });
+      if (res.status === 200) {
+        setRedirect('/login');
       }
-      setRedirect('/login');
-    } catch (err) {
-      console.log(err);
-      setError(err.message);
-      setIsLoading(false);
     }
-  }
+  });
 
   if (redirect !== '') {
     console.log('Redirect: '+redirect);
@@ -123,85 +132,135 @@ export default function SignupForm() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit={formik.handleSubmit} className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
-                onChange={handleFirstNameChange}
-                autoComplete="given-name"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
                 id="firstName"
+                name="firstName"
                 label="First Name"
+                type="text"
+                value={formik.values.firstName}
+                onChange={formik.handleChange}
+                error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+                helperText={formik.touched.firstName && formik.errors.firstName}
+                autoComplete="given-name"
+                variant="outlined"
+                fullWidth
                 autoFocus
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                onChange={handleLastNameChange}
-                variant="outlined"
-                required
-                fullWidth
                 id="lastName"
-                label="Last Name"
                 name="lastName"
+                label="Last Name"
+                type="text"
+                value={formik.values.lastName}
+                onChange={formik.handleChange}
+                error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+                helperText={formik.touched.lastName && formik.errors.lastName}
                 autoComplete="family-name"
+                variant="outlined"
+                fullWidth
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                onChange={handleEmailChange}
-                variant="outlined"
-                required
-                fullWidth
                 id="email"
-                label="Email Address"
                 name="email"
+                label="Email"
+                type="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
                 autoComplete="email"
+                variant="outlined"
+                fullWidth
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                onChange={handleUsernameChange}
+                id="emailConfirmation"
+                name="emailConfirmation"
+                label="Confirm Email"
+                type="email"
+                value={formik.values.emailConfirmation}
+                onChange={formik.handleChange}
+                error={formik.touched.emailConfirmation && Boolean(formik.errors.emailConfirmation)}
+                helperText={formik.touched.emailConfirmation && formik.errors.emailConfirmation}
+                autoComplete="off"
                 variant="outlined"
-                required
                 fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
                 id="username"
-                label="Username"
                 name="username"
+                label="Username"
+                type="text"
+                value={formik.values.username}
+                onChange={formik.handleChange}
+                error={formik.touched.username && Boolean(formik.errors.username)}
+                helperText={formik.touched.username && formik.errors.username}
                 autoComplete="username"
+                variant="outlined"
+                fullWidth
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                onChange={handlePasswordChange}
-                variant="outlined"
-                required
-                fullWidth
+                id="password"
                 name="password"
                 label="Password"
                 type="password"
-                id="password"
-                autoComplete="current-password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
+                autoComplete="new-password"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="passwordConfirmation"
+                name="passwordConfirmation"
+                label="Confirm Password"
+                type="password"
+                value={formik.values.passwordConfirmation}
+                onChange={formik.handleChange}
+                error={formik.touched.passwordConfirmation && Boolean(formik.errors.passwordConfirmation)}
+                helperText={formik.touched.passwordConfirmation && formik.errors.passwordConfirmation}
+                autoComplete="off"
+                variant="outlined"
+                fullWidth
               />
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
+                control={
+                  <Checkbox
+                    name="subscription"
+                    value={formik.values.subscription}
+                    onChange={formik.handleChange}
+                    color="primary" 
+                  />
+                }
                 label="I want to receive inspiration, marketing promotions and updates via email."
               />
             </Grid>
           </Grid>
           <Button
-            type="button"
-            onClick={handleClick}
-            fullWidth
-            variant="contained"
+            type="submit"
+            disabled={formik.isSubmitting}
             color="primary"
+            variant="contained"
             className={classes.submit}
-            disabled={isLoading}
+            fullWidth
           >
             Sign Up
           </Button>
@@ -213,7 +272,6 @@ export default function SignupForm() {
             </Grid>
           </Grid>
         </form>
-        { error ? <h3>{error}</h3> : null}
       </div>
       <Box mt={5}>
         <Copyright />

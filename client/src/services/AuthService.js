@@ -19,7 +19,8 @@ const AuthService = {
           lastName: user.lastName,
           email: user.email,
           username: user.username,
-          password: user.password
+          password: user.password,
+          subscription: user.subscription
         }
       );
       if (res.status !== 200) {
