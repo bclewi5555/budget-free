@@ -71,8 +71,12 @@ const validationSchema = yup.object({
     .max(255, 'Cannot be more than 255 characters')
     .required('Username is required'),
   password: yup.string('Enter your password')
-    .min(10, 'Password must have a minimum length of 10 characters')
+    .min(10, 'Password must have at least 10 characters')
     .max(255, 'Cannot be more than 255 characters')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{10,})/,
+      "Must contain at least 10 characters, one uppercase, one lowercase, one number, and one special case character"
+     )
     .required('Password is required'),
   passwordConfirmation: yup.string()
     .oneOf([yup.ref('password'), null], 'Passwords must match')
