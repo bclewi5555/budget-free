@@ -119,11 +119,16 @@ exports.signup = async (req, res) => {
     //console.log(req.body);
 
     // Validate Request
-    const validRequest = ((req.body.email != null) || (req.body.username != null)) && (req.body.password != null);
+    const validRequest = (req.body.firstName != null) 
+    && (req.body.lastName != null) 
+    && (req.body.email != null) 
+    && (req.body.username != null) 
+    && (req.body.password != null)
+    && (req.body.subscription != null);
     //console.log(`validRequest: ${validRequest}`);
     if (!validRequest) {
       return res.status(400).send({
-        message: 'Invalid Request: Users must provide a username or email and a password.'
+        message: 'Invalid Request: Users must provide all required data fields to sign up.'
       });
     }
 
@@ -153,7 +158,8 @@ exports.signup = async (req, res) => {
       passwordHash: hash,
       username: req.body.username,
       firstName: req.body.firstName,
-      lastName: req.body.lastName
+      lastName: req.body.lastName,
+      subscription: req.body.subscription
     };
     //console.log(`user: ${JSON.stringify(user)}`);
 

@@ -14,7 +14,20 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     email: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: true
+    },
+    username: {
       type: Sequelize.STRING,
       allowNull: false,
       unique: true
@@ -23,17 +36,8 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false
     },
-    username: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true
-    },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    lastName: {
-      type: DataTypes.STRING,
+    subscription: {
+      type: Sequelize.BOOLEAN,
       allowNull: false
     }
   });
