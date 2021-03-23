@@ -102,8 +102,8 @@ export default function SignupForm() {
     } catch (err) {
       console.log(err);
       setError(err.message);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   if (redirect !== '') {
