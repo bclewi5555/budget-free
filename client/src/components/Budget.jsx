@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
+import BudgetMonth from './BudgetMonth';
+import LogoutButton from './LogoutButton';
+import Nav from './Nav';
+
+export default function Budget() {
+  const [month, setMonth] = useState(/*Date.today().month()*/);
+
+  /*
+  import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { Redirect } from 'react-router-dom';
 
 import AuthService from '../services/AuthService';
 
-const useStyles = makeStyles((theme) => ({
+const classes = useStyles();
+
+const [isLoading, setIsLoading] = useState(false);
+  const [redirect, setRedirect] = useState('');
+
+
+  const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
@@ -25,11 +39,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignupForm() {
-  const classes = useStyles();
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [redirect, setRedirect] = useState('');
 
   async function handleClick() {
     setIsLoading(true);
@@ -51,9 +60,7 @@ export default function SignupForm() {
     );
   }
 
-  return(
-    <div>
-    <Button
+  <Button
       type="button"
       onClick={handleClick}
       fullWidth
@@ -62,7 +69,14 @@ export default function SignupForm() {
       className={classes.submit}
       disabled={isLoading}
     >Logout</Button>
-      <h1>Budget</h1>
+  */
+
+  return(
+    <div>
+      <LogoutButton />
+      <Nav />
+      <BudgetMonth />
     </div>
   );
+
 }
