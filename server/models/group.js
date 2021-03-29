@@ -18,7 +18,7 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: 'budgetMonths',
+        model: 'budget_months',
         key: 'id',
         deferrable: Deferrable.INITIALLY_IMMEDIATE
       }

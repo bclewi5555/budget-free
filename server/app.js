@@ -117,8 +117,111 @@ app.use(flashMessageMiddleware.flashMessages);
 Database Instantiation
 ------------------------
 */
+const sequelize = require('sequelize');
 db.sequelize.sync({ force: true }).then(() => {
-  console.log('Sequelize dropped and re-synced the database.');
+  console.log('[Sequelize] Dropped and re-synced the database.');
+
+  // Create Sample Data
+  (async () => {
+    try {
+      const userRes = await db.users.create({
+        id: 'eeee1972-a077-43eb-b83b-ce842e3c833f',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'jd@example.com',
+        username: 'JohnDoe00',
+        passwordHash: process.env.PASSWORD_HASH_SAMPLE,
+        subscription: true
+      });
+      console.log('[Sequelize] Sample user created.');
+      const budgetRes = await db.budgets.create({
+        id: 'b95573be-8f56-4d29-b7a4-fba07c60a859',
+        label: 'Home'
+      });
+      console.log('[Sequelize] Sample budget created.');
+      const budgetMonthRes = await db.budgetMonths.create({
+        id: '1d8b021a-d5ac-4043-8038-5cca73346d61',
+        year: 2021,
+        month: 3
+      });
+      console.log('[Sequelize] Sample budgetMonth created.');
+      const permissionRes = await db.permissions.create({
+        budgetId: 'b95573be-8f56-4d29-b7a4-fba07c60a859',
+        userId: 'eeee1972-a077-43eb-b83b-ce842e3c833f',
+        isOwner: true,
+        isAdmin: true
+      });
+      console.log('[Sequelize] Sample permissions created.');
+      const groupIncomeRes = await db.groups.create({
+        id: '4c2d628d-6f5e-45d6-b661-b7d4e0e210b4',
+        budgetMonthId: '1d8b021a-d5ac-4043-8038-5cca73346d61',
+        label: 'Income'
+      });
+      const groupFoodRes = await db.groups.create({
+        id: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
+        budgetMonthId: '1d8b021a-d5ac-4043-8038-5cca73346d61',
+        label: 'Food'
+      });
+      console.log('[Sequelize] Sample groups created.');
+      const envelopePaychecksRes = await db.envelopes.create({
+        id: 'cc56b50e-a22a-46c5-959d-d4d77b56dbee',
+        groupId: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
+        type: 'income',
+        label: 'Paychecks',
+        amountPlanned: 2000
+      });
+      const envelopeGroceriesRes = await db.envelopes.create({
+        id: 'e2f5d72f-23d9-4533-827b-55d8f65f1b3d',
+        groupId: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
+        type: 'default',
+        label: 'Groceries',
+        amountPlanned: 300,
+        isStarred: true,
+        notes: 'TODO: Review planned amount in May'
+      });
+      const envelopeDateNightFoodRes = await db.envelopes.create({
+        id: '3f8a2522-90a9-4ea3-b3fa-9957e00d95c5',
+        groupId: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
+        type: 'sinking',
+        label: 'Date Night Food',
+        amountPlanned: 100,
+        isStarred: false
+      });
+      console.log('[Sequelize] Sample envelopes created.');
+      const transactionPaycheckRes = await db.transactions.create({
+        envelopeId: 'cc56b50e-a22a-46c5-959d-d4d77b56dbee',
+        type: 'income',
+        amount: 1000,
+        date: sequelize.literal('CURRENT_TIMESTAMP'),
+        label: 'Microsoft Paycheck'
+      });
+      const transactionPublixRes = await db.transactions.create({
+        envelopeId: 'e2f5d72f-23d9-4533-827b-55d8f65f1b3d',
+        type: 'expense',
+        amount: 150,
+        date: sequelize.literal('CURRENT_TIMESTAMP'),
+        label: 'Publix'
+      });
+      const transactionKrogerRes = await db.transactions.create({
+        envelopeId: 'e2f5d72f-23d9-4533-827b-55d8f65f1b3d',
+        type: 'expense',
+        amount: 35,
+        date: sequelize.literal('CURRENT_TIMESTAMP'),
+        label: 'Kroger'
+      });
+      const transactionAtlasPizzaRes = await db.transactions.create({
+        envelopeId: '3f8a2522-90a9-4ea3-b3fa-9957e00d95c5',
+        type: 'expense',
+        amount: 45,
+        date: sequelize.literal('CURRENT_TIMESTAMP'),
+        label: 'Atlas Pizza Date w/ Jane'
+      });
+      console.log('[Sequelize] Sample transactions created.');
+    } catch (err) {
+      console.log(err);
+    }
+  })();
+
 });
 
 /*

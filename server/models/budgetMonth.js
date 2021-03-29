@@ -8,18 +8,18 @@ Budget Month table model
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, Sequelize) => {
-  const BudgetMonth = sequelize.define('budgetMonths', {
+  const BudgetMonth = sequelize.define('budget_months', {
     id: {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
     year: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     month: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   });
