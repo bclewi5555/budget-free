@@ -17,7 +17,7 @@ export default function DetailList(props) {
       <div>
         <EnvelopeDetail envelopeSelection={props.envelopeSelection} />
         <TransactionList envelopeSelection={props.envelopeSelection} />
-        <Button type={/*'addTransaction'*/}/>
+        {/*<Button type={'addTransaction'}/>*/}
       </div>
     );
   }

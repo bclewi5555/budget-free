@@ -4,9 +4,9 @@ import FundDetail from './FundDetail';
 export default function EnvelopeDetail() {
   return(
     <div>
-    <DatePicker />
+    {/*<DatePicker />*/}
     <FundDetail />
-    <Button type={/* Delete Envelope Button */}/>
+    {/*<Button type={ Delete Envelope Button }/>*/}
       {/* Detailed properties and calculations of the envelope */}
     </div>
   );
