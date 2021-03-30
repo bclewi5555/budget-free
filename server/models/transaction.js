@@ -14,7 +14,7 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
-    envelopeId: {
+    envelope_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
@@ -39,7 +39,7 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    referenceNumber: {
+    reference_number: {
       type: DataTypes.STRING,
       allowNull: true
     },

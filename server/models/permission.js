@@ -9,12 +9,12 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize, Sequelize) => {
   const Permission = sequelize.define('permissions', {
-    isOwner: {
+    is_owner: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       default: false
     },
-    isAdmin: {
+    is_admin: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       default: false

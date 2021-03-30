@@ -20,8 +20,8 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
     acquire: config.pool.acquire,
     idle: config.pool.idle
   },
-  logging: false
-  //logging: console.log
+  //logging: false
+  logging: console.log
   //logging: (...msg) => console.log(msg)
 });
 
@@ -42,6 +42,7 @@ db.sequelize = sequelize;
 
 // Create database tables from models (order matters here)
 db.users = require('./user')(sequelize, Sequelize);
+db.sessions = require('./session')(sequelize, Sequelize);
 db.budgets = require('./budget')(sequelize, Sequelize);
 db.budgetMonths = require('./budgetMonth')(sequelize, Sequelize);
 db.permissions = require('./permission')(sequelize, Sequelize);

@@ -1,6 +1,6 @@
 /*
 ======================================================
-User API router
+Envelope API router
 ======================================================
 */
 
@@ -8,18 +8,14 @@ User API router
 const express = require('express');
 
 // Controller dependencies
-const controller = require('../controllers/user');
 const authController = require('../controllers/auth');
+const controller = require('../controllers/envelope');
 
 const router = express.Router();
 
-
-router.get("/",
+router.get('/',
   authController.requireAuth,
-  controller.getUser
+  controller.getEnvelopes
 );
-
-//router.put("/:id", controller.update);
-//router.delete("/:id", controller.delete);
 
 module.exports = router;

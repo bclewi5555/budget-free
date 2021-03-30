@@ -14,11 +14,11 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
-    firstName: {
+    first_name: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    lastName: {
+    last_name: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -32,7 +32,7 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       unique: true
     },
-    passwordHash: {
+    password_hash: {
       type: Sequelize.STRING,
       allowNull: false
     },

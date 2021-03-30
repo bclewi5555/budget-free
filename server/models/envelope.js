@@ -14,7 +14,7 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
-    groupId: {
+    group_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
@@ -31,25 +31,25 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    amountPlanned: {
+    amount_planned: {
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: 0
     },
-    isStarred: {
+    is_starred: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false
     },
-    dueDate: {
+    due_date: {
       type: DataTypes.DATEONLY,
       allowNull: true
     },
-    startingBalance: {
+    starting_balance: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    savingsGoal: {
+    savings_goal: {
       type: DataTypes.INTEGER,
       allowNull: true
     },

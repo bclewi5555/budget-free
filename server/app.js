@@ -37,6 +37,7 @@ const db = require('./models/db');
 
 // Route dependencies
 const authRouter = require('./routes/auth');
+const envelopeRouter = require('./routes/envelope');
 const userRouter = require('./routes/user');
 
 /*
@@ -45,11 +46,19 @@ Server Setup
 ------------------------
 */
 const app = express();
+function extendDefaultFields(defaults, session) {
+  return {
+    data: defaults.data,
+    expires: defaults.expires,
+    userId: session.userId
+  };
+}
 const sessionStore = new SequelizeStore({
   db: db.sequelize,
-  tableName: 'sessions',
+  table: 'sessions',
   checkExpirationInterval: process.env.SESSION_STORE_CLEANUP_INTERVAL, // 15 min
-  expiration: process.env.SESSION_STORE_EXPIRATION // 24 hrs
+  expiration: process.env.SESSION_STORE_EXPIRATION, // 24 hrs
+  extendDefaultFields: extendDefaultFields
 });
 configurePassport(passport);
 
@@ -126,11 +135,11 @@ db.sequelize.sync({ force: true }).then(() => {
     try {
       const userRes = await db.users.create({
         id: 'eeee1972-a077-43eb-b83b-ce842e3c833f',
-        firstName: 'John',
-        lastName: 'Doe',
+        first_name: 'John',
+        last_name: 'Doe',
         email: 'jd@example.com',
         username: 'JohnDoe00',
-        passwordHash: process.env.PASSWORD_HASH_SAMPLE,
+        password_hash: process.env.PASSWORD_HASH_SAMPLE,
         subscription: true
       });
       console.log('[Sequelize] Sample user created.');
@@ -148,69 +157,69 @@ db.sequelize.sync({ force: true }).then(() => {
       const permissionRes = await db.permissions.create({
         budgetId: 'b95573be-8f56-4d29-b7a4-fba07c60a859',
         userId: 'eeee1972-a077-43eb-b83b-ce842e3c833f',
-        isOwner: true,
-        isAdmin: true
+        is_owner: true,
+        is_admin: true
       });
       console.log('[Sequelize] Sample permissions created.');
       const groupIncomeRes = await db.groups.create({
         id: '4c2d628d-6f5e-45d6-b661-b7d4e0e210b4',
-        budgetMonthId: '1d8b021a-d5ac-4043-8038-5cca73346d61',
+        budget_month_id: '1d8b021a-d5ac-4043-8038-5cca73346d61',
         label: 'Income'
       });
       const groupFoodRes = await db.groups.create({
         id: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
-        budgetMonthId: '1d8b021a-d5ac-4043-8038-5cca73346d61',
+        budget_month_id: '1d8b021a-d5ac-4043-8038-5cca73346d61',
         label: 'Food'
       });
       console.log('[Sequelize] Sample groups created.');
       const envelopePaychecksRes = await db.envelopes.create({
         id: 'cc56b50e-a22a-46c5-959d-d4d77b56dbee',
-        groupId: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
+        group_id: '4c2d628d-6f5e-45d6-b661-b7d4e0e210b4',
         type: 'income',
         label: 'Paychecks',
-        amountPlanned: 2000
+        amount_planned: 2000
       });
       const envelopeGroceriesRes = await db.envelopes.create({
         id: 'e2f5d72f-23d9-4533-827b-55d8f65f1b3d',
-        groupId: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
+        group_id: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
         type: 'default',
         label: 'Groceries',
-        amountPlanned: 300,
-        isStarred: true,
+        amount_planned: 300,
+        is_starred: true,
         notes: 'TODO: Review planned amount in May'
       });
       const envelopeDateNightFoodRes = await db.envelopes.create({
         id: '3f8a2522-90a9-4ea3-b3fa-9957e00d95c5',
-        groupId: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
+        group_id: '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330',
         type: 'sinking',
         label: 'Date Night Food',
-        amountPlanned: 100,
-        isStarred: false
+        amount_planned: 100,
+        is_starred: false
       });
       console.log('[Sequelize] Sample envelopes created.');
       const transactionPaycheckRes = await db.transactions.create({
-        envelopeId: 'cc56b50e-a22a-46c5-959d-d4d77b56dbee',
+        envelope_id: 'cc56b50e-a22a-46c5-959d-d4d77b56dbee',
         type: 'income',
         amount: 1000,
         date: sequelize.literal('CURRENT_TIMESTAMP'),
         label: 'Microsoft Paycheck'
       });
       const transactionPublixRes = await db.transactions.create({
-        envelopeId: 'e2f5d72f-23d9-4533-827b-55d8f65f1b3d',
+        envelope_id: 'e2f5d72f-23d9-4533-827b-55d8f65f1b3d',
         type: 'expense',
         amount: 150,
         date: sequelize.literal('CURRENT_TIMESTAMP'),
         label: 'Publix'
       });
       const transactionKrogerRes = await db.transactions.create({
-        envelopeId: 'e2f5d72f-23d9-4533-827b-55d8f65f1b3d',
+        envelope_id: 'e2f5d72f-23d9-4533-827b-55d8f65f1b3d',
         type: 'expense',
         amount: 35,
         date: sequelize.literal('CURRENT_TIMESTAMP'),
         label: 'Kroger'
       });
       const transactionAtlasPizzaRes = await db.transactions.create({
-        envelopeId: '3f8a2522-90a9-4ea3-b3fa-9957e00d95c5',
+        envelope_id: '3f8a2522-90a9-4ea3-b3fa-9957e00d95c5',
         type: 'expense',
         amount: 45,
         date: sequelize.literal('CURRENT_TIMESTAMP'),
@@ -232,6 +241,7 @@ Route Configuration
 // serve React static files
 app.get('/', express.static(path.join(__dirname, '../client/build')));
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/envelope', envelopeRouter);
 app.use('/api/v1/auth', authRouter);
 
 module.exports = app;

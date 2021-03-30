@@ -71,7 +71,8 @@ const AuthService = {
         return false;
       }
       this._isAuth = true;
-      return res;
+      //return res;
+      return true;
     } catch (err) {
       console.log(err);
       this._isAuth = false;

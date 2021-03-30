@@ -32,7 +32,7 @@ exports.configurePassport = (passport) => {
 
     // Validate Password
     try {
-      const validPassword = await bcrypt.compare(password, user.passwordHash);
+      const validPassword = await bcrypt.compare(password, user.password_hash);
       if (!validPassword) {
         console.log('[Passport] Failed: Password incorrect.');
         return next(null, false, { message: 'Password incorrect' });

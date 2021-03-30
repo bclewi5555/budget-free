@@ -14,7 +14,7 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
-    budgetMonthId: {
+    budget_month_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
