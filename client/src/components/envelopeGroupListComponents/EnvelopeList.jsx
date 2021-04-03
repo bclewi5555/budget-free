@@ -1,26 +1,13 @@
 import React from 'react';
 import Envelope from './Envelope';
+
 //import EnvelopeService from '../../services/EnvelopeService';
 
 // Dynamically renders all envelopes in the current Group > BudgetMonth > Budget > User.
 export default function EnvelopeList(props) {
   //const [envelopes, setEnvelopes] = useState(envelopeData);
   
-  const envelopes = [
-    {
-      label: 'Paychecks',
-      amount_planned: 2000
-    },
-    {
-      label: 'Groceries',
-      amount_planned: 300
-    },
-    {
-      label: 'Restaurants',
-      amount_planned: 75
-    }
-  ];
-  
+  if (props.group)
   /*
   let envelopes = [];
   EnvelopeService.getEnvelopes(props.budgetMonth)

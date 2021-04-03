@@ -23,7 +23,6 @@ export default function SimpleAccordion() {
 
   return (
     <div className={classes.root}>
-     <p> Looks weird because date picker is in a card...to make the above part look good</p>
       <Accordion>
         <AccordionSummary
         

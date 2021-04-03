@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -33,7 +34,7 @@ export default function Envelope(props) {
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.paper}>
+      
         <Grid container spacing={2}>
           <Grid item xs={12} sm container>
             <Grid item xs container direction="column" spacing={2}>
@@ -52,7 +53,7 @@ export default function Envelope(props) {
             </Grid>
           </Grid>
         </Grid>
-      </Paper>
+     
     </div>
   );
 }

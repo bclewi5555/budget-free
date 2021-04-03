@@ -4,16 +4,14 @@ import Grid from '@material-ui/core/Grid';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import Accordion from '@material-ui/core/Accordion';
 import Typography from '@material-ui/core/Typography';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Card from '@material-ui/core/Card'
 
 
 const useStyles = makeStyles((theme) => ({
     root: {
-    width: "25%",
-     padding: '30px',
+   // width: "26.8%",
+    //padding: '30px',
      
    }, 
    title: {
