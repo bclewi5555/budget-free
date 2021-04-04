@@ -6,8 +6,31 @@ import Envelope from './Envelope';
 // Dynamically renders all envelopes in the current Group > BudgetMonth > Budget > User.
 export default function EnvelopeList(props) {
   //const [envelopes, setEnvelopes] = useState(envelopeData);
-  
-  if (props.group)
+
+  let envelopes = [];
+  if (props.groupID === '4c2d628d-6f5e-45d6-b661-b7d4e0e210b4') { // Income
+    envelopes = [
+      {
+        label: 'Paychecks',
+        amountPlanned: 1500
+      },
+      {
+        label: 'Tax Refunds',
+        amountPlanned: 500
+      }
+    ];
+  } else if (props.groupID === '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330') { //Food
+    envelopes = [
+      {
+        label: 'Groceries',
+        amountPlanned: 300
+      },
+      {
+        label: 'Restaurants',
+        amountPlanned: 80
+      }
+    ];
+  }
   /*
   let envelopes = [];
   EnvelopeService.getEnvelopes(props.budgetMonth)
@@ -25,9 +48,12 @@ export default function EnvelopeList(props) {
   
   return(
     <div>
-      <h3>[EnvelopeList]</h3>
       <ul>
-        {envelopes.map((envelope) => <Envelope label={envelope.label} amountPlanned={envelope.amount_planned}/>)}
+        {envelopes.map((envelope) => {return (<Envelope
+          key={envelope.label}
+          label={envelope.label}
+          amountPlanned={envelope.amount_planned}
+        />)})}
         {/*
           envelopes.map((envelope) => {
             <Envelope

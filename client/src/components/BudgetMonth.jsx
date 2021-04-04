@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 //import DetailList from './detailListComponents/DetailList';
+import BudgetMonthNav from './BudgetMonthNav';
 import EnvelopeGroupList from './envelopeGroupListComponents/EnvelopeGroupList';
 
 export default function BudgetMonth(props) {
@@ -8,7 +9,7 @@ export default function BudgetMonth(props) {
 
   return(
     <div>
-      <h2>[BudgetMonth] budgetMonth: {props.budgetMonth}</h2>
+      <BudgetMonthNav />
       <EnvelopeGroupList budgetMonth={props.budgetMonth} envelopeSelection={envelopeSelection} setEnvelopeSelection={setEnvelopeSelection} />
       {/*<DetailList envelopeSelection={envelopeSelection} />*/}
     </div>

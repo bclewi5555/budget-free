@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import BudgetMonth from './BudgetMonth';
-import Nav from './Nav';
-import ButtonAppBar from './ButtonAppBar';
-import StaticDatePicker from './StaticDatePicker';
-import SimmpleAccordion from "./SimpleAccordion"
-import {createMuiTheme, ThemeProvider} from "@material-ui/core";
-import Card from '@material-ui/core/Card'
+import TopAppBar from './TopAppBar';
+//import StaticDatePicker from './StaticDatePicker';
+//import SimmpleAccordion from "./SimpleAccordion"
+//import {createMuiTheme, ThemeProvider} from "@material-ui/core";
+//import Card from '@material-ui/core/Card'
 import { makeStyles } from '@material-ui/core/styles';
-import Random from './Random';
-
-
+//import Random from './Random';
 
 const useStyles = makeStyles ({
   root: {
@@ -24,18 +21,10 @@ export default function Budget() {
 
   return(
     <div className = {classes.root}>
-      
-      <ButtonAppBar/>
+      <TopAppBar/>
       <BudgetMonth budgetMonth={budgetMonth} setBudgetMonth={setBudgetMonth}/>
       {/* <StaticDatePicker/>
       <Random/> */}
-     
-    
-    
-      
-      
-    
-    
     </div>
   );
 
