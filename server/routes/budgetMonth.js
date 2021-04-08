@@ -1,6 +1,6 @@
 /*
 ======================================================
-Envelope API router
+budgetMonth API router
 ======================================================
 */
 
@@ -11,14 +11,14 @@ const asyncHandler = require('express-async-handler');
 // Controller dependencies
 const authController = require('../controllers/auth');
 const permController = require('../controllers/permission');
-const controller = require('../controllers/envelope');
+const controller = require('../controllers/budgetMonth');
 
 const router = express.Router();
 
 router.get('/',
   authController.requireAuth,
   asyncHandler(permController.getPerms),
-  asyncHandler(controller.getEnvelopes)
+  asyncHandler(controller.getBudgetMonths)
 );
 
 module.exports = router;

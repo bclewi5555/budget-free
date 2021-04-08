@@ -14,46 +14,47 @@ const Op = db.Sequelize.Op;
 
 /* 
 ----------------
-READ ENVELOPES FOR BUDGET MONTH
+READ ENVELOPES OF THE GIVEN ENVELOPE GROUP
 ----------------
 */
 exports.getEnvelopes = async (req, res) => {
-
+  if (!req.query.groupId) return res.status(400).send('groupId required');
   console.log('\n[Envelope Controller] Getting envelopes...');
 
-  // Find all groups for current BudgetMonth
-  console.log('[Envelope Controller] req.query.budgetMonthId: ' + JSON.stringify(req.query.budgetMonthId));
-  await db.groups.findAll({
-    where: { budget_month_id: req.query.budgetMonthId }
-  })
-    .then(async (data) => {
-      //console.log('[Envelope Controller] db.groups data: ' + JSON.stringify(data));
+  // Check if authUser perms include budgetId associated with the given group
+  const budgetIdsPermitted = [];
+  res.locals.perms.map(perm => {
+    budgetIdsPermitted.push(perm.budgetId);
+  });
+  console.log('[Envelope Controller] budgetIdsPermitted: '+budgetIdsPermitted);
 
-      const groupIds = [];
-      data.forEach((group, index) => {
-        groupIds.push(group.id);
-      });
-      console.log('[Envelope Controller] groupIds: ' + groupIds);
+  const group = await db.groups.findOne({
+    where: {
+      id: req.query.groupId
+    }
+  });
+  const budgetMonth = await db.budgetMonths.findOne({
+    where: { 
+      id: group.budget_month_id
+    }
+  });
+  console.log('[Envelope Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
+  
+  const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
+  console.log('[Envelope Controller] permGranted: '+permGranted);
+  if (!permGranted) {
+    console.log('[Envelope Controller] Permission to the requested resource denied.');
+    return res.status(401).send('Permission to the requested resource denied.');
+  }
+  console.log('[Envelope Controller] Permission to the requested resource granted.');
 
-      // Find all envelopes of all groups for currrent BudgetMonth
-      await db.envelopes.findAll({
-        where: {
-          group_id: { [Op.or]: groupIds }
-        }
-      })
-        .then((data) => {
-          console.log('[Envelope Controller] db.envelopes data: ' + JSON.stringify(data));
-          return res.send(data);
-        })
-        .catch(err => {
-          console.log('[Envelope Controller] Error: ' + err);
-          return res.status(500).send({ message: err.message });
-        });
-
-    })
-    .catch(err => {
-      console.log('[Envelope Controller] Error: ' + err);
-      return res.status(500).send({ message: err.message });
-    });
+  // Get all envelopes for the given groupId if permitted
+  const envelopesRes = await db.envelopes.findAll({
+    where: { 
+      group_id: req.query.groupId
+    }
+  });
+  console.log('[Envelope Controller] Done: '+JSON.stringify(envelopesRes));
+  return res.send(envelopesRes);
 
 };

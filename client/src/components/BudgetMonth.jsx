@@ -10,7 +10,7 @@ export default function BudgetMonth(props) {
   return(
     <div>
       <BudgetMonthNav />
-      <EnvelopeGroupList budgetMonth={props.budgetMonth} envelopeSelection={envelopeSelection} setEnvelopeSelection={setEnvelopeSelection} />
+      <EnvelopeGroupList budgetMonthId={props.budgetMonthId} envelopeSelection={envelopeSelection} setEnvelopeSelection={setEnvelopeSelection} />
       {/*<DetailList envelopeSelection={envelopeSelection} />*/}
     </div>
   );

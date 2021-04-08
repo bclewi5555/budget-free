@@ -2,10 +2,10 @@ import axios from 'axios';
 
 const EnvelopeService = {
 
-  async getEnvelopes(budgetMonthId) {
+  async getEnvelopes(groupId) {
     console.log('[EnvelopeService] [getEnvelopes] Getting envelopes...');
     try {
-      const res = await axios.get('/api/v1/envelope?budgetMonthId='+budgetMonthId);
+      const res = await axios.get('/api/v1/envelopes?groupId='+groupId);
       console.log(res.data);
       return res.data;
     } catch (err) {

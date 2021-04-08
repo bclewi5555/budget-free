@@ -15,7 +15,7 @@ require('../config/auth');
 
 exports.login = (req, res) => {
   console.log('\n[Auth Controller] Issued Session ID: '+req.sessionID);
-  res.json({sessionID: req.sessionID});
+  res.json({sessionId: req.sessionID});
 };
 
 exports.validateSession = async (req, res) => {
@@ -37,10 +37,10 @@ exports.validateSession = async (req, res) => {
 
     // validate user
     console.log('[Auth Controller] Validating user...');
-    const userID = validSession.data.passport.user;
-    console.log(userID);
+    const userId = validSession.data.passport.user;
+    console.log(userId);
     const validUser = await db.users.findOne({
-      where: {id: userID}
+      where: {id: userId}
     });
     if (!validUser) {
       return res.status(401).send('Invalid user');
@@ -69,21 +69,22 @@ exports.requireAuth = async (req, res, next) => {
     if (!validSession) {
       return res.status(401).send('[Auth Controller] [requireAuth] Invalid session');
     }
+    res.locals.validSession = validSession;
     console.log('[Auth Controller] [requireAuth] Session validated.');
 
     // validate user
     console.log('[Auth Controller] [requireAuth] Validating user...');
-    const userID = JSON.parse(validSession.data).passport.user;
-    console.log('[Auth Controller] [requireAuth] userId: '+userID);
+    const userId = JSON.parse(validSession.data).passport.user;
+    console.log('[Auth Controller] [requireAuth] userId: '+userId);
     const validUser = await db.users.findOne({
-      where: {id: userID}
+      where: {id: userId}
     });
     if (!validUser) {
       return res.status(401).send('[Auth Controller] [requireAuth] Invalid user');
     }
+    res.locals.authUser = validUser;
     console.log('[Auth Controller] [requireAuth] User validated.');
     
-
     next();
 
   } catch(err) {
@@ -97,13 +98,13 @@ exports.logout = (req, res) => {
     return res.status(500).send('No authenticated user to log out.');
   }
   try {
-    const destroyedSessionID = req.sessionID;
+    const destroyedSessionId = req.sessionID;
     console.log('\n[Auth Controller] Logging out...');
     req.logOut();
     req.session.destroy((err) => {
       console.log('[Auth Controller] Done: Logged out.');
-      console.log('[Auth Controller] Destroyed Session ID: '+destroyedSessionID);
-      res.json({destroyedSessionID: destroyedSessionID});
+      console.log('[Auth Controller] Destroyed Session ID: '+destroyedSessionId);
+      res.json({destroyedSessionId: destroyedSessionId});
       //res.redirect('/login');
     });
   } catch(err) {

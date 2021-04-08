@@ -37,8 +37,13 @@ const db = require('./models/db');
 
 // Route dependencies
 const authRouter = require('./routes/auth');
-const envelopeRouter = require('./routes/envelope');
 const userRouter = require('./routes/user');
+const permissionRouter = require('./routes/permission');
+const budgetRouter = require('./routes/budget');
+const budgetMonthRouter = require('./routes/budgetMonth');
+const groupRouter = require('./routes/group');
+const envelopeRouter = require('./routes/envelope');
+const transactionRouter = require('./routes/transaction');
 
 /*
 ------------------------
@@ -148,19 +153,20 @@ db.sequelize.sync({ force: true }).then(() => {
         label: 'Home'
       });
       console.log('[Sequelize] Sample budget created.');
-      const budgetMonthRes = await db.budgetMonths.create({
-        id: '1d8b021a-d5ac-4043-8038-5cca73346d61',
-        year: 2021,
-        month: 3
-      });
-      console.log('[Sequelize] Sample budgetMonth created.');
       const permissionRes = await db.permissions.create({
         budgetId: 'b95573be-8f56-4d29-b7a4-fba07c60a859',
         userId: 'eeee1972-a077-43eb-b83b-ce842e3c833f',
         is_owner: true,
         is_admin: true
       });
-      console.log('[Sequelize] Sample permissions created.');
+      console.log('[Sequelize] Sample permission created.');
+      const budgetMonthRes = await db.budgetMonths.create({
+        id: '1d8b021a-d5ac-4043-8038-5cca73346d61',
+        budget_id: 'b95573be-8f56-4d29-b7a4-fba07c60a859',
+        year: 2021,
+        month: 3
+      });
+      console.log('[Sequelize] Sample budgetMonth created.');
       const groupIncomeRes = await db.groups.create({
         id: '4c2d628d-6f5e-45d6-b661-b7d4e0e210b4',
         budget_month_id: '1d8b021a-d5ac-4043-8038-5cca73346d61',
@@ -240,8 +246,14 @@ Route Configuration
 */
 // serve React static files
 app.get('/', express.static(path.join(__dirname, '../client/build')));
-app.use('/api/v1/user', userRouter);
-app.use('/api/v1/envelope', envelopeRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/permissions', permissionRouter);
+app.use('/api/v1/budgets', budgetRouter);
+app.use('/api/v1/budget-months', budgetMonthRouter);
+app.use('/api/v1/envelope-groups', groupRouter);
+app.use('/api/v1/envelopes', envelopeRouter);
+app.use('/api/v1/transactions', transactionRouter);
+
 
 module.exports = app;

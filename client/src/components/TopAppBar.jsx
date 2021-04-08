@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function TopAppBar() {
+export default function TopAppBar(props) {
   const classes = useStyles();
 
   return (
