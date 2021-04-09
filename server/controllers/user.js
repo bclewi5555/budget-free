@@ -25,7 +25,8 @@ exports.getUser = async (req, res) => {
         email: data.dataValues.email,
         username: data.dataValues.username,
         firstName: data.dataValues.firstName,
-        lastName: data.dataValues.lastName
+        lastName: data.dataValues.lastName,
+        subscription: data.dataValues.subscription
       }
     });
   }

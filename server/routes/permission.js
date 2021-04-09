@@ -15,7 +15,7 @@ const controller = require('../controllers/permission');
 const router = express.Router();
 
 router.get('/',
-  authController.requireAuth,
+  asyncHandler(authController.requireAuth),
   asyncHandler(controller.getPermissions)
 );
 

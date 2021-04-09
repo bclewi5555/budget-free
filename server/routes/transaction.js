@@ -16,7 +16,7 @@ const controller = require('../controllers/transaction');
 const router = express.Router();
 
 router.get('/',
-  authController.requireAuth,
+  asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
   asyncHandler(controller.getTransactions)
 );
