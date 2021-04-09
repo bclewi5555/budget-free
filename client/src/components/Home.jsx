@@ -4,13 +4,14 @@ import TopAppBar from './TopAppBar';
 import Budget from './Budget';
 
 const res = BudgetService.getBudgets();
+console.log('[Home] BudgetService.getBudgets(): '+res);
 
 export default function Home() {
-  const [budgetId, setBudgetId] = useState(res[0]);
+  const [budgetId, setBudgetId] = useState('b95573be-8f56-4d29-b7a4-fba07c60a859');
 
   return(
     <div>
-      <TopAppBar setBudgetId={setBudgetId} />
+      <TopAppBar budgetId={budgetId} setBudgetId={setBudgetId} />
       <Budget budgetId={budgetId} />
     </div>
   );

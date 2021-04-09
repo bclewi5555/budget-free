@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
-import AuthService from '../services/AuthService';
+import AuthService from '../../services/AuthService';
 
 const useStyles = makeStyles((theme) => ({
     

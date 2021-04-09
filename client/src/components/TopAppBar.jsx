@@ -1,9 +1,10 @@
 import React  from 'react';
+import SelectBudget from './appBarComponents/SelectBudget';
+import LogoutButton from './appBarComponents/LogoutButton';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import LogoutButton from './LogoutButton';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 export default function TopAppBar(props) {
   const classes = useStyles();
 
@@ -28,7 +28,8 @@ export default function TopAppBar(props) {
           <Typography variant="h6" className={classes.title}>
             BudgetFree
           </Typography>
-          < LogoutButton></LogoutButton>
+          <SelectBudget budgetId={props.budgetId} setBudgetId={props.setBudgetId} />
+          <LogoutButton />
         </Toolbar>
       </AppBar>
     </div>
