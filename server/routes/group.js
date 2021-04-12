@@ -21,4 +21,10 @@ router.get('/',
   asyncHandler(controller.getGroups)
 );
 
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.createGroup)
+);
+
 module.exports = router;

@@ -21,4 +21,10 @@ router.get('/',
   asyncHandler(controller.getEnvelopes)
 );
 
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.createEnvelope)
+);
+
 module.exports = router;

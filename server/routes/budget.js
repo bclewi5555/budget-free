@@ -21,4 +21,9 @@ router.get('/',
   asyncHandler(controller.getBudgets)
 );
 
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(controller.createBudget)
+);
+
 module.exports = router;

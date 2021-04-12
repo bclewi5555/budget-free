@@ -21,4 +21,10 @@ router.get('/',
   asyncHandler(controller.getTransactions)
 );
 
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.createTransaction)
+);
+
 module.exports = router;

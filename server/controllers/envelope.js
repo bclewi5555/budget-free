@@ -58,3 +58,68 @@ exports.getEnvelopes = async (req, res) => {
   return res.send(envelopesRes);
 
 };
+
+/* 
+----------------
+CREATE NEW ENVELOPE IN THE GIVEN GROUP
+----------------
+*/
+exports.createEnvelope = async (req, res) => {
+
+  // validate request
+  if (!req.body.groupId || !req.body.type || !req.body.label) {
+    console.log('[Envelope Conroller] groupID, type and label required to create an envelope');
+    return res.status(400).send('groupID, type and label required to create an envelope');
+  }
+  // Check if authUser perms include budgetId associated with the given group
+  const budgetIdsPermitted = [];
+  res.locals.perms.map(perm => {
+    budgetIdsPermitted.push(perm.budgetId);
+  });
+  console.log('[Envelope Controller] budgetIdsPermitted: '+budgetIdsPermitted);
+
+  const group = await db.groups.findOne({
+    where: {
+      id: req.body.groupId
+    }
+  });
+  const budgetMonth = await db.budgetMonths.findOne({
+    where: { 
+      id: group.budget_month_id
+    }
+  });
+  console.log('[Envelope Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
+  
+  const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
+  console.log('[Envelope Controller] permGranted: '+permGranted);
+  if (!permGranted) {
+    console.log('[Envelope Controller] Permission to the requested resource denied.');
+    return res.status(401).send('Permission to the requested resource denied.');
+  }
+  console.log('[Envelope Controller] Permission to the requested resource granted.');
+
+  console.log('[Envelope Controller] Creating envelope...');
+  // create new envelope
+  /*
+  if (!req.body.amountPlanned) req.body.amountPlanned = null
+  if (!req.body.isStarred) req.body.isStarred = null;
+  if (!req.body.dueDate) req.body.dueDate = null;
+  if (!req.body.startingBalance) req.body.startingBalance = null;
+  if (!req.body.savingsGoal) req.body.savingsGoal = null;
+  if (!req.body.notes) req.body.notes = null;
+  */
+  const newEnvelope = await db.envelopes.create({
+    group_id: req.body.groupId,
+    type: req.body.type,
+    label: req.body.label,
+    amount_planned: req.body.amountPlanned,
+    is_starred: req.body.isStarred,
+    due_date: req.body.dueDate,
+    starting_balance: req.body.startingBalance,
+    savings_goal: req.body.savingsGoal,
+    notes: req.body.notes
+  });
+  console.log('[Envelope Controller] Done: Created new envelope with id: '+newEnvelope.id);
+  return res.status(200).send(newEnvelope);
+
+};

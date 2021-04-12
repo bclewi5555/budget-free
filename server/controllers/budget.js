@@ -18,8 +18,8 @@ READ BUDGETS OF THE AUTHENTICATED USER
 ----------------
 */
 exports.getBudgets = async (req, res) => {
-  console.log('\n[Budget Controller] Getting budgets...');
 
+  console.log('\n[Budget Controller] Getting budgets...');
   const budgetIds = [];
   res.locals.perms.map(perm => {
     budgetIds.push(perm.budgetId);
@@ -36,3 +36,37 @@ exports.getBudgets = async (req, res) => {
   return res.send(budgetsRes);
 
 };
+
+/* 
+----------------
+CREATE NEW BUDGET FOR THE AUTHENTICATED USER
+----------------
+*/
+exports.createBudget = async (req, res) => {
+
+  // validate request
+  if (!req.body.label) {
+    console.log('[Budget Controller] label required to create new budget');
+    return res.status(400).send('label required to create new budget');
+  }
+  console.log('\n[Budget Controller] Creating new budget...');
+
+  const newBudget = await db.budgets.create({
+    label: req.body.label
+  });
+  console.log(newBudget);
+
+  const newPerm = await db.permissions.create({
+    budgetId: newBudget.id,
+    userId: res.locals.authUser.id,
+    is_owner: true,
+    is_admin: true
+  });
+  console.log(newPerm);
+
+  console.log('[Budget Controller] Done: New budget created with id: '+newBudget.id);
+  return res.status(200).send({
+    newBudget: newBudget,
+    newPerm: newPerm
+  });
+}

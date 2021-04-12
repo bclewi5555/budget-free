@@ -21,4 +21,10 @@ router.get('/',
   asyncHandler(controller.getBudgetMonths)
 );
 
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.createBudgetMonth)
+);
+
 module.exports = router;
