@@ -1,4 +1,4 @@
-import React /*, {useState}8*/ from 'react'; 
+import React /*, {useState}*/ from 'react'; 
 import EnvelopeList from './EnvelopeList';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -19,7 +19,7 @@ export default function EnvelopeGroup(props) {
         <Typography>{props.label}</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <EnvelopeList groupID={props.groupID}></EnvelopeList>
+        <EnvelopeList groupId={props.groupId}></EnvelopeList>
       </AccordionDetails>
     </Accordion>   
   );

@@ -1,6 +1,6 @@
 /*
 ======================================================
-User API router
+EnvelopeGroups API router
 ======================================================
 */
 
@@ -9,20 +9,22 @@ const express = require('express');
 const asyncHandler = require('express-async-handler');
 
 // Controller dependencies
-const controller = require('../controllers/user');
 const authController = require('../controllers/auth');
 const permController = require('../controllers/permission');
+const controller = require('../controllers/group');
 
 const router = express.Router();
 
-
-router.get("/",
+router.get('/',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
-  asyncHandler(controller.getUsers)
+  asyncHandler(controller.getGroups)
 );
 
-//router.put("/:id", controller.update);
-//router.delete("/:id", controller.delete);
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.createGroup)
+);
 
 module.exports = router;

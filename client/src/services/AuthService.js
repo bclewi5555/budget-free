@@ -89,10 +89,10 @@ const AuthService = {
         console.log(res);
         return false;
       }
-      const destroyedSessionID = sessionStorage.getItem('sid');
+      const destroyedSessionId = sessionStorage.getItem('sid');
       sessionStorage.removeItem('sid');
       this._isAuth = false;
-      console.log('[AuthService] Done: Destroyed Session ID: '+destroyedSessionID);
+      console.log('[AuthService] Done: Destroyed Session ID: '+destroyedSessionId);
       return res;
     } catch (err) {
       console.log(err);

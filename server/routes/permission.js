@@ -1,6 +1,6 @@
 /*
 ======================================================
-User API router
+Permission API router
 ======================================================
 */
 
@@ -9,20 +9,14 @@ const express = require('express');
 const asyncHandler = require('express-async-handler');
 
 // Controller dependencies
-const controller = require('../controllers/user');
 const authController = require('../controllers/auth');
-const permController = require('../controllers/permission');
+const controller = require('../controllers/permission');
 
 const router = express.Router();
 
-
-router.get("/",
+router.get('/',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
-  asyncHandler(controller.getUsers)
+  asyncHandler(controller.getPermissions)
 );
-
-//router.put("/:id", controller.update);
-//router.delete("/:id", controller.delete);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 /*
 ======================================================
-User API router
+Transaction API router
 ======================================================
 */
 
@@ -9,20 +9,22 @@ const express = require('express');
 const asyncHandler = require('express-async-handler');
 
 // Controller dependencies
-const controller = require('../controllers/user');
 const authController = require('../controllers/auth');
 const permController = require('../controllers/permission');
+const controller = require('../controllers/transaction');
 
 const router = express.Router();
 
-
-router.get("/",
+router.get('/',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
-  asyncHandler(controller.getUsers)
+  asyncHandler(controller.getTransactions)
 );
 
-//router.put("/:id", controller.update);
-//router.delete("/:id", controller.delete);
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.createTransaction)
+);
 
 module.exports = router;

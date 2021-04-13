@@ -30,7 +30,7 @@ export default function EnvelopeGroupList(props) {
   return (
     <div className={classes.root}>
       {groups.map(group => { return (<EnvelopeGroup
-        budgetMonth={props.budgetMonth}
+        budgetMonthId={props.budgetMonthId}
         key={group.id}
         groupID={group.id}
         label={group.label}

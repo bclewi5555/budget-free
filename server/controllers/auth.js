@@ -15,81 +15,72 @@ require('../config/auth');
 
 exports.login = (req, res) => {
   console.log('\n[Auth Controller] Issued Session ID: '+req.sessionID);
-  res.json({sessionID: req.sessionID});
+  res.json({sessionId: req.sessionID});
 };
 
 exports.validateSession = async (req, res) => {
   if (!req.sessionID) {
     return res.status(401);
   }
-  try {
 
-    // validate session
-    console.log('\n[Auth Controller] Validating session...');
-    const validSession = await db.sessions.findOne({
-      where: {sid: req.sessionID}
-    });
-    if (!validSession) {
-      return res.status(401).send('Invalid session');
-    }
-    console.log(validSession);
-    console.log('[Auth Controller] Session validated.');
-
-    // validate user
-    console.log('[Auth Controller] Validating user...');
-    const userID = validSession.data.passport.user;
-    console.log(userID);
-    const validUser = await db.users.findOne({
-      where: {id: userID}
-    });
-    if (!validUser) {
-      return res.status(401).send('Invalid user');
-    }
-    console.log('[Auth Controller] User validated.');
-
-    res.status(200).send('OK');
-
-  } catch(err) {
-    console.log(err.message);
-    res.status(500).json(err.message);
+  // validate session
+  console.log('\n[Auth Controller] Validating session...');
+  const validSession = await db.sessions.findOne({
+    where: { sid: req.sessionID }
+  });
+  if (!validSession) {
+    return res.status(401).send('Invalid session');
   }
+  console.log(validSession);
+  console.log('[Auth Controller] Session validated.');
+
+  // validate user
+  console.log('[Auth Controller] Validating user...');
+  const userId = validSession.data.passport.user;
+  console.log(userId);
+  const validUser = await db.users.findOne({
+    where: { id: userId }
+  });
+  if (!validUser) {
+    return res.status(401).send('Invalid user');
+  }
+  console.log('[Auth Controller] User validated.');
+
+  res.status(200).send('OK');
+
 };
 
 exports.requireAuth = async (req, res, next) => {
   if (!req.sessionID) {
     return res.status(401);
   }
-  try {
 
-    // validate session
-    console.log('\n[Auth Controller] [requireAuth] Validating session...');
-    const validSession = await db.sessions.findOne({
-      where: {sid: req.sessionID}
-    });
-    if (!validSession) {
-      return res.status(401).send('[Auth Controller] [requireAuth] Invalid session');
-    }
-    console.log('[Auth Controller] [requireAuth] Session validated.');
-
-    // validate user
-    console.log('[Auth Controller] [requireAuth] Validating user...');
-    const userID = JSON.parse(validSession.data).passport.user;
-    console.log('[Auth Controller] [requireAuth] userId: '+userID);
-    const validUser = await db.users.findOne({
-      where: {id: userID}
-    });
-    if (!validUser) {
-      return res.status(401).send('[Auth Controller] [requireAuth] Invalid user');
-    }
-    console.log('[Auth Controller] [requireAuth] User validated.');
-    
-
-    next();
-
-  } catch(err) {
-    console.log(err);
-    res.status(500).json(err.message);
+  // validate session
+  console.log('\n[Auth Controller] [requireAuth] Validating session...');
+  const validSession = await db.sessions.findOne({
+    where: { sid: req.sessionID }
+  });
+  if (!validSession) {
+    return res.status(401).send('[Auth Controller] [requireAuth] Invalid session');
   }
+  res.locals.validSession = validSession;
+  console.log('[Auth Controller] [requireAuth] Session validated.');
+
+  // validate user
+  console.log('[Auth Controller] [requireAuth] Validating user...');
+  const userId = JSON.parse(validSession.data).passport.user;
+  console.log('[Auth Controller] [requireAuth] userId: ' + userId);
+  const validUser = await db.users.findOne({
+    where: { id: userId }
+  });
+  if (!validUser) {
+    return res.status(401).send('[Auth Controller] [requireAuth] Invalid user');
+  }
+  res.locals.authUser = validUser;
+  console.log('[Auth Controller] [requireAuth] User validated.');
+
+  next();
+
 };
 
 exports.logout = (req, res) => {
@@ -97,13 +88,13 @@ exports.logout = (req, res) => {
     return res.status(500).send('No authenticated user to log out.');
   }
   try {
-    const destroyedSessionID = req.sessionID;
+    const destroyedSessionId = req.sessionID;
     console.log('\n[Auth Controller] Logging out...');
     req.logOut();
     req.session.destroy((err) => {
       console.log('[Auth Controller] Done: Logged out.');
-      console.log('[Auth Controller] Destroyed Session ID: '+destroyedSessionID);
-      res.json({destroyedSessionID: destroyedSessionID});
+      console.log('[Auth Controller] Destroyed Session ID: '+destroyedSessionId);
+      res.json({destroyedSessionId: destroyedSessionId});
       //res.redirect('/login');
     });
   } catch(err) {
@@ -114,66 +105,57 @@ exports.logout = (req, res) => {
 
 exports.signup = async (req, res) => {
   console.log('\n[Auth Controller] Signing up...');
-  try {
-    //console.log(req.body);
 
-    // Validate Request
-    const validRequest = (req.body.firstName != null) 
-    && (req.body.lastName != null) 
-    && (req.body.email != null) 
-    && (req.body.username != null) 
+  // Validate Request
+  const validRequest = (req.body.firstName != null)
+    && (req.body.lastName != null)
+    && (req.body.email != null)
+    && (req.body.username != null)
     && (req.body.password != null)
     && (req.body.subscription != null);
-    //console.log(`validRequest: ${validRequest}`);
-    if (!validRequest) {
-      return res.status(400).send({
-        message: 'Invalid Request: Users must provide all required data fields to sign up.'
-      });
-    }
-
-    // Validate Availability of Credentials 
-    const credentialsTaken = await db.users.findOne({
-      where: {
-        [db.Sequelize.Op.or]: [
-          { username: req.body.username },
-          { email: req.body.email }
-        ]
-      }
+  //console.log(`validRequest: ${validRequest}`);
+  if (!validRequest) {
+    return res.status(400).send({
+      message: 'Invalid Request: Users must provide all required data fields to sign up.'
     });
-    if (credentialsTaken) {
-      console.log('The credentials provided are already associated with an account.');
-      return res.status(400).send({ message: 'The credentials provided are already associated with an account.' });
-    }
-    //console.log('The credentials provided are available.');
-
-    // Enrypt password
-    const hash = await bcrypt.hash(req.body.password, 10);
-    //console.log(`hashedPassword: ${hash}`);
-
-    // Create user object
-    const user = {
-      // id is autogenerated
-      email: req.body.email,
-      password_hash: hash,
-      username: req.body.username,
-      first_name: req.body.firstName,
-      last_name: req.body.lastName,
-      subscription: req.body.subscription
-    };
-    //console.log(`user: ${JSON.stringify(user)}`);
-
-    // Save user to database
-    const newUser = await db.users.create(user);
-    console.log('[Auth Controller] Done: Signed up new user.');
-    res.json({id: newUser.id});
-    // If successful, redirect to login page
-    //res.redirect('/login');
-
-  } catch (err) {
-    console.error(`[Auth Controller] Error: ${err.message}`);
-    res.status(500).json(err.message);
-    // If error, redirect back to signup page
-    //res.redirect('/register');
   }
+
+  // Validate Availability of Credentials 
+  const credentialsTaken = await db.users.findOne({
+    where: {
+      [db.Sequelize.Op.or]: [
+        { username: req.body.username },
+        { email: req.body.email }
+      ]
+    }
+  });
+  if (credentialsTaken) {
+    console.log('The credentials provided are already associated with an account.');
+    return res.status(400).send({ message: 'The credentials provided are already associated with an account.' });
+  }
+  //console.log('The credentials provided are available.');
+
+  // Enrypt password
+  const hash = await bcrypt.hash(req.body.password, 10);
+  //console.log(`hashedPassword: ${hash}`);
+
+  // Create user object
+  const user = {
+    // id is autogenerated
+    email: req.body.email,
+    password_hash: hash,
+    username: req.body.username,
+    first_name: req.body.firstName,
+    last_name: req.body.lastName,
+    subscription: req.body.subscription
+  };
+  //console.log(`user: ${JSON.stringify(user)}`);
+
+  // Save user to database
+  const newUser = await db.users.create(user);
+  console.log('[Auth Controller] Done: Signed up new user.');
+  res.json({ id: newUser.id });
+  // If successful, redirect to login page
+  //res.redirect('/login');
 
 }

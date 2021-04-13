@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import BudgetMonth from './BudgetMonth';
-import TopAppBar from './TopAppBar';
 //import StaticDatePicker from './StaticDatePicker';
 //import SimmpleAccordion from "./SimpleAccordion"
 //import {createMuiTheme, ThemeProvider} from "@material-ui/core";
@@ -15,14 +14,13 @@ const useStyles = makeStyles ({
   },
 });
 
-export default function Budget() {
-  const [budgetMonth, setBudgetMonth] = useState('1d8b021a-d5ac-4043-8038-5cca73346d61');
+export default function Budget(props) {
+  const [budgetMonthId, setBudgetMonthId] = useState('1d8b021a-d5ac-4043-8038-5cca73346d61');
   const classes = useStyles();
 
   return(
     <div className = {classes.root}>
-      <TopAppBar/>
-      <BudgetMonth budgetMonth={budgetMonth} setBudgetMonth={setBudgetMonth}/>
+      <BudgetMonth budgetMonthId={budgetMonthId} setBudgetMonthId={setBudgetMonthId}/>
       {/* <StaticDatePicker/>
       <Random/> */}
     </div>

@@ -6,6 +6,7 @@ Passport authentication API router
 
 // Module dependencies
 const express = require('express');
+const asyncHandler = require('express-async-handler');
 const passport = require('passport');
 const router = express.Router();
 
@@ -13,7 +14,7 @@ const router = express.Router();
 const controller = require('../controllers/auth');
 
 router.post('/signup',
-  controller.signup
+  asyncHandler(controller.signup)
 );
 
 router.post('/login',
@@ -26,7 +27,7 @@ router.post('/login',
 );
 
 router.post('/session',
-  controller.validateSession
+  asyncHandler(controller.validateSession)
 );
 
 router.post('/logout',
