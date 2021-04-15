@@ -1,5 +1,11 @@
 import React from 'react';
 import Envelope from './Envelope';
+import Button from '@material-ui/core/Button'
+import TableCell from '@material-ui/core/TableCell';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableBody from '@material-ui/core/TableBody';
+import TableRow from '@material-ui/core/TableRow';
 
 //import EnvelopeService from '../../services/EnvelopeService';
 
@@ -45,32 +51,57 @@ export default function EnvelopeList(props) {
     .catch(err => {console.log(err)});
   console.log(envelopes);
   */
-  
-  return(
+
+  return (
     <div>
-      <ul>
-        {envelopes.map((envelope) => {return (<Envelope
-          key={envelope.label}
-          label={envelope.label}
-          amountPlanned={envelope.amount_planned}
-        />)})}
-        {/*
-          envelopes.map((envelope) => {
-            <Envelope
-            //id={envelope.id}
-            //groupId={envelope.group_id}
-            //type={envelope.type}
-            label={envelope.label}
-            amountPlanned={envelope.amount_planned}
-            //isStarred={envelope.is_starred}
-            //dueDate={envelope.due_date}
-            //startingBalance={envelope.starting_balance}
-            //savingsGoal={envelope.savings_goal}
-            //notes={envelope.notes}
-          />
-          })
-        */}
-      </ul>
+
+      <Table size="medium" >
+
+
+        <TableHead>
+
+
+
+
+          <TableRow>
+            <TableCell> Planned </TableCell>
+            <TableCell> Spent </TableCell>
+            <TableCell> Remaining </TableCell>
+          </TableRow>
+        </TableHead>
+
+        <TableBody>
+
+
+          {envelopes.map((envelope) => {
+            return (<Envelope
+              key={envelope.label}
+              label={envelope.label}
+              amountPlanned={envelope.amount_planned}
+            />)
+          })}
+          {/*
+            envelopes.map((envelope) => {
+              <Envelope
+              //id={envelope.id}
+              //groupId={envelope.group_id}
+              //type={envelope.type}
+              label={envelope.label}
+              amountPlanned={envelope.amount_planned}
+              //isStarred={envelope.is_starred}
+              //dueDate={envelope.due_date}
+              //startingBalance={envelope.starting_balance}
+              //savingsGoal={envelope.savings_goal}
+              //notes={envelope.notes}
+            />
+            })
+          */}
+        </TableBody>
+
+        <Button color="primary" >Add Item </Button>
+      </Table>
+
+
     </div>
   );
 }
