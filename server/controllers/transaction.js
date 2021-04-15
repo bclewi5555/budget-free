@@ -130,3 +130,69 @@ exports.createTransaction = async (req, res) => {
   return res.status(200).send(newTransaction);
 
 }
+
+/* 
+----------------
+DELETE A TRANSACTION
+----------------
+*/
+exports.deleteTransaction = async (req, res) => {
+
+  // validate request
+  if (!req.params.transactionId) {
+    console.log('[Transaction Controller] transactionId required to delete transaction');
+    return res.status(400).send('transactionId required to delete transaction');
+  }
+  //console.log('[Transaction Controller] req.params.transactionId: '+req.params.transactionId);
+  const budgetIdsPermitted = [];
+  res.locals.perms.map(perm => {
+    budgetIdsPermitted.push(perm.budgetId);
+  });
+  //console.log('[Transaction Controller] budgetIdsPermitted: '+budgetIdsPermitted);
+  const transaction = await db.transactions.findOne({
+    where: {
+      id: req.params.transactionId
+    }
+  });
+  //console.log('[Transaction Controller] transaction.envelope_id: '+transaction.envelope_id);
+  const envelope = await db.envelopes.findOne({
+    where: {
+      id: transaction.envelope_id
+    }
+  });
+  //console.log('[Transaction Controller] envelope.group_id: '+envelope.group_id);
+  const group = await db.groups.findOne({
+    where: {
+      id: envelope.group_id
+    }
+  });
+  //console.log('[Transaction Controller] group.budget_month_id: '+group.budget_month_id);
+  const budgetMonth = await db.budgetMonths.findOne({
+    where: { 
+      id: group.budget_month_id
+    }
+  });
+  //console.log('[Transaction Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
+  
+  const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
+  //console.log('[Transaction Controller] permGranted: '+permGranted);
+  if (!permGranted) {
+    console.log('[Transaction Controller] Permission to the requested resource denied.');
+    return res.status(401).send('Permission to the requested resource denied.');
+  }
+  //console.log('[Transaction Controller] Permission to the requested resource granted.');
+
+  console.log('\n[Transaction Controller] Deleting transaction...');
+  const deleteRes = await db.transactions.destroy({
+    where: {
+      id: req.params.transactionId
+    }
+  });
+  if (deleteRes !== 1) {
+    console.log('[Transaction Controller] Error: The requested resource could not be deleted');
+    return res.status(500).send();
+  }
+  console.log('[Transaction Controller] Done: Deleted the requested resource');
+  return res.status(204).send(); // No Content
+
+};

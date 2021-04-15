@@ -95,3 +95,57 @@ exports.createGroup = async (req, res) => {
   return res.status(200).send(newGroup);
 
 };
+
+/* 
+----------------
+DELETE A GROUP
+----------------
+*/
+exports.deleteGroup = async (req, res) => {
+
+  // validate request
+  if (!req.params.groupId) {
+    console.log('[Group Controller] groupId required to delete group');
+    return res.status(400).send('groupId required to delete group');
+  }
+  //console.log('[Group Controller] req.params.groupId: '+req.params.groupId);
+  const budgetIdsPermitted = [];
+  res.locals.perms.map(perm => {
+    budgetIdsPermitted.push(perm.budgetId);
+  });
+  //console.log('[Group Controller] budgetIdsPermitted: '+budgetIdsPermitted);
+
+  const group = await db.groups.findOne({
+    where: {
+      id: req.params.groupId
+    }
+  });
+  const budgetMonth = await db.budgetMonths.findOne({
+    where: { 
+      id: group.budget_month_id
+    }
+  });
+  //console.log('[Group Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
+  
+  const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
+  //console.log('[Group Controller] permGranted: '+permGranted);
+  if (!permGranted) {
+    console.log('[Group Controller] Permission to the requested resource denied.');
+    return res.status(401).send('Permission to the requested resource denied.');
+  }
+  //console.log('[Group Controller] Permission to the requested resource granted.');
+
+  console.log('\n[Group Controller] Deleting group...');
+  const deleteRes = await db.groups.destroy({
+    where: {
+      id: req.params.groupId
+    }
+  });
+  if (deleteRes !== 1) {
+    console.log('[Group Controller] Error: The requested resource could not be deleted');
+    return res.status(500).send();
+  }
+  console.log('[Group Controller] Done: Deleted the requested resource');
+  return res.status(204).send(); // No Content
+
+};

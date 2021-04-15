@@ -27,4 +27,10 @@ router.post('/',
   asyncHandler(controller.createGroup)
 );
 
+router.delete('/:groupId',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.deleteGroup)
+);
+
 module.exports = router;

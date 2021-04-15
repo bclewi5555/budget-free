@@ -82,3 +82,52 @@ exports.createBudgetMonth = async (req, res) => {
   return res.status(200).send(newBudgetMonth);
 
 }
+
+/* 
+----------------
+DELETE A BUDGET MONTH
+----------------
+*/
+exports.deleteBudgetMonth = async (req, res) => {
+
+  // validate request
+  if (!req.params.budgetMonthId) {
+    console.log('[BudgetMonth Controller] budgetMonthId required to delete budgetMonth');
+    return res.status(400).send('budgetMonthId required to delete budgetMonth');
+  }
+  //console.log('[BudgetMonth Controller] req.params.budgetMonthId: '+req.params.budgetMonthId);
+  const budgetIdsPermitted = [];
+  res.locals.perms.map(perm => {
+    budgetIdsPermitted.push(perm.budgetId);
+  });
+  //console.log('[BudgetMonth Controller] budgetIdsPermitted: '+budgetIdsPermitted);
+
+  const budgetMonth = await db.budgetMonths.findOne({
+    where: { 
+      id: req.params.budgetMonthId
+    }
+  });
+  //console.log('[BudgetMonth Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
+  
+  const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
+  //console.log('[BudgetMonth Controller] permGranted: '+permGranted);
+  if (!permGranted) {
+    console.log('[BudgetMonth Controller] Permission to the requested resource denied.');
+    return res.status(401).send('Permission to the requested resource denied.');
+  }
+  //console.log('[BudgetMonth Controller] Permission to the requested resource granted.');
+
+  console.log('\n[BudgetMonth Controller] Deleting budgetMonth...');
+  const deleteRes = await db.budgetMonths.destroy({
+    where: {
+      id: req.params.budgetMonthId
+    }
+  });
+  if (deleteRes !== 1) {
+    console.log('[BudgetMonth Controller] Error: The requested resource could not be deleted');
+    return res.status(500).send();
+  }
+  console.log('[BudgetMonth Controller] Done: Deleted the requested resource');
+  return res.status(204).send(); // No Content
+
+};

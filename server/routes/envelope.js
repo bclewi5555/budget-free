@@ -27,4 +27,10 @@ router.post('/',
   asyncHandler(controller.createEnvelope)
 );
 
+router.delete('/:envelopeId',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.deleteEnvelope)
+);
+
 module.exports = router;

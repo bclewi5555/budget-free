@@ -26,4 +26,9 @@ router.post('/',
   asyncHandler(controller.createBudget)
 );
 
+router.delete('/:budgetId',
+asyncHandler(authController.requireAuth),
+asyncHandler(permController.getPerms),
+asyncHandler(controller.deleteBudget));
+
 module.exports = router;

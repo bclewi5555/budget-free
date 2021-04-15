@@ -27,4 +27,10 @@ router.post('/',
   asyncHandler(controller.createTransaction)
 );
 
+router.delete('/:transactionId',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.deleteTransaction)
+);
+
 module.exports = router;

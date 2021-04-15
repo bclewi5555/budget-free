@@ -20,8 +20,8 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
     acquire: config.pool.acquire,
     idle: config.pool.idle
   },
-  //logging: false
-  logging: console.log
+  logging: false
+  //logging: console.log
   //logging: (...msg) => console.log(msg)
 });
 
@@ -50,8 +50,52 @@ db.groups = require('./group')(sequelize, Sequelize);
 db.envelopes = require('./envelope')(sequelize, Sequelize);
 db.transactions = require('./transaction')(sequelize, Sequelize);
 
+const User = db.users;
+const Budget = db.budgets;
+const BudgetMonth = db.budgetMonths;
+const Permission = db.permissions;
+const Group = db.groups;
+const Envelope = db.envelopes;
+const Transaction = db.transactions;
+
 // Define associations
-db.budgets.belongsToMany(db.users, { through: db.permissions });
-db.users.belongsToMany(db.budgets, { through: db.permissions });
+Budget.belongsToMany(User, { through: Permission });
+User.belongsToMany(Budget, { through: Permission });
+Budget.hasMany(BudgetMonth, { 
+  foreignKey: {
+    name: 'budget_id',
+    type: Sequelize.DataTypes.UUID,
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
+BudgetMonth.hasMany(Group, { 
+  foreignKey: {
+    name: 'budget_month_id',
+    type: Sequelize.DataTypes.UUID,
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
+Group.hasMany(Envelope, { 
+  foreignKey: {
+    name: 'group_id',
+    type: Sequelize.DataTypes.UUID,
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
+Envelope.hasMany(Transaction, { 
+  foreignKey: {
+    name: 'envelope_id',
+    type: Sequelize.DataTypes.UUID,
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
 
 module.exports = db;

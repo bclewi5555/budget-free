@@ -266,6 +266,8 @@ exports.withSampleData = (db) => {
         console.log('[Sequelize] Sample envelopes created.');
 
         // TRANSACTIONS
+        const homeAprilKrogerTransactionId = 'e79ed7b2-c14c-4cb0-8045-eaa7669fb1de';
+
         await db.transactions.create({
           envelope_id: homeAprilPaychecksEnvelopeId,
           type: 'income',
@@ -295,6 +297,7 @@ exports.withSampleData = (db) => {
           label: 'Publix'
         });
         await db.transactions.create({
+          id: homeAprilKrogerTransactionId,
           envelope_id: homeAprilGroceriesEnvelopeId,
           type: 'expense',
           amount: 35,
