@@ -15,16 +15,22 @@ const controller = require('../controllers/transaction');
 
 const router = express.Router();
 
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.createTransaction)
+);
+
 router.get('/',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
   asyncHandler(controller.getTransactions)
 );
 
-router.post('/',
+router.put('/:transactionId',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
-  asyncHandler(controller.createTransaction)
+  asyncHandler(controller.updateTransaction)
 );
 
 router.delete('/:transactionId',

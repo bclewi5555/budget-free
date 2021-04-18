@@ -15,16 +15,22 @@ const controller = require('../controllers/group');
 
 const router = express.Router();
 
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.createGroup)
+);
+
 router.get('/',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
   asyncHandler(controller.getGroups)
 );
 
-router.post('/',
+router.put('/:groupId',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
-  asyncHandler(controller.createGroup)
+  asyncHandler(controller.updateGroup)
 );
 
 router.delete('/:groupId',

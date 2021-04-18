@@ -20,8 +20,8 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
     acquire: config.pool.acquire,
     idle: config.pool.idle
   },
-  logging: false
-  //logging: console.log
+  //logging: false
+  logging: console.log
   //logging: (...msg) => console.log(msg)
 });
 

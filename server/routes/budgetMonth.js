@@ -15,16 +15,22 @@ const controller = require('../controllers/budgetMonth');
 
 const router = express.Router();
 
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.getPerms),
+  asyncHandler(controller.createBudgetMonth)
+);
+
 router.get('/',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
   asyncHandler(controller.getBudgetMonths)
 );
 
-router.post('/',
+router.put('/:budgetMonthId',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
-  asyncHandler(controller.createBudgetMonth)
+  asyncHandler(controller.updateBudgetMonth)
 );
 
 router.delete('/:budgetMonthId',

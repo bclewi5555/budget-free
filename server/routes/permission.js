@@ -19,4 +19,16 @@ router.get('/',
   asyncHandler(controller.getPermissions)
 );
 
+/*
+router.put('/:permissionId/user/:userId',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(controller.updatePermission)
+);
+
+router.delete('/:permissionId/user/:userId',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(controller.deletePermission)
+);
+*/
+
 module.exports = router;
