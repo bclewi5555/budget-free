@@ -5,6 +5,7 @@ import BudgetMonth from './BudgetMonth';
 //import {createMuiTheme, ThemeProvider} from "@material-ui/core";
 //import Card from '@material-ui/core/Card'
 import { makeStyles } from '@material-ui/core/styles';
+
 //import Random from './Random';
 
 const useStyles = makeStyles ({
@@ -23,6 +24,7 @@ export default function Budget(props) {
       <BudgetMonth budgetMonthId={budgetMonthId} setBudgetMonthId={setBudgetMonthId}/>
       {/* <StaticDatePicker/>
       <Random/> */}
+      
     </div>
   );
 

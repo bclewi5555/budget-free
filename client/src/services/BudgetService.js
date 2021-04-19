@@ -7,11 +7,18 @@ const BudgetService = {
     try {
       const res = await axios.get('/api/v1/budgets');
       console.log('[BudgetService] [getBudgets] Done: ' + JSON.stringify(res.data));
+      
+      if ( res.status !== 200) {
+      return [];
+      } 
+      console.log('Status is ' +res.status)
+      
       return res.data;
+      
     } catch (err) {
       console.log('[BudgetService] [getBudgets] Error: ' + err);
-      return null;
-    } 
+      return [];
+    }
   }
 
 };

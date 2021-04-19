@@ -28,7 +28,7 @@ export default function TopAppBar(props) {
           <Typography variant="h6" className={classes.title}>
             BudgetFree
           </Typography>
-          <SelectBudget budgetId={props.budgetId} setBudgetId={props.setBudgetId} />
+          <SelectBudget budget={props.budget} setBudget={props.setBudget} />
           <LogoutButton />
         </Toolbar>
       </AppBar>
