@@ -81,6 +81,7 @@ export default function EnvelopeList(props) {
       <Table class size="medium" >
         <TableHead >
           <TableRow>
+          <TableCell> Label </TableCell>
             <TableCell> Planned </TableCell>
             <TableCell> Spent </TableCell>
             <TableCell> Remaining </TableCell>
@@ -95,8 +96,9 @@ export default function EnvelopeList(props) {
             />)
           })}
         </TableBody>
+        <Envelope className></Envelope>
 
-        <Button color="primary" >Add Item </Button>
+        <Button color="primary" >Add Envelope </Button>
       </Table>
 
 

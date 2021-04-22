@@ -43,6 +43,11 @@ export default function Envelope(props) {
         </Typography>
       </TableCell>
       <TableCell>
+        <TextField d id="standard-basic" InputLabelProps={{ shrink: true }} onChange={(e) => setPlanned(e.target.value)} />
+
+        
+      </TableCell>
+      <TableCell>
         <TextField id="standard-basic" InputLabelProps={{ shrink: true }} onChange={(e) => setPlanned(e.target.value)} />
       </TableCell>
       <TableCell>

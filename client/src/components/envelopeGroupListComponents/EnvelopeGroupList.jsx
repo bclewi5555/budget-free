@@ -1,6 +1,7 @@
 import React from 'react';
 import EnvelopeGroup from './EnvelopeGroup';
 import { makeStyles } from '@material-ui/core/styles';
+import Button from "@material-ui/core/Button"
 
 // Dynamically renders all groups in the current BudgetMonth > Budget > User.
 const useStyles = makeStyles((theme) => ({
@@ -37,6 +38,7 @@ export default function EnvelopeGroupList(props) {
         envelopeSelection={props.envelopeSelection}
         setEnvelopeSelection={props.setEnvelopeSelection}
       />)})}
+       <Button color="primary" >Add New Group </Button>
     </div>
   );
 

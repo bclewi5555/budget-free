@@ -7,11 +7,11 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { makeStyles } from '@material-ui/core/styles';
 import Envelope from '../envelopeGroupListComponents/Envelope';
-import Button from "@material-ui/core/Button"
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '50%',
+    width: '100%',
     padding: '30px',
   },
   heading: {
@@ -53,8 +53,9 @@ export default function EnvelopeGroup(props) {
       </AccordionSummary>
       <AccordionDetails>
         <EnvelopeList groupId={props.groupId} className={classes.title}></EnvelopeList>
-        <Envelope className></Envelope>
+        {/* <Envelope className></Envelope> */}
       </AccordionDetails>
+      
      
     </Accordion>  
     

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import Demo from './Demo'
 //import DetailList from './detailListComponents/DetailList';
+import Button from "@material-ui/core/Button"
 
 import EnvelopeGroupList from './envelopeGroupListComponents/EnvelopeGroupList';
 
@@ -9,9 +11,11 @@ export default function BudgetMonth(props) {
 
   return(
     <div>
+      <Demo/>
      
       <EnvelopeGroupList budgetMonthId={props.budgetMonthId} envelopeSelection={envelopeSelection} setEnvelopeSelection={setEnvelopeSelection} />
       {/*<DetailList envelopeSelection={envelopeSelection} />*/}
+     
     </div>
   );
 }
