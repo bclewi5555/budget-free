@@ -46,7 +46,7 @@ router.put("/me",
 router.delete("/me/:userIdConfirmation",
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.getPerms),
-  asyncHandler(controller.deleteUser)
+  asyncHandler(controller.deleteAccount)
 );
 
 module.exports = router;

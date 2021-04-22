@@ -54,6 +54,13 @@ router.get('/:budgetId/permissions',
 );
 
 // TODO
+router.get('/:budgetId/summary',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.requirePerms),
+  asyncHandler(controller.getBudgetSummary)
+);
+
+// TODO
 router.get('/:budgetId/details',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.requirePerms),

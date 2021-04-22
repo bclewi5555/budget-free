@@ -218,7 +218,7 @@ exports.updateUser = async (req, res) => {
 DELETE SELF
 ----------------
 */
-exports.deleteUser = async (req, res) => {
+exports.deleteAccount = async (req, res) => {
 
   // validate request
   if (!req.params.userIdConfirmation) {
