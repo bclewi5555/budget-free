@@ -33,7 +33,8 @@ export default function StaticDatePicker() {
             <KeyboardDatePicker className
               disableToolBar
               variant='dialog' // inline might be better
-              format='MM/dd/yyyy'
+              views={["year", "month"]}
+              format='MM//yyyy'
               margin='normal'
               id='date-picker'
               value={selectDate}

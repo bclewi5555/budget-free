@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
   //  padding: '30px',
  }, 
  title: {
-     fontSize: 25,
+     fontSize: 50,
      
  }
 }));
@@ -28,7 +28,7 @@ export default function EnvelopeGroupList(props) {
   ];
 
   return (
-    <div className={classes.root}>
+    <div className={classes.title}>
       {groups.map(group => { return (<EnvelopeGroup
         budgetMonthId={props.budgetMonthId}
         key={group.id}

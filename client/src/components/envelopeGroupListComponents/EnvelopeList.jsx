@@ -1,4 +1,5 @@
-import React from 'react';
+import React  from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Envelope from './Envelope';
 import Button from '@material-ui/core/Button'
 import TableCell from '@material-ui/core/TableCell';
@@ -7,16 +8,39 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '25%',
+   padding: '30px',
+   
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(20),
+    fontWeight: theme.typography.fontWeightRegular,
+  },
+  divPadding: {
+      padding: '30px',
+  },
+  envelopeGroup: {
+      marginTop: '30px',
+      marginBottom:'30px',
+      
+      
+  }
+}));
+
 //import EnvelopeService from '../../services/EnvelopeService';
 
 // Dynamically renders all envelopes in the current Group > BudgetMonth > Budget > User.
 export default function EnvelopeList(props) {
+  const classes = useStyles();
   //const [envelopes, setEnvelopes] = useState(envelopeData);
 
   let envelopes = [];
   if (props.groupID === '4c2d628d-6f5e-45d6-b661-b7d4e0e210b4') { // Income
     envelopes = [
       {
+        
         label: 'Paychecks',
         amountPlanned: 1500
       },
@@ -53,26 +77,16 @@ export default function EnvelopeList(props) {
   */
 
   return (
-    <div>
-
-      <Table size="medium" >
-
-
-        <TableHead>
-
-
-
-
+    <div className >
+      <Table class size="medium" >
+        <TableHead >
           <TableRow>
             <TableCell> Planned </TableCell>
             <TableCell> Spent </TableCell>
             <TableCell> Remaining </TableCell>
           </TableRow>
         </TableHead>
-
         <TableBody>
-
-
           {envelopes.map((envelope) => {
             return (<Envelope
               key={envelope.label}
@@ -80,22 +94,6 @@ export default function EnvelopeList(props) {
               amountPlanned={envelope.amount_planned}
             />)
           })}
-          {/*
-            envelopes.map((envelope) => {
-              <Envelope
-              //id={envelope.id}
-              //groupId={envelope.group_id}
-              //type={envelope.type}
-              label={envelope.label}
-              amountPlanned={envelope.amount_planned}
-              //isStarred={envelope.is_starred}
-              //dueDate={envelope.due_date}
-              //startingBalance={envelope.starting_balance}
-              //savingsGoal={envelope.savings_goal}
-              //notes={envelope.notes}
-            />
-            })
-          */}
         </TableBody>
 
         <Button color="primary" >Add Item </Button>
