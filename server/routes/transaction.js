@@ -17,25 +17,25 @@ const router = express.Router();
 
 router.post('/',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
+  asyncHandler(permController.requirePerms),
   asyncHandler(controller.createTransaction)
 );
 
 router.get('/',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
+  asyncHandler(permController.requirePerms),
   asyncHandler(controller.getTransactions)
 );
 
 router.put('/:transactionId',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
+  asyncHandler(permController.requirePerms),
   asyncHandler(controller.updateTransaction)
 );
 
 router.delete('/:transactionId',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
+  asyncHandler(permController.requirePerms),
   asyncHandler(controller.deleteTransaction)
 );
 

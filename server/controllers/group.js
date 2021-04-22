@@ -36,20 +36,16 @@ exports.createGroup = async (req, res) => {
     return res.status(404).send();
   }
 
-  // Check if authUser perms include budgetId of given budgetMonth
+  // validate permissions
   const budgetIdsPermitted = [];
   res.locals.perms.map(perm => {
     budgetIdsPermitted.push(perm.budgetId);
   });
-  //console.log('[Group Controller] budgetIdsPermitted: '+budgetIdsPermitted);
-  //console.log('[Group Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
   const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
-  //console.log('[Group Controller] permGranted: '+permGranted);
   if (!permGranted) {
     console.log('[Group Controller] Permission to the requested resource denied.');
     return res.status(401).send('Permission to the requested resource denied.');
   }
-  //console.log('[Group Controller] Permission to the requested resource granted.');
 
   // perform request
   console.log('\n[Group Controller] Creating new group...');
@@ -88,15 +84,11 @@ exports.getGroups = async (req, res) => {
   res.locals.perms.map(perm => {
     budgetIdsPermitted.push(perm.budgetId);
   });
-  //console.log('[Group Controller] budgetIdsPermitted: '+budgetIdsPermitted);
-  //console.log('[Group Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
   const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
-  //console.log('[Group Controller] permGranted: '+permGranted);
   if (!permGranted) {
     console.log('[Group Controller] Permission to the requested resource denied.');
     return res.status(401).send('Permission to the requested resource denied.');
   }
-  //console.log('[Group Controller] Permission to the requested resource granted.');
 
   // perform request
   console.log('\n[Group Controller] Getting groups...');
@@ -105,7 +97,11 @@ exports.getGroups = async (req, res) => {
       budget_month_id: req.query.budgetMonthId
     }
   });
-  console.log('[Group Controller] Done: '+JSON.stringify(groupsRes));
+  if (!groupRes) {
+    console.log('[Group Controller] Failed: The requested groups could not be found');
+    return res.status(404).send('[User Controller] Failed: The requested groups could not be found');
+  }
+  console.log('[Group Controller] Done');
   return res.send(groupsRes);
 
 };
@@ -122,15 +118,6 @@ exports.updateGroup = async (req, res) => {
     console.log('[Group Controller] Invalid Request: groupId and either label or budgetMonthId are\ required to update a group.');
     return res.status(400).send('groupId and either label or budgetMonthId are required to update a group.');
   }
-  /*
-  console.log('[Group Controller] req.params.groupId: '+req.params.groupId);
-  if (req.body.label) {
-    console.log('[Group Controller] req.body.label: '+req.body.label);
-  }
-  if (req.body.budgetMonthId) {
-    console.log('[Group Controller] req.body.budgetMonthId: '+req.body.budgetMonthId);
-  }
-  */
 
   // check if resource(s) referenced exist
   const group = await db.groups.findOne({
@@ -154,7 +141,6 @@ exports.updateGroup = async (req, res) => {
       console.log('[Group Controller] Invalid Request: The new budgetMonthId provided could not be found');
       return res.status(404).send('Invalid Request: The new budgetMonthId provided could not be found');
     }
-    //console.log('[Group Controller] newBudgetMonth.budget_id: '+newBudgetMonth.budget_id);
   }
   
   // validate permissions
@@ -163,12 +149,10 @@ exports.updateGroup = async (req, res) => {
       id: group.budget_month_id
     }
   });
-  //console.log('[Group Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
   const budgetIdsPermitted = [];
   res.locals.perms.map(perm => {
     budgetIdsPermitted.push(perm.budgetId);
   });
-  //console.log('[Group Controller] budgetIdsPermitted: '+budgetIdsPermitted);
   let permGranted;
   if (req.body.budgetMonthId) {
     permGranted = 
@@ -177,12 +161,10 @@ exports.updateGroup = async (req, res) => {
   } else {
     permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
   }
-  //console.log('[Group Controller] permGranted: '+permGranted);
   if (!permGranted) {
     console.log('[Group Controller] Permission to the requested resource denied.');
     return res.status(401).send('Permission to the requested resource denied.');
   }
-  //console.log('[Group Controller] Permission to the requested resource granted.');
   
   // perform request
   console.log('\n[Group Controller] Updating group...');
@@ -214,7 +196,6 @@ exports.deleteGroup = async (req, res) => {
     console.log('[Group Controller] groupId required to delete group');
     return res.status(400).send('groupId required to delete group');
   }
-  //console.log('[Group Controller] req.params.groupId: '+req.params.groupId);
 
   // check if resource(s) referenced exist
   const group = await db.groups.findOne({
@@ -232,20 +213,16 @@ exports.deleteGroup = async (req, res) => {
   res.locals.perms.map(perm => {
     budgetIdsPermitted.push(perm.budgetId);
   });
-  //console.log('[Group Controller] budgetIdsPermitted: '+budgetIdsPermitted);
   const budgetMonth = await db.budgetMonths.findOne({
     where: { 
       id: group.budget_month_id
     }
   });
-  //console.log('[Group Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
   const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
-  //console.log('[Group Controller] permGranted: '+permGranted);
   if (!permGranted) {
     console.log('[Group Controller] Permission to the requested resource denied.');
     return res.status(401).send('Permission to the requested resource denied.');
   }
-  //console.log('[Group Controller] Permission to the requested resource granted.');
 
   // perform request
   console.log('\n[Group Controller] Deleting group...');

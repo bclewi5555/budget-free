@@ -15,29 +15,6 @@ exports.withSampleData = (db) => {
     (async () => {
       try {
 
-        // USERS
-        const johnUserId = 'eeee1972-a077-43eb-b83b-ce842e3c833f';
-        const janeUserId = '921e8b45-0d73-450d-b65b-e4ac996971c1';
-        await db.users.create({
-          id: johnUserId,
-          first_name: 'John',
-          last_name: 'Doe',
-          email: 'john.doe@example.com',
-          username: 'JohnDoe00',
-          password_hash: process.env.PASSWORD_HASH_SAMPLE,
-          subscription: true
-        });
-        await db.users.create({
-          id: janeUserId,
-          first_name: 'Jane',
-          last_name: 'Doe',
-          email: 'jane.doe@example.com',
-          username: 'JaneDoe00',
-          password_hash: process.env.PASSWORD_HASH_SAMPLE,
-          subscription: true
-        });
-        console.log('[Sequelize] Sample users created.');
-
         // BUDGETS
         const homeBudgetId = 'b95573be-8f56-4d29-b7a4-fba07c60a859';
         const businessBudgetId = '080d2177-1f4d-4d1c-b096-d5e5e02fcc23';
@@ -50,6 +27,31 @@ exports.withSampleData = (db) => {
           label: 'Business'
         });
         console.log('[Sequelize] Sample budgets created.');
+
+        // USERS
+        const johnUserId = 'eeee1972-a077-43eb-b83b-ce842e3c833f';
+        const janeUserId = '921e8b45-0d73-450d-b65b-e4ac996971c1';
+        await db.users.create({
+          id: johnUserId,
+          first_name: 'John',
+          last_name: 'Doe',
+          email: 'john.doe@example.com',
+          username: 'JohnDoe00',
+          password_hash: process.env.PASSWORD_HASH_SAMPLE,
+          subscription: true,
+          default_budget_id: homeBudgetId
+        });
+        await db.users.create({
+          id: janeUserId,
+          first_name: 'Jane',
+          last_name: 'Doe',
+          email: 'jane.doe@example.com',
+          username: 'JaneDoe00',
+          password_hash: process.env.PASSWORD_HASH_SAMPLE,
+          subscription: true,
+          default_budget_id: homeBudgetId
+        });
+        console.log('[Sequelize] Sample users created.');
 
         // PERMISSIONS
         await db.permissions.create({

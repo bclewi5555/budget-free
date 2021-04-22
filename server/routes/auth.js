@@ -13,10 +13,6 @@ const router = express.Router();
 // Controller dependencies
 const controller = require('../controllers/auth');
 
-router.post('/signup',
-  asyncHandler(controller.signup)
-);
-
 router.post('/login',
   passport.authenticate('local', {
     //successRedirect: '/',

@@ -39,7 +39,17 @@ module.exports = (sequelize, Sequelize) => {
     subscription: {
       type: Sequelize.BOOLEAN,
       allowNull: false
-    }
+    },
+    default_budget_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      references: {
+        model: 'budgets',
+        key: 'id',
+        deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
+      }
+    },
   });
 
   return User;

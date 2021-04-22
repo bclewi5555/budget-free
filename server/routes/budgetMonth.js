@@ -17,25 +17,25 @@ const router = express.Router();
 
 router.post('/',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
+  asyncHandler(permController.requirePerms),
   asyncHandler(controller.createBudgetMonth)
 );
 
 router.get('/',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
+  asyncHandler(permController.requirePerms),
   asyncHandler(controller.getBudgetMonths)
 );
 
 router.put('/:budgetMonthId',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
+  asyncHandler(permController.requirePerms),
   asyncHandler(controller.updateBudgetMonth)
 );
 
 router.delete('/:budgetMonthId',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
+  asyncHandler(permController.requirePerms),
   asyncHandler(controller.deleteBudgetMonth)
 );
 

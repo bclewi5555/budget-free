@@ -13,7 +13,7 @@ const AuthService = {
   async signup(user) {
     console.log('[AuthService] Signing up...');
     try {
-      const res = await axios.post('/api/v1/auth/signup',
+      const res = await axios.post('/api/v1/users/signup', // moved from auth to users
         {
           firstName: user.firstName,
           lastName: user.lastName,
