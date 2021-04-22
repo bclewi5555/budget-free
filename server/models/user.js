@@ -4,50 +4,49 @@ User table model
 ======================================================
 */
 
-// Module dependencies
-const { DataTypes } = require("sequelize");
-
 module.exports = (sequelize, Sequelize) => {
   const User = sequelize.define('users', {
     id: {
       primaryKey: true,
-      type: DataTypes.UUID,
+      type: Sequelize.DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
     first_name: {
-      type: DataTypes.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: false
     },
     last_name: {
-      type: DataTypes.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: false
     },
     email: {
-      type: Sequelize.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: false,
       unique: true
     },
     username: {
-      type: Sequelize.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: false,
       unique: true
     },
     password_hash: {
-      type: Sequelize.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: false
     },
     subscription: {
-      type: Sequelize.BOOLEAN,
+      type: Sequelize.DataTypes.BOOLEAN,
       allowNull: false
     },
-    default_budget_id: {
-      type: DataTypes.UUID,
+    default_budget_id: { 
+      type: Sequelize.DataTypes.UUID,
       allowNull: true,
       defaultValue: null,
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE',
       references: {
         model: 'budgets',
         key: 'id',
-        deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
+        deferrable: Sequelize.Deferrable.INITIALLY_DEFERRED,
       }
     },
   });

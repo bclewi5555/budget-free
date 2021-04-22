@@ -8,6 +8,12 @@ Budget API router
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 
+// Middleware denendencies
+const { validateResource } = require('../middleware/validateResource');
+
+// Validation dependencies
+const { budgetTemplateSchema } = require('../validationSchemas/budgetTemplate');
+
 // Controller dependencies
 const authController = require('../controllers/auth');
 const permController = require('../controllers/permission');
@@ -23,6 +29,7 @@ router.post('/',
 // TODO Test
 router.post('/template',
   asyncHandler(authController.requireAuth),
+  validateResource(budgetTemplateSchema),
   asyncHandler(controller.createBudgetFromTemplate)
 );
 
@@ -51,6 +58,13 @@ router.get('/:budgetId/details',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.requirePerms),
   asyncHandler(controller.getBudgetDetails)
+);
+
+// TODO
+router.get('/details',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.requirePerms),
+  asyncHandler(controller.getDefaultBudgetDetails)
 );
 
 router.put('/:budgetId',

@@ -4,9 +4,6 @@ Authentication controller
 ======================================================
 */
 
-// Module dependencies
-const bcrypt = require('bcrypt');
-
 // Model dependencies
 const db = require('../models/db');
 
@@ -15,12 +12,12 @@ require('../config/auth');
 
 exports.login = (req, res) => {
   console.log('\n[Auth Controller] Issued Session ID: '+req.sessionID);
-  res.json({sessionId: req.sessionID});
+  return res.status(200).json({sessionId: req.sessionID});
 };
 
 exports.validateSession = async (req, res) => {
   if (!req.sessionID) {
-    return res.status(401);
+    return res.status(401); // unauthorized
   }
 
   // validate session
@@ -29,7 +26,7 @@ exports.validateSession = async (req, res) => {
     where: { sid: req.sessionID }
   });
   if (!validSession) {
-    return res.status(401).send('Invalid session');
+    return res.status(401).send('Invalid session'); // unauthorized
   }
   console.log(validSession);
   console.log('[Auth Controller] Session validated.');
@@ -42,11 +39,11 @@ exports.validateSession = async (req, res) => {
     where: { id: userId }
   });
   if (!validUser) {
-    return res.status(401).send('Invalid user');
+    return res.status(401).send('Invalid user'); // unauthorized
   }
   console.log('[Auth Controller] User validated.');
 
-  res.status(200).send('OK');
+  return res.status(200).send('OK');
 
 };
 
@@ -55,7 +52,7 @@ exports.requireAuth = async (req, res, next) => {
   // validate request
   if (!req.sessionID) {
     console.log('[Auth Controller] sessionID required');
-    return res.status(401);
+    return res.status(401); // unauthorized
   }
 
   // validate session
@@ -65,19 +62,19 @@ exports.requireAuth = async (req, res, next) => {
   });
   if (!validSession) {
     console.log('[Auth Controller] Failed: Invalid session.');
-    return res.status(401).send();
+    return res.status(401).send(); // unauthorized
   }
   const sessionData = JSON.parse(validSession.data);
   if (!sessionData.passport) {
     console.log('[Auth Controller] Failed: Missing passport.');
-    return res.status(401).send();
+    return res.status(401).send(); // unauthorized
   }
   
   // validate user
   const userId = sessionData.passport.user;
   if (!userId) {
     console.log('[Auth Controller] Failed: Invalid passport.');
-    return res.status(401).send();
+    return res.status(401).send(); // unauthorized
   }
   const validUser = await db.users.findOne({
     where: { id: userId }
@@ -105,11 +102,11 @@ exports.logout = (req, res) => {
     req.session.destroy((err) => {
       console.log('[Auth Controller] Done: Logged out.');
       console.log('[Auth Controller] Destroyed Session ID: '+destroyedSessionId);
-      res.json({destroyedSessionId: destroyedSessionId});
+      return res.status(200).json({destroyedSessionId: destroyedSessionId});
       //res.redirect('/login');
     });
   } catch(err) {
     console.error(err.message);
-    res.status(500).json(err.message);
+    return res.status(500).json(err.message);
   }
 };

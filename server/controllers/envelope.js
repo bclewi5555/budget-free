@@ -12,7 +12,7 @@ https://sequelize.org/master/variable/index.html#static-variable-Op
 */
 const Op = db.Sequelize.Op;
 
-const validTypes = ['default', 'sinking', 'income'];
+const validTypes = ['default', 'sinking'];
 
 /* 
 ----------------
@@ -20,16 +20,20 @@ CREATE NEW ENVELOPE IN THE GIVEN GROUP
 ----------------
 */
 exports.createEnvelope = async (req, res) => {
+  const { groupId, type, label, amountPlanned, isStarred, dueDate, startingBalance, savingsGoal, notes } = req.body;
 
   // validate request
-  if (!req.body.groupId || !req.body.type || !req.body.label) {
-    console.log('[Envelope Conroller] groupID, type and label required to create an envelope');
-    return res.status(400).send('groupID, type and label required to create an envelope');
+  if (!groupId || !label) {
+    console.log('[Envelope Conroller] groupID and label required to create an envelope');
+    return res.status(400).send('groupID and label required to create an envelope');
   }
-  if (!validTypes.includes(req.body.type)) {
+  if (!type) {
+    type = 'default';
+  }
+  else if (!validTypes.includes(type)) {
     return res.status(400).send('invalid type provided');
   }
-  if (req.body.amountPlanned && req.body.amountPlanned < 0) {
+  if (amountPlanned && amountPlanned < 0) {
     console.log('[Envelope Conroller] amountPlanned must be an non-negative integer');
     return res.status(400).send('amountPlanned must be an non-negative integer');
   }
@@ -37,7 +41,7 @@ exports.createEnvelope = async (req, res) => {
   // check if resource(s) referenced exist
   const group = await db.groups.findOne({
     where: {
-      id: req.body.groupId
+      id: groupId
     }
   });
   if (!group) {
@@ -68,15 +72,15 @@ exports.createEnvelope = async (req, res) => {
   // perform request
   console.log('\n[Envelope Controller] Creating envelope...');
   const newEnvelope = await db.envelopes.create({
-    group_id: req.body.groupId,
-    type: req.body.type,
-    label: req.body.label,
-    amount_planned: req.body.amountPlanned,
-    is_starred: req.body.isStarred,
-    due_date: req.body.dueDate,
-    starting_balance: req.body.startingBalance,
-    savings_goal: req.body.savingsGoal,
-    notes: req.body.notes
+    group_id: groupId,
+    type: type,
+    label: label,
+    amount_planned: amountPlanned,
+    is_starred: isStarred,
+    due_date: dueDate,
+    starting_balance: startingBalance,
+    savings_goal: savingsGoal,
+    notes: notes
   });
   console.log('[Envelope Controller] Done: Created new envelope with id: '+newEnvelope.id);
   return res.status(200).send(newEnvelope);

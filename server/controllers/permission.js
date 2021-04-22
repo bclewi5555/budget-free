@@ -22,11 +22,22 @@ exports.getPerms = async (req, res, next) => {
 
   const permsRes = await db.permissions.findAll({
     where: { [Op.and]: [
-      { userId: res.locals.authUser.id },
+      { user_id: res.locals.authUser.id },
       { is_admin: true }
     ]}
   });
-  res.locals.perms = permsRes; // make available to next() middleware
+  const perms = [];
+  permsRes.map(perm => {
+    perms.push({
+      budgetId: perm.budget_id,
+      userId: perm.user_id,
+      isOwner: perm.is_owner,
+      isAdmin: perm.is_admin,
+      createdAt: perm.createdAt,
+      updatedAt: perm.updatedAt
+    });
+  });
+  res.locals.perms = perms; // make available to next() middleware
   console.log('[Perm Controller] Done');
   next();
 
@@ -42,15 +53,27 @@ exports.requirePerms = async (req, res, next) => {
 
   const permsRes = await db.permissions.findAll({
     where: { [Op.and]: [
-      { userId: res.locals.authUser.id },
+      { user_id: res.locals.authUser.id },
       { is_admin: true }
     ]}
   });
-  res.locals.perms = permsRes; // make available to next() middleware
   if (permsRes.length < 1) {
     console.log('[Perm Controller] Failed: The authorized user has no budget permissions');
     return res.status(401).send();
   }
+  const perms = [];
+  permsRes.map(perm => {
+    perms.push({
+      budgetId: perm.budget_id,
+      userId: perm.user_id,
+      isOwner: perm.is_owner,
+      isAdmin: perm.is_admin,
+      createdAt: perm.createdAt,
+      updatedAt: perm.updatedAt
+    });
+  });
+  res.locals.perms = perms; // make available to next() middleware
+  
   console.log('[Perm Controller] Done');
   next();
 

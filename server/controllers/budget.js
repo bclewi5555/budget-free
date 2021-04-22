@@ -32,8 +32,8 @@ exports.createBudget = async (req, res) => {
   });
   //console.log(newBudget);
   const newPerm = await db.permissions.create({
-    budgetId: newBudget.id,
-    userId: res.locals.authUser.id,
+    budget_id: newBudget.id,
+    user_id: res.locals.authUser.id,
     is_owner: true,
     is_admin: true
   });
@@ -69,14 +69,22 @@ exports.createBudgetFromTemplate = async (req, res) => {
     return res.status(500).error('Could not create new budget');
   }
   const newPerm = await db.permissions.create({
-    budgetId: newBudget.id,
-    userId: res.locals.authUser.id,
+    budget_id: newBudget.id,
+    user_id: res.locals.authUser.id,
     is_owner: true,
     is_admin: true
   });
   if (!newPerm) {
     console.log('[Budget Controller] Failed: Could not create new set of permissions');
     return res.status(500).error('Could not create new set of permissions');
+  }
+  const updateDefaultBudgetRes = await db.users.update(
+    { default_budget_id: newBudget.id },
+    { where: { id: res.locals.authUser.id }}
+  );
+  if (!updateDefaultBudgetRes) {
+    console.log('[Budget Controller] Failed: Could not update defaultBudgetId');
+    return res.status(500).error('Could not update defaultBudgetId');
   }
   console.log('[Budget Controller] New budget created with id: '+newBudget.id);
 
@@ -85,7 +93,7 @@ exports.createBudgetFromTemplate = async (req, res) => {
   const currYear = date.getFullYear();
   const currMonth = date.getMonth()+1; // zero indexed (0-11)
   const newBudgetMonth = await db.budgetMonths.create({
-    budgetId: newBudget.id,
+    budget_id: newBudget.id,
     year: currYear,
     month: currMonth
   });

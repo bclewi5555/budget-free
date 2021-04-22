@@ -12,23 +12,32 @@ https://sequelize.org/master/variable/index.html#static-variable-Op
 */
 const Op = db.Sequelize.Op;
 
+const validTypes = ['default', 'income'];
+
 /* 
 ----------------
 CREATE NEW GROUP IN THE GIVEN BUDGET MONTH
 ----------------
 */
 exports.createGroup = async (req, res) => {
+  const { budgetMonthId, type, label } = req.body;
 
   // validate request
-  if (!req.body.budgetMonthId || !req.body.label) {
+  if (!budgetMonthId || !label) {
     console.log('[Group Controller] Invalid Request: budgetMonthId and label required to create a group');
     return res.status(400).send('budgetMonthId and label required to create a group.');
+  }
+  if (!type) {
+    type = 'default';
+  }
+  else if (!validTypes.includes(type)) {
+    return res.status(400).send('invalid type provided');
   }
 
   // check if resource(s) referenced exist
   const budgetMonth = await db.budgetMonths.findOne({
     where: { 
-      id: req.body.budgetMonthId
+      id: budgetMonthId
     }
   });
   if (!budgetMonth) {
@@ -50,8 +59,9 @@ exports.createGroup = async (req, res) => {
   // perform request
   console.log('\n[Group Controller] Creating new group...');
   const newGroup = await db.groups.create({
-    budget_month_id: req.body.budgetMonthId,
-    label: req.body.label
+    budget_month_id: budgetMonthId,
+    label: label,
+    type: type
   });
   console.log('[Group Controller] Done: New group created with id: '+newGroup.id);
   return res.status(200).send(newGroup);
@@ -97,7 +107,7 @@ exports.getGroups = async (req, res) => {
       budget_month_id: req.query.budgetMonthId
     }
   });
-  if (!groupRes) {
+  if (!groupsRes) {
     console.log('[Group Controller] Failed: The requested groups could not be found');
     return res.status(404).send('[User Controller] Failed: The requested groups could not be found');
   }

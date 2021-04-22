@@ -59,42 +59,64 @@ const Envelope = db.envelopes;
 const Transaction = db.transactions;
 
 // Define associations
-Budget.belongsToMany(User, { through: Permission });
-User.belongsToMany(Budget, { through: Permission });
-Budget.hasMany(BudgetMonth, { 
+
+// join table for budgets-users
+Budget.belongsToMany(User, { through: Permission, foreignKey: 'budget_id' });
+User.belongsToMany(Budget, { through: Permission, foreignKey: 'user_id' });
+
+//Budget.hasMany(BudgetMonth);
+BudgetMonth.hasOne(Budget, {
+  foreignKey: {
+    name: 'default_budget_month_id',
+    type: Sequelize.DataTypes.UUID,
+    allowNull: true,
+    defaultValue: null
+  },
+  constraints: false,
+  onDelete: 'SET NULL', // When the budgetMonth is deleted, set default_budget_month_id reference to null
+  onUpdate: 'CASCADE'
+});
+BudgetMonth.belongsTo(Budget, { 
   foreignKey: {
     name: 'budget_id',
     type: Sequelize.DataTypes.UUID,
     allowNull: false
   },
-  onDelete: 'CASCADE',
+  onDelete: 'CASCADE', // When the budget is deleted, delete all of its budgetMonths
   onUpdate: 'CASCADE'
 });
-BudgetMonth.hasMany(Group, { 
+
+
+//BudgetMonth.hasMany(Group);
+Group.belongsTo(BudgetMonth, { 
   foreignKey: {
     name: 'budget_month_id',
     type: Sequelize.DataTypes.UUID,
     allowNull: false
   },
-  onDelete: 'CASCADE',
+  onDelete: 'CASCADE', // When the budgetMonth is deleted, delete all of its groups
   onUpdate: 'CASCADE'
 });
-Group.hasMany(Envelope, { 
+
+//Group.hasMany(Envelope);
+Envelope.belongsTo(Group, { 
   foreignKey: {
     name: 'group_id',
     type: Sequelize.DataTypes.UUID,
     allowNull: false
   },
-  onDelete: 'CASCADE',
+  onDelete: 'CASCADE', // When the group is deleted, delete all of its envelopes
   onUpdate: 'CASCADE'
 });
-Envelope.hasMany(Transaction, { 
+
+//Envelope.hasMany(Transaction);
+Transaction.belongsTo(Envelope, { 
   foreignKey: {
     name: 'envelope_id',
     type: Sequelize.DataTypes.UUID,
     allowNull: false
   },
-  onDelete: 'CASCADE',
+  onDelete: 'CASCADE', // When the envelope is deleted, delete all of its transactions
   onUpdate: 'CASCADE'
 });
 

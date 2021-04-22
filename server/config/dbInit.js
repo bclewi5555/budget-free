@@ -55,26 +55,26 @@ exports.withSampleData = (db) => {
 
         // PERMISSIONS
         await db.permissions.create({
-          budgetId: homeBudgetId,
-          userId: johnUserId,
+          budget_id: homeBudgetId,
+          user_id: johnUserId,
           is_owner: true,
           is_admin: true
         });
         await db.permissions.create({
-          budgetId: businessBudgetId,
-          userId: johnUserId,
+          budget_id: businessBudgetId,
+          user_id: johnUserId,
           is_owner: true,
           is_admin: true
         });
         await db.permissions.create({
-          budgetId: homeBudgetId,
-          userId: janeUserId,
+          budget_id: homeBudgetId,
+          user_id: janeUserId,
           is_owner: false,
           is_admin: true
         });
         await db.permissions.create({
-          budgetId: businessBudgetId,
-          userId: janeUserId,
+          budget_id: businessBudgetId,
+          user_id: janeUserId,
           is_owner: false,
           is_admin: false
         });
@@ -126,7 +126,8 @@ exports.withSampleData = (db) => {
         await db.groups.create({
           id: homeMarchIncomeGroupId,
           budget_month_id: homeMarchBudgetMonthId,
-          label: 'Income'
+          label: 'Income',
+          type: 'income'
         });
         await db.groups.create({
           id: homeMarchFoodGroupId,
@@ -136,7 +137,8 @@ exports.withSampleData = (db) => {
         await db.groups.create({
           id: homeAprilIncomeGroupId,
           budget_month_id: homeAprilBudgetMonthId,
-          label: 'Income'
+          label: 'Income',
+          type: 'income'
         });
         await db.groups.create({
           id: homeAprilFoodGroupId,
@@ -147,7 +149,8 @@ exports.withSampleData = (db) => {
         await db.groups.create({
           id: businessAprilIncomeGroupId,
           budget_month_id: businessAprilBudgetMonthId,
-          label: 'Income'
+          label: 'Income',
+          type: 'income'
         });
         await db.groups.create({
           id: businessAprilTaxableExpensesGroupId,
@@ -175,55 +178,55 @@ exports.withSampleData = (db) => {
         await db.envelopes.create({
           id: businessAprilSalesEnvelopeId,
           group_id: businessAprilIncomeGroupId,
-          type: 'income',
           label: 'Sales',
-          amount_planned: 2000
+          amount_planned: 2000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: businessAprilInvestmentsEnvelopeId,
           group_id: businessAprilIncomeGroupId,
-          type: 'income',
           label: 'Investments',
-          amount_planned: 1000
+          amount_planned: 1000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: businessAprilSalariesEnvelopeId,
           group_id: businessAprilTaxableExpensesGroupId,
-          type: 'default',
           label: 'Salaries',
           amount_planned: 350,
-          is_starred: false
+          is_starred: false,
+          type: 'default'
         });
         await db.envelopes.create({
           id: businessAprilServicesEnvelopeId,
           group_id: businessAprilTaxableExpensesGroupId,
-          type: 'default',
           label: 'Services',
           amount_planned: 125,
-          is_starred: true
+          is_starred: true,
+          type: 'default'
         });
 
         await db.envelopes.create({
           id: homeMarchPaychecksEnvelopeId,
           group_id: homeMarchIncomeGroupId,
-          type: 'income',
           label: 'Paychecks',
-          amount_planned: 2000
+          amount_planned: 2000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeMarchBonusesEnvelopeId,
           group_id: homeMarchIncomeGroupId,
-          type: 'income',
           label: 'Bonuses',
-          amount_planned: 1000
+          amount_planned: 1000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeMarchGroceriesEnvelopeId,
           group_id: homeMarchFoodGroupId,
-          type: 'default',
           label: 'Groceries',
           amount_planned: 350,
-          is_starred: false
+          is_starred: false,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeMarchDateNightFoodEnvelopeId,
@@ -237,23 +240,23 @@ exports.withSampleData = (db) => {
         await db.envelopes.create({
           id: homeAprilPaychecksEnvelopeId,
           group_id: homeAprilIncomeGroupId,
-          type: 'income',
           label: 'Paychecks',
-          amount_planned: 2000
+          amount_planned: 2000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeAprilBonusesEnvelopeId,
           group_id: homeAprilIncomeGroupId,
-          type: 'income',
           label: 'Bonuses',
-          amount_planned: 500
+          amount_planned: 500,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeAprilGroceriesEnvelopeId,
           group_id: homeAprilFoodGroupId,
-          type: 'default',
           label: 'Groceries',
           amount_planned: 300,
+          type: 'default',
           is_starred: false,
           notes: 'TODO: Review planned amount in March'
         });
