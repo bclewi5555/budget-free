@@ -27,16 +27,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
 export default function Envelope(props) {
   const classes = useStyles();
   const [planned, setPlanned] = useState(0);
   const [spent] = useState(50);
 
+  
+
   return (
 
 
 
-    <TableRow>
+    <TableRow >
       <TableCell>
         <Typography gutterBottom variant="subtitle1">
           {props.label}

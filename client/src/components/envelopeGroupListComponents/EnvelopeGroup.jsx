@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { makeStyles } from '@material-ui/core/styles';
 import Envelope from '../envelopeGroupListComponents/Envelope';
+import Button from "@material-ui/core/Button";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -55,7 +56,6 @@ export default function EnvelopeGroup(props) {
         <EnvelopeList groupId={props.groupId} className={classes.title}></EnvelopeList>
         {/* <Envelope className></Envelope> */}
       </AccordionDetails>
-      
      
     </Accordion>  
     

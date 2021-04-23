@@ -49,6 +49,7 @@ export default function BudgetMonthNav() {
           <Grid >
             <KeyboardDatePicker className
               disableToolBar
+              color='primary'
               variant='dialog' // inline might be better
               views={["year", "month"]}
               format='MM//yyyy'

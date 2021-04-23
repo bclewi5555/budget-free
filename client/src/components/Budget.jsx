@@ -5,6 +5,7 @@ import StaticDatePicker from './testComponents/StaticDatePicker';
 //import {createMuiTheme, ThemeProvider} from "@material-ui/core";
 //import Card from '@material-ui/core/Card'
 import { makeStyles } from '@material-ui/core/styles';
+import Transaction from './detailListComponents/Transaction'
 
 
 
@@ -26,6 +27,7 @@ export default function Budget(props) {
        
       <BudgetMonth budgetMonthId={budgetMonthId} setBudgetMonthId={setBudgetMonthId}/>
       {/* <Random/> */}
+      <Transaction/>
      
       
     

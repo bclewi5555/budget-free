@@ -29,6 +29,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function clickHandler() {
+  console.log("clicked")
+  
+}
+
 //import EnvelopeService from '../../services/EnvelopeService';
 
 // Dynamically renders all envelopes in the current Group > BudgetMonth > Budget > User.
@@ -40,15 +45,61 @@ export default function EnvelopeList(props) {
   if (props.groupID === '4c2d628d-6f5e-45d6-b661-b7d4e0e210b4') { // Income
     envelopes = [
       {
-        
-        label: 'Paychecks',
-        amountPlanned: 1500
+          "id": "cc56b50e-a22a-46c5-959d-d4d77b56dbee",
+          "group_id": "4c2d628d-6f5e-45d6-b661-b7d4e0e210b4",
+          "type": "income",
+          "label": "Paychecks",
+          "amount_planned": 2000,
+          "is_starred": false,
+          "due_date": null,
+          "starting_balance": null,
+          "savings_goal": null,
+          "notes": null,
+          "createdAt": "2021-04-23T03:46:33.650Z",
+          "updatedAt": "2021-04-23T03:46:33.650Z",
+          "received": 2000,
+          transactions: [
+            {
+                "id": "d0ae2142-761e-4f99-b54b-6d5e4ac62f85",
+                "envelope_id": "cc56b50e-a22a-46c5-959d-d4d77b56dbee",
+                "type": "income",
+                "amount": 1000,
+                "date": "2021-04-23",
+                "label": "Microsoft Paycheck",
+                "reference_number": null,
+                "notes": null,
+                "createdAt": "2021-04-23T03:46:33.657Z",
+                "updatedAt": "2021-04-23T03:46:33.657Z"
+            },
+            {
+                "id": "8295d359-3b08-4821-8b6c-f338f7a03a6a",
+                "envelope_id": "cc56b50e-a22a-46c5-959d-d4d77b56dbee",
+                "type": "income",
+                "amount": 1000,
+                "date": "2021-04-23",
+                "label": "Microsoft Paycheck",
+                "reference_number": null,
+                "notes": null,
+                "createdAt": "2021-04-23T03:46:33.661Z",
+                "updatedAt": "2021-04-23T03:46:33.661Z"
+            }
+        ]
       },
       {
-        label: 'Tax Refunds',
-        amountPlanned: 500
+          "id": "81991ec0-6875-4338-882a-3d34c5bb25dd",
+          "group_id": "4c2d628d-6f5e-45d6-b661-b7d4e0e210b4",
+          "type": "income",
+          "label": "Bonuses",
+          "amount_planned": 500,
+          "is_starred": false,
+          "due_date": null,
+          "starting_balance": null,
+          "savings_goal": null,
+          "notes": null,
+          "createdAt": "2021-04-23T03:46:33.652Z",
+          "updatedAt": "2021-04-23T03:46:33.652Z"
       }
-    ];
+  ]
   } else if (props.groupID === '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330') { //Food
     envelopes = [
       {
@@ -61,20 +112,20 @@ export default function EnvelopeList(props) {
       }
     ];
   }
-  /*
-  let envelopes = [];
-  EnvelopeService.getEnvelopes(props.budgetMonth)
-    .then((res) => {
-      res.forEach((envelope) => {
-        envelopes.push({
-          label: envelope.label,
-          amountPlanned: envelope.amount_planned
-        });
-      });
-    })
-    .catch(err => {console.log(err)});
-  console.log(envelopes);
-  */
+  
+  // let envelopes = [];
+  // EnvelopeService.getEnvelopes(props.budgetMonth)
+  //   .then((res) => {
+  //     res.forEach((envelope) => {
+  //       envelopes.push({
+  //         label: envelope.label,
+  //         amountPlanned: envelope.amount_planned
+  //       });
+  //     });
+  //   })
+  //   .catch(err => {console.log(err)});
+  // console.log(envelopes);
+  
 
   return (
     <div className >
@@ -90,15 +141,16 @@ export default function EnvelopeList(props) {
         <TableBody>
           {envelopes.map((envelope) => {
             return (<Envelope
-              key={envelope.label}
-              label={envelope.label}
-              amountPlanned={envelope.amount_planned}
+              key={envelope.id}
+              // label={envelope.label}
+              // amountPlanned={envelope.amount_planned}
+              envelope={envelope}
             />)
           })}
         </TableBody>
         <Envelope className></Envelope>
 
-        <Button color="primary" >Add Envelope </Button>
+        <Button color="primary" variant='contained' >Add Envelope </Button>
       </Table>
 
 

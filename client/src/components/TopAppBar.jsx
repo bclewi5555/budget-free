@@ -29,7 +29,7 @@ export default function TopAppBar(props) {
           <Typography variant="h6" className={classes.title}>
             BudgetFree
           </Typography>
-          <BudgetMonthNav className />
+          {/* <BudgetMonthNav/> */}
           <SelectBudget  budgetId={props.budgetId} setBudgetId={props.setBudgetId} />
           
           <LogoutButton />
