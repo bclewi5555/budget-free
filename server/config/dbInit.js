@@ -15,29 +15,6 @@ exports.withSampleData = (db) => {
     (async () => {
       try {
 
-        // USERS
-        const johnUserId = 'eeee1972-a077-43eb-b83b-ce842e3c833f';
-        const janeUserId = '921e8b45-0d73-450d-b65b-e4ac996971c1';
-        await db.users.create({
-          id: johnUserId,
-          first_name: 'John',
-          last_name: 'Doe',
-          email: 'john.doe@example.com',
-          username: 'JohnDoe00',
-          password_hash: process.env.PASSWORD_HASH_SAMPLE,
-          subscription: true
-        });
-        await db.users.create({
-          id: janeUserId,
-          first_name: 'Jane',
-          last_name: 'Doe',
-          email: 'jane.doe@example.com',
-          username: 'JaneDoe00',
-          password_hash: process.env.PASSWORD_HASH_SAMPLE,
-          subscription: true
-        });
-        console.log('[Sequelize] Sample users created.');
-
         // BUDGETS
         const homeBudgetId = 'b95573be-8f56-4d29-b7a4-fba07c60a859';
         const businessBudgetId = '080d2177-1f4d-4d1c-b096-d5e5e02fcc23';
@@ -51,28 +28,53 @@ exports.withSampleData = (db) => {
         });
         console.log('[Sequelize] Sample budgets created.');
 
+        // USERS
+        const johnUserId = 'eeee1972-a077-43eb-b83b-ce842e3c833f';
+        const janeUserId = '921e8b45-0d73-450d-b65b-e4ac996971c1';
+        await db.users.create({
+          id: johnUserId,
+          first_name: 'John',
+          last_name: 'Doe',
+          email: 'john.doe@example.com',
+          username: 'JohnDoe00',
+          password_hash: process.env.PASSWORD_HASH_SAMPLE,
+          subscription: true,
+          default_budget_id: homeBudgetId
+        });
+        await db.users.create({
+          id: janeUserId,
+          first_name: 'Jane',
+          last_name: 'Doe',
+          email: 'jane.doe@example.com',
+          username: 'JaneDoe00',
+          password_hash: process.env.PASSWORD_HASH_SAMPLE,
+          subscription: true,
+          default_budget_id: homeBudgetId
+        });
+        console.log('[Sequelize] Sample users created.');
+
         // PERMISSIONS
         await db.permissions.create({
-          budgetId: homeBudgetId,
-          userId: johnUserId,
+          budget_id: homeBudgetId,
+          user_id: johnUserId,
           is_owner: true,
           is_admin: true
         });
         await db.permissions.create({
-          budgetId: businessBudgetId,
-          userId: johnUserId,
+          budget_id: businessBudgetId,
+          user_id: johnUserId,
           is_owner: true,
           is_admin: true
         });
         await db.permissions.create({
-          budgetId: homeBudgetId,
-          userId: janeUserId,
+          budget_id: homeBudgetId,
+          user_id: janeUserId,
           is_owner: false,
           is_admin: true
         });
         await db.permissions.create({
-          budgetId: businessBudgetId,
-          userId: janeUserId,
+          budget_id: businessBudgetId,
+          user_id: janeUserId,
           is_owner: false,
           is_admin: false
         });
@@ -88,27 +90,23 @@ exports.withSampleData = (db) => {
         await db.budgetMonths.create({
           id: homeMarchBudgetMonthId,
           budget_id: homeBudgetId,
-          year: 2021,
-          month: 3
+          date_integer: 202103
         });
         await db.budgetMonths.create({
           id: homeAprilBudgetMonthId,
           budget_id: homeBudgetId,
-          year: 2021,
-          month: 4
+          date_integer: 202104,
         });
 
         await db.budgetMonths.create({
           id: businessMarchBudgetMonthId,
           budget_id: businessBudgetId,
-          year: 2021,
-          month: 3
+          date_integer: 202103
         });
         await db.budgetMonths.create({
           id: businessAprilBudgetMonthId,
           budget_id: businessBudgetId,
-          year: 2021,
-          month: 4
+          date_integer: 202104,
         });
         console.log('[Sequelize] Sample budgetMonths created.');
 
@@ -124,7 +122,8 @@ exports.withSampleData = (db) => {
         await db.groups.create({
           id: homeMarchIncomeGroupId,
           budget_month_id: homeMarchBudgetMonthId,
-          label: 'Income'
+          label: 'Income',
+          type: 'income'
         });
         await db.groups.create({
           id: homeMarchFoodGroupId,
@@ -134,7 +133,8 @@ exports.withSampleData = (db) => {
         await db.groups.create({
           id: homeAprilIncomeGroupId,
           budget_month_id: homeAprilBudgetMonthId,
-          label: 'Income'
+          label: 'Income',
+          type: 'income'
         });
         await db.groups.create({
           id: homeAprilFoodGroupId,
@@ -145,7 +145,8 @@ exports.withSampleData = (db) => {
         await db.groups.create({
           id: businessAprilIncomeGroupId,
           budget_month_id: businessAprilBudgetMonthId,
-          label: 'Income'
+          label: 'Income',
+          type: 'income'
         });
         await db.groups.create({
           id: businessAprilTaxableExpensesGroupId,
@@ -173,85 +174,85 @@ exports.withSampleData = (db) => {
         await db.envelopes.create({
           id: businessAprilSalesEnvelopeId,
           group_id: businessAprilIncomeGroupId,
-          type: 'income',
           label: 'Sales',
-          amount_planned: 2000
+          amount_planned: 200000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: businessAprilInvestmentsEnvelopeId,
           group_id: businessAprilIncomeGroupId,
-          type: 'income',
           label: 'Investments',
-          amount_planned: 1000
+          amount_planned: 100000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: businessAprilSalariesEnvelopeId,
           group_id: businessAprilTaxableExpensesGroupId,
-          type: 'default',
           label: 'Salaries',
-          amount_planned: 350,
-          is_starred: false
+          amount_planned: 35000,
+          is_starred: false,
+          type: 'default'
         });
         await db.envelopes.create({
           id: businessAprilServicesEnvelopeId,
           group_id: businessAprilTaxableExpensesGroupId,
-          type: 'default',
           label: 'Services',
-          amount_planned: 125,
-          is_starred: true
+          amount_planned: 12500,
+          is_starred: true,
+          type: 'default'
         });
 
         await db.envelopes.create({
           id: homeMarchPaychecksEnvelopeId,
           group_id: homeMarchIncomeGroupId,
-          type: 'income',
           label: 'Paychecks',
-          amount_planned: 2000
+          amount_planned: 200000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeMarchBonusesEnvelopeId,
           group_id: homeMarchIncomeGroupId,
-          type: 'income',
           label: 'Bonuses',
-          amount_planned: 1000
+          amount_planned: 100000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeMarchGroceriesEnvelopeId,
           group_id: homeMarchFoodGroupId,
-          type: 'default',
           label: 'Groceries',
-          amount_planned: 350,
-          is_starred: false
+          amount_planned: 35000,
+          is_starred: false,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeMarchDateNightFoodEnvelopeId,
           group_id: homeMarchFoodGroupId,
           type: 'sinking',
           label: 'Date Night Food',
-          amount_planned: 125,
+          amount_planned: 12500,
           is_starred: true
         });
 
         await db.envelopes.create({
           id: homeAprilPaychecksEnvelopeId,
           group_id: homeAprilIncomeGroupId,
-          type: 'income',
           label: 'Paychecks',
-          amount_planned: 2000
+          amount_planned: 200000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeAprilBonusesEnvelopeId,
           group_id: homeAprilIncomeGroupId,
-          type: 'income',
           label: 'Bonuses',
-          amount_planned: 500
+          amount_planned: 50000,
+          type: 'default'
         });
         await db.envelopes.create({
           id: homeAprilGroceriesEnvelopeId,
           group_id: homeAprilFoodGroupId,
-          type: 'default',
           label: 'Groceries',
-          amount_planned: 300,
+          amount_planned: 30000,
+          type: 'default',
           is_starred: false,
           notes: 'TODO: Review planned amount in March'
         });
@@ -260,51 +261,47 @@ exports.withSampleData = (db) => {
           group_id: homeAprilFoodGroupId,
           type: 'sinking',
           label: 'Date Night Food',
-          amount_planned: 100,
+          amount_planned: 10000,
           is_starred: true
         });
         console.log('[Sequelize] Sample envelopes created.');
 
         // TRANSACTIONS
+        const homeAprilKrogerTransactionId = 'e79ed7b2-c14c-4cb0-8045-eaa7669fb1de';
+
         await db.transactions.create({
           envelope_id: homeAprilPaychecksEnvelopeId,
           type: 'income',
-          amount: 1000,
-          date: sequelize.literal('CURRENT_TIMESTAMP'),
-          label: 'Microsoft Paycheck'
-        });
-        await db.transactions.create({
-          envelope_id: homeAprilPaychecksEnvelopeId,
-          type: 'income',
-          amount: 1000,
+          amount: 100000,
           date: sequelize.literal('CURRENT_TIMESTAMP'),
           label: 'Microsoft Paycheck'
         });
         await db.transactions.create({
           envelope_id: homeAprilBonusesEnvelopeId,
           type: 'income',
-          amount: 500,
+          amount: 50000,
           date: sequelize.literal('CURRENT_TIMESTAMP'),
           label: 'Microsoft Bonus'
         });
         await db.transactions.create({
           envelope_id: homeAprilGroceriesEnvelopeId,
           type: 'expense',
-          amount: 150,
+          amount: 15000,
           date: sequelize.literal('CURRENT_TIMESTAMP'),
           label: 'Publix'
         });
         await db.transactions.create({
+          id: homeAprilKrogerTransactionId,
           envelope_id: homeAprilGroceriesEnvelopeId,
           type: 'expense',
-          amount: 35,
+          amount: 3500,
           date: sequelize.literal('CURRENT_TIMESTAMP'),
           label: 'Kroger'
         });
         await db.transactions.create({
           envelope_id: homeAprilDateNightFoodEnvelopeId,
           type: 'expense',
-          amount: 45,
+          amount: 4500,
           date: sequelize.literal('CURRENT_TIMESTAMP'),
           label: 'Atlas Pizza Date w/ Jane'
         });

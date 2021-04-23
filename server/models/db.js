@@ -50,8 +50,61 @@ db.groups = require('./group')(sequelize, Sequelize);
 db.envelopes = require('./envelope')(sequelize, Sequelize);
 db.transactions = require('./transaction')(sequelize, Sequelize);
 
+const User = db.users;
+const Budget = db.budgets;
+const BudgetMonth = db.budgetMonths;
+const Permission = db.permissions;
+const Group = db.groups;
+const Envelope = db.envelopes;
+const Transaction = db.transactions;
+
 // Define associations
-db.budgets.belongsToMany(db.users, { through: db.permissions });
-db.users.belongsToMany(db.budgets, { through: db.permissions });
+
+// join table for budgets-users
+Budget.belongsToMany(User, { through: Permission, foreignKey: 'budget_id' });
+User.belongsToMany(Budget, { through: Permission, foreignKey: 'user_id' });
+
+BudgetMonth.belongsTo(Budget, { 
+  foreignKey: {
+    name: 'budget_id',
+    type: Sequelize.DataTypes.UUID,
+    allowNull: false
+  },
+  onDelete: 'CASCADE', // When the budget is deleted, delete all of its budgetMonths
+  onUpdate: 'CASCADE'
+});
+
+//BudgetMonth.hasMany(Group);
+Group.belongsTo(BudgetMonth, { 
+  foreignKey: {
+    name: 'budget_month_id',
+    type: Sequelize.DataTypes.UUID,
+    allowNull: false
+  },
+  onDelete: 'CASCADE', // When the budgetMonth is deleted, delete all of its groups
+  onUpdate: 'CASCADE'
+});
+
+//Group.hasMany(Envelope);
+Envelope.belongsTo(Group, { 
+  foreignKey: {
+    name: 'group_id',
+    type: Sequelize.DataTypes.UUID,
+    allowNull: false
+  },
+  onDelete: 'CASCADE', // When the group is deleted, delete all of its envelopes
+  onUpdate: 'CASCADE'
+});
+
+//Envelope.hasMany(Transaction);
+Transaction.belongsTo(Envelope, { 
+  foreignKey: {
+    name: 'envelope_id',
+    type: Sequelize.DataTypes.UUID,
+    allowNull: false
+  },
+  onDelete: 'CASCADE', // When the envelope is deleted, delete all of its transactions
+  onUpdate: 'CASCADE'
+});
 
 module.exports = db;

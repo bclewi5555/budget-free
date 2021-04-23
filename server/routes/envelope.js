@@ -15,16 +15,28 @@ const controller = require('../controllers/envelope');
 
 const router = express.Router();
 
+router.post('/',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.requirePerms),
+  asyncHandler(controller.createEnvelope)
+);
+
 router.get('/',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
+  asyncHandler(permController.requirePerms),
   asyncHandler(controller.getEnvelopes)
 );
 
-router.post('/',
+router.put('/:envelopeId',
   asyncHandler(authController.requireAuth),
-  asyncHandler(permController.getPerms),
-  asyncHandler(controller.createEnvelope)
+  asyncHandler(permController.requirePerms),
+  asyncHandler(controller.updateEnvelope)
+);
+
+router.delete('/:envelopeId',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.requirePerms),
+  asyncHandler(controller.deleteEnvelope)
 );
 
 module.exports = router;

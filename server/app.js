@@ -38,7 +38,6 @@ const db = require('./models/db');
 // Route dependencies
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
-const permissionRouter = require('./routes/permission');
 const budgetRouter = require('./routes/budget');
 const budgetMonthRouter = require('./routes/budgetMonth');
 const groupRouter = require('./routes/group');
@@ -143,7 +142,6 @@ Route Configuration
 app.get('/', express.static(path.join(__dirname, '../client/build')));
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
-app.use('/api/v1/permissions', permissionRouter);
 app.use('/api/v1/budgets', budgetRouter);
 app.use('/api/v1/budget-months', budgetMonthRouter);
 app.use('/api/v1/envelope-groups', groupRouter);
