@@ -93,14 +93,15 @@ READ ENVELOPES OF THE GIVEN ENVELOPE GROUP
 ----------------
 */
 exports.getEnvelopes = async (req, res) => {
+  const { groupId } = req.query;
 
   // validate request
-  if (!req.query.groupId) return res.status(400).send('groupId required');
+  if (!groupId) return res.status(400).send('groupId required');
 
   // check if resource(s) referenced exist
   const group = await db.groups.findOne({
     where: { 
-      id: req.query.groupId
+      id: groupId
     }
   });
   if (!group) {
@@ -113,31 +114,25 @@ exports.getEnvelopes = async (req, res) => {
   res.locals.perms.map(perm => {
     budgetIdsPermitted.push(perm.budgetId);
   });
-  //console.log('[Envelope Controller] budgetIdsPermitted: '+budgetIdsPermitted);
   const budgetMonth = await db.budgetMonths.findOne({
     where: { 
       id: group.budget_month_id
     }
   });
-  //console.log('[Envelope Controller] group.budget_month_id: '+group.budget_month_id);
-  //console.log('[Envelope Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
   const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
-  //console.log('[Envelope Controller] permGranted: '+permGranted);
   if (!permGranted) {
     console.log('[Envelope Controller] Permission to the requested resource denied.');
     return res.status(401).send('Permission to the requested resource denied.');
   }
-  //console.log('[Envelope Controller] Permission to the requested resource granted.');
 
   // perform request
   console.log('\n[Envelope Controller] Getting envelopes...');
   const envelopesRes = await db.envelopes.findAll({
     where: { 
-      group_id: req.query.groupId
+      group_id: groupId
     }
   });
   console.log('[Envelope Controller] Done');
-  //console.log('[Envelope Controller] Done: '+JSON.stringify(envelopesRes));
   return res.send(envelopesRes);
 
 };
@@ -148,43 +143,35 @@ UPDATE ENVELOPE
 ----------------
 */
 exports.updateEnvelope = async (req, res) => {
+  const { envelopeId } = req.params;
+  const { groupId, type, label, amountPlanned, isStarred, dueDate, startingBalance, savingsGoal, notes } = req.body;
 
   // validate request
-  if (!req.params.envelopeId) {
+  if (!envelopeId) {
     console.log('[Envelope Conroller] envelopeId required to update an envelope');
     return res.status(400).send('envelopeId required to update an envelope');
   }
-  if (
-    !req.body.groupId && 
-    !req.body.type && 
-    !req.body.label && 
-    !req.body.amountPlanned && 
-    !req.body.isStarred && 
-    !req.body.dueDate && 
-    !req.body.startingBalance &&
-    !req.body.savingsGoal &&
-    !req.body.notes
-    ) {
+  if (!groupId && !type && !label && !amountPlanned && !isStarred && !dueDate && !startingBalance && !savingsGoal && !notes) {
     console.log('[Envelope Conroller] At least one of the following properties is required to update an envelope: groupId, type, label, amountPlanned, isStarred, dueDate, startingBalance, savingsGoal, notes');
     return res.status(400).send('At least one of the following properties is required to update an envelope: groupId, type, label, amountPlanned, isStarred, dueDate, startingBalance, savingsGoal, notes');
   }
-  if (req.body.type && !validTypes.includes(req.body.type)) {
+  if (type && !validTypes.includes(type)) {
     return res.status(400).send('invalid type provided');
   }
-  if (req.body.amountPlanned < 1) {
+  if (amountPlanned < 1) {
     return res.status(400).send('amountPlanned must be a nonzero positive integer');
   }
-  if (req.body.isStarred && req.body.isStarred !== false && req.body.isStarred !== true) {
+  if (isStarred && isStarred !== false && isStarred !== true) {
     return res.status(400).send('isStarred must be a boolean');
   }
-  if (req.body.savingsGoal < 1) {
+  if (savingsGoal < 1) {
     return res.status(400).send('savingsGoal must be a nonzero positive integer');
   }
 
   // check if resource(s) referenced exist
   const envelope = await db.envelopes.findOne({
     where: {
-      id: req.params.envelopeId
+      id: envelopeId
     }
   });
   if (!envelope) {
@@ -192,10 +179,10 @@ exports.updateEnvelope = async (req, res) => {
     return res.status(404).send();
   }
   let newGroup;
-  if (req.body.groupId) {
+  if (groupId) {
     newGroup = await db.groups.findOne({
       where: {
-        id: req.body.groupId
+        id: groupId
       }
     });
     if (!newGroup) {
@@ -219,44 +206,40 @@ exports.updateEnvelope = async (req, res) => {
   res.locals.perms.map(perm => {
     budgetIdsPermitted.push(perm.budgetId);
   });
-  //console.log('[Envelope Controller] budgetIdsPermitted: '+budgetIdsPermitted);
   let newGroupBudgetMonth, permGranted = false, newGroupBudgetId;
-  if (req.body.groupId) {
+  if (groupId) {
     newGroupBudgetMonth = await db.budgetMonths.findOne({
       where: { 
         id: newGroup.budget_month_id
       }
     });
     newGroupBudgetId = newGroupBudgetMonth.budget_id;
-    //console.log('[Envelope Controller] newGroupBudgetId: '+newGroupBudgetId);
     permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id) && budgetIdsPermitted.includes(newGroupBudgetId);
   } else {
     permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
   }
-  //console.log('[Envelope Controller] permGranted: '+permGranted);
   if (!permGranted) {
     console.log('[Envelope Controller] Permission to the requested resource denied.');
     return res.status(401).send('Permission to the requested resource denied.');
   }
-  //console.log('[Envelope Controller] Permission to the requested resource granted.');
   
   // perform request
   console.log('\n[Envelope Controller] Updating envelope...');
   const updateRes = await db.envelopes.update(
     {
-      group_id: req.body.groupId,
-      type: req.body.type,
-      label: req.body.label,
-      amount_planned: req.body.amountPlanned,
-      is_starred: req.body.isStarred,
-      due_date: req.body.dueDate,
-      starting_balance: req.body.startingBalance,
-      savings_goal: req.body.savingsGoal,
-      notes: req.body.notes
+      group_id: groupId,
+      type: type,
+      label: label,
+      amount_planned: amountPlanned,
+      is_starred: isStarred,
+      due_date: dueDate,
+      starting_balance: startingBalance,
+      savings_goal: savingsGoal,
+      notes: notes
     },
   {
     where: {
-      id: req.params.envelopeId
+      id: envelopeId
     }
   }
   );
@@ -275,18 +258,18 @@ DELETE AN ENVELOPE
 ----------------
 */
 exports.deleteEnvelope = async (req, res) => {
+  const { envelopeId } = req.params;
 
   // validate request
-  if (!req.params.envelopeId) {
+  if (!envelopeId) {
     console.log('[Envelope Controller] envelopeId required to delete envelope');
     return res.status(400).send('envelopeId required to delete envelope');
   }
-  //console.log('[Envelope Controller] req.params.envelopeId: '+req.params.envelopeId);
 
   // check if resource(s) referenced exist
   const envelope = await db.envelopes.findOne({
     where: {
-      id: req.params.envelopeId
+      id: envelopeId
     }
   });
   if (!envelope) {
@@ -299,34 +282,27 @@ exports.deleteEnvelope = async (req, res) => {
   res.locals.perms.map(perm => {
     budgetIdsPermitted.push(perm.budgetId);
   });
-  //console.log('[Envelope Controller] budgetIdsPermitted: '+budgetIdsPermitted);
-  //console.log('[Envelope Controller] req.params.envelopeId: '+req.params.envelopeId);
-  //console.log('[Envelope Controller] envelope.group_id: '+envelope.group_id);
   const group = await db.groups.findOne({
     where: {
       id: envelope.group_id
     }
   });
-  //console.log('[Envelope Controller] group.budget_month_id: '+group.budget_month_id);
   const budgetMonth = await db.budgetMonths.findOne({
     where: { 
       id: group.budget_month_id
     }
   });
-  //console.log('[Envelope Controller] budgetMonth.budget_id: '+budgetMonth.budget_id);
   const permGranted = budgetIdsPermitted.includes(budgetMonth.budget_id);
-  //console.log('[Envelope Controller] permGranted: '+permGranted);
   if (!permGranted) {
     console.log('[Envelope Controller] Permission to the requested resource denied.');
     return res.status(401).send('Permission to the requested resource denied.');
   }
-  //console.log('[Envelope Controller] Permission to the requested resource granted.');
 
   // perform request
   console.log('\n[Envelope Controller] Deleting envelope...');
   const deleteRes = await db.envelopes.destroy({
     where: {
-      id: req.params.envelopeId
+      id: envelopeId
     }
   });
   if (deleteRes != 1) { // not using !== because typeof deleteRes is object with int

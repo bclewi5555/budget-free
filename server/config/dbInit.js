@@ -90,27 +90,23 @@ exports.withSampleData = (db) => {
         await db.budgetMonths.create({
           id: homeMarchBudgetMonthId,
           budget_id: homeBudgetId,
-          year: 2021,
-          month: 3
+          date_integer: 202103
         });
         await db.budgetMonths.create({
           id: homeAprilBudgetMonthId,
           budget_id: homeBudgetId,
-          year: 2021,
-          month: 4
+          date_integer: 202104,
         });
 
         await db.budgetMonths.create({
           id: businessMarchBudgetMonthId,
           budget_id: businessBudgetId,
-          year: 2021,
-          month: 3
+          date_integer: 202103
         });
         await db.budgetMonths.create({
           id: businessAprilBudgetMonthId,
           budget_id: businessBudgetId,
-          year: 2021,
-          month: 4
+          date_integer: 202104,
         });
         console.log('[Sequelize] Sample budgetMonths created.');
 
@@ -273,13 +269,6 @@ exports.withSampleData = (db) => {
         // TRANSACTIONS
         const homeAprilKrogerTransactionId = 'e79ed7b2-c14c-4cb0-8045-eaa7669fb1de';
 
-        await db.transactions.create({
-          envelope_id: homeAprilPaychecksEnvelopeId,
-          type: 'income',
-          amount: 100000,
-          date: sequelize.literal('CURRENT_TIMESTAMP'),
-          label: 'Microsoft Paycheck'
-        });
         await db.transactions.create({
           envelope_id: homeAprilPaychecksEnvelopeId,
           type: 'income',

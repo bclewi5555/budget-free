@@ -20,20 +20,21 @@ CREATE NEW TRANSACTION IN THE GIVEN ENVELOPE
 ----------------
 */
 exports.createTransaction = async (req, res) => {
+  const { envelopeId, type, amount, date, label, referenceNumber, notes } = req.body;
 
   // validate request
-  if (!req.body.envelopeId || !req.body.type || !req.body.amount || !req.body.date || !req.body.label) {
+  if (!envelopeId || !type || !amount || !date || !label) {
     console.log('[Transaction Controller] envelopeId, type, amount, date and label required to create new transaction');
     return res.status(400).send('envelopeId, type, amount, date and label required to create new transaction')
   }
-  if (!validTypes.includes(req.body.type)) {
+  if (!validTypes.includes(type)) {
     return res.status(400).send('invalid type provided');
   }
 
   // check if resource(s) referenced exist
   const envelope = await db.envelopes.findOne({
     where: {
-      id: req.body.envelopeId
+      id: envelopeId
     }
   });
   if (!envelope) {
@@ -64,13 +65,13 @@ exports.createTransaction = async (req, res) => {
 
   // perform request
   const newTransaction = await db.transactions.create({
-    envelope_id: req.body.envelopeId,
-    type: req.body.type,
-    amount: req.body.amount,
-    date: req.body.date,
-    label: req.body.label,
-    reference_number: req.body.referenceNumber,
-    notes: req.body.notes
+    envelope_id: envelopeId,
+    type: type,
+    amount: amount,
+    date: date,
+    label: label,
+    reference_number: referenceNumber,
+    notes: notes
   });
   if (!newTransaction) {
     console.log('[Transaction Controller] Failed: The transaction could not be created');
@@ -87,14 +88,15 @@ READ TRANSACTIONS OF THE GIVEN ENVELOPE
 ----------------
 */
 exports.getTransactions = async (req, res) => {
+  const { envelopeId } = req.query;
 
   // validate request
-  if (!req.query.envelopeId) return res.status(400).send('envelopeId required');
+  if (!envelopeId) return res.status(400).send('envelopeId required');
 
   // check if resource(s) referenced exist
   const envelope = await db.envelopes.findOne({
     where: {
-      id: req.query.envelopeId
+      id: envelopeId
     }
   });
   if (!envelope) {
@@ -127,7 +129,7 @@ exports.getTransactions = async (req, res) => {
   console.log('\n[Transaction Controller] Getting transactions...');
   const transactionsRes = await db.transactions.findAll({
     where: { 
-      envelope_id: req.query.envelopeId
+      envelope_id: envelopeId
     }
   });
   if (!transactionsRes) {
@@ -145,28 +147,24 @@ UPDATE TRANSACTION
 ----------------
 */
 exports.updateTransaction = async (req, res) => {
+  const { transactionId } = req.params;
+  const { envelopeId, type, amount, date, label, referenceNumber, notes } = req.body;
 
   // validate request
   if (
-    !req.body.envelopeId && 
-    !req.body.type && 
-    !req.body.amount && 
-    !req.body.date && 
-    !req.body.label && 
-    !req.body.referenceNumber &&
-    !req.body.notes
+    !envelopeId && !type && !amount && !date && !label && !referenceNumber &&!notes
     ) {
     console.log('[Transaction Controller] Invalid Request: At least one property is required to update a transaction: envelopeId, type, amount, date, label, referenceNumber, notes');
     return res.status(400).send('At least one property is required to update a transaction: envelopeId, type, amount, date, label, referenceNumber, notes')
   }
-  if (!validTypes.includes(req.body.type)) {
+  if (!validTypes.includes(type)) {
     return res.status(400).send('invalid type provided');
   }
 
   // check if resource(s) referenced exist
   const transaction = await db.transactions.findOne({
     where: {
-      id: req.params.transactionId
+      id: transactionId
     }
   });
   if (!transaction) {
@@ -174,10 +172,10 @@ exports.updateTransaction = async (req, res) => {
     return res.status(404).send('The requested resource was not found');
   }
   let newEnvelope;
-  if (req.body.envelopeId) {
+  if (envelopeId) {
     newEnvelope = await db.envelopes.findOne({
       where: {
-        id: req.body.envelopeId
+        id: envelopeId
       }
     });
     if (!newEnvelope) {
@@ -207,7 +205,7 @@ exports.updateTransaction = async (req, res) => {
     budgetIdsPermitted.push(perm.budgetId);
   });
   let permGranted;
-  if (req.body.envelopeId) {
+  if (envelopeId) {
     const newEnvelopeGroup = await db.groups.findOne({
       where: {
         id: newEnvelope.group_id
@@ -231,17 +229,17 @@ exports.updateTransaction = async (req, res) => {
   console.log('\n[Transaction Controller] Updating transaction...');
   const newTransaction = await db.transactions.update(
     {
-      envelope_id: req.body.envelopeId,
-      type: req.body.type,
-      amount: req.body.amount,
-      date: req.body.date,
-      label: req.body.label,
-      reference_number: req.body.referenceNumber,
-      notes: req.body.notes
+      envelope_id: envelopeId,
+      type: type,
+      amount: amount,
+      date: date,
+      label: label,
+      reference_number: referenceNumber,
+      notes: notes
     },
     {
       where: {
-        id: req.params.transactionId
+        id: transactionId
       }
     }
   );
@@ -260,9 +258,10 @@ DELETE A TRANSACTION
 ----------------
 */
 exports.deleteTransaction = async (req, res) => {
+  const { transactionId } = req.params;
 
   // validate request
-  if (!req.params.transactionId) {
+  if (!transactionId) {
     console.log('[Transaction Controller] transactionId required to delete transaction');
     return res.status(400).send('transactionId required to delete transaction');
   }
@@ -270,7 +269,7 @@ exports.deleteTransaction = async (req, res) => {
   // check if resource(s) referenced exist
   const transaction = await db.transactions.findOne({
     where: {
-      id: req.params.transactionId
+      id: transactionId
     }
   });
   if (!transaction) {
@@ -308,7 +307,7 @@ exports.deleteTransaction = async (req, res) => {
   console.log('\n[Transaction Controller] Deleting transaction...');
   const deleteRes = await db.transactions.destroy({
     where: {
-      id: req.params.transactionId
+      id: transactionId
     }
   });
   if (deleteRes != 1) { // not using !== because typeof deleteRes is object with int

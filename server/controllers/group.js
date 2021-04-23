@@ -74,14 +74,15 @@ READ GROUPS (OF ENVELOPES) OF THE GIVEN BUDGET MONTH
 ----------------
 */
 exports.getGroups = async (req, res) => {
+  const { budgetMonthId } = req.query;
 
   // validate request
-  if (!req.query.budgetMonthId) return res.status(400).send('budgetMonthId required');
+  if (!budgetMonthId) return res.status(400).send('budgetMonthId required');
 
   // check if resource(s) referenced exist
   const budgetMonth = await db.budgetMonths.findOne({
     where: { 
-      id: req.query.budgetMonthId
+      id: budgetMonthId
     }
   });
   if (!budgetMonth) {
@@ -104,7 +105,7 @@ exports.getGroups = async (req, res) => {
   console.log('\n[Group Controller] Getting groups...');
   const groupsRes = await db.groups.findAll({
     where: { 
-      budget_month_id: req.query.budgetMonthId
+      budget_month_id: budgetMonthId
     }
   });
   if (!groupsRes) {
@@ -122,9 +123,11 @@ UPDATE GROUP (OF ENVELOPES)
 ----------------
 */
 exports.updateGroup = async (req, res) => {
+  const { groupId } = req.params;
+  const { label, budgetMonthId } = req.body;
 
   // validate request
-  if (!req.params.groupId || (!req.body.label && !req.body.budgetMonthId) ) {
+  if (!groupId || (!label && !budgetMonthId) ) {
     console.log('[Group Controller] Invalid Request: groupId and either label or budgetMonthId are\ required to update a group.');
     return res.status(400).send('groupId and either label or budgetMonthId are required to update a group.');
   }
@@ -132,7 +135,7 @@ exports.updateGroup = async (req, res) => {
   // check if resource(s) referenced exist
   const group = await db.groups.findOne({
     where: {
-      id: req.params.groupId
+      id: groupId
     }
   });
   if (!group) {
@@ -141,10 +144,10 @@ exports.updateGroup = async (req, res) => {
   }
 
   let newBudgetMonth;
-  if (req.body.budgetMonthId) { // if user provided a new budgetMonthId in req.body
+  if (budgetMonthId) { // if user provided a new budgetMonthId in req.body
     newBudgetMonth = await db.budgetMonths.findOne({
       where: {
-        id: req.body.budgetMonthId
+        id: budgetMonthId
       }
     });
     if (!newBudgetMonth) {
@@ -164,7 +167,7 @@ exports.updateGroup = async (req, res) => {
     budgetIdsPermitted.push(perm.budgetId);
   });
   let permGranted;
-  if (req.body.budgetMonthId) {
+  if (budgetMonthId) {
     permGranted = 
       budgetIdsPermitted.includes(budgetMonth.budget_id) && 
       budgetIdsPermitted.includes(newBudgetMonth.budget_id);
@@ -180,10 +183,10 @@ exports.updateGroup = async (req, res) => {
   console.log('\n[Group Controller] Updating group...');
   const updateRes = await db.groups.update(
   {
-    budget_month_id: req.body.budgetMonthId,
-    label: req.body.label
+    budget_month_id: budgetMonthId,
+    label: label
   },
-  { where: { id: req.params.groupId}}
+  { where: { id: groupId}}
   );
   if (updateRes != 1) { // not using !== because typeof updateRes is object with int
     console.log('[Group Controller] Failed: The requested resource could not be updated');
@@ -200,9 +203,10 @@ DELETE A GROUP
 ----------------
 */
 exports.deleteGroup = async (req, res) => {
+  const { groupId } = req.params;
 
   // validate request
-  if (!req.params.groupId) {
+  if (!groupId) {
     console.log('[Group Controller] groupId required to delete group');
     return res.status(400).send('groupId required to delete group');
   }
@@ -210,7 +214,7 @@ exports.deleteGroup = async (req, res) => {
   // check if resource(s) referenced exist
   const group = await db.groups.findOne({
     where: {
-      id: req.params.groupId
+      id: groupId
     }
   });
   if (!group) {
@@ -238,7 +242,7 @@ exports.deleteGroup = async (req, res) => {
   console.log('\n[Group Controller] Deleting group...');
   const deleteRes = await db.groups.destroy({
     where: {
-      id: req.params.groupId
+      id: groupId
     }
   });
   if (deleteRes != 1) { // not using !== because typeof deleteRes is object with int

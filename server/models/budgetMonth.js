@@ -11,11 +11,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
-    year: {
-      type: Sequelize.DataTypes.INTEGER,
-      allowNull: false
-    },
-    month: {
+    date_integer: {
       type: Sequelize.DataTypes.INTEGER,
       allowNull: false
     }

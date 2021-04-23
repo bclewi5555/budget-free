@@ -64,18 +64,6 @@ const Transaction = db.transactions;
 Budget.belongsToMany(User, { through: Permission, foreignKey: 'budget_id' });
 User.belongsToMany(Budget, { through: Permission, foreignKey: 'user_id' });
 
-//Budget.hasMany(BudgetMonth);
-BudgetMonth.hasOne(Budget, {
-  foreignKey: {
-    name: 'default_budget_month_id',
-    type: Sequelize.DataTypes.UUID,
-    allowNull: true,
-    defaultValue: null
-  },
-  constraints: false,
-  onDelete: 'SET NULL', // When the budgetMonth is deleted, set default_budget_month_id reference to null
-  onUpdate: 'CASCADE'
-});
 BudgetMonth.belongsTo(Budget, { 
   foreignKey: {
     name: 'budget_id',
@@ -85,7 +73,6 @@ BudgetMonth.belongsTo(Budget, {
   onDelete: 'CASCADE', // When the budget is deleted, delete all of its budgetMonths
   onUpdate: 'CASCADE'
 });
-
 
 //BudgetMonth.hasMany(Group);
 Group.belongsTo(BudgetMonth, { 

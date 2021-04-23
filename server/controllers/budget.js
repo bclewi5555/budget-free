@@ -7,7 +7,6 @@ Budget controller
 // Model dependencies
 const { sequelize } = require('../models/db');
 const db = require('../models/db');
-const group = require('../models/group');
 
 /*
 Sequelize Operators for queries
@@ -21,9 +20,10 @@ CREATE NEW BUDGET FOR THE AUTHENTICATED USER
 ----------------
 */
 exports.createBudget = async (req, res) => {
+  const { label } = req.body;
 
   // validate request
-  if (!req.body.label) {
+  if (!label) {
     console.log('[Budget Controller] label required to create new budget');
     return res.status(400).send('label required to create new budget');
   }
@@ -31,16 +31,14 @@ exports.createBudget = async (req, res) => {
   // perform request
   console.log('\n[Budget Controller] Creating new budget...');
   const newBudget = await db.budgets.create({
-    label: req.body.label
+    label: label
   });
-  //console.log(newBudget);
   const newPerm = await db.permissions.create({
     budget_id: newBudget.id,
     user_id: res.locals.authUser.id,
     is_owner: true,
     is_admin: true
   });
-  //console.log(newPerm);
   console.log('[Budget Controller] Done: New budget created with id: '+newBudget.id);
   return res.status(200).send({
     newBudget: newBudget,
@@ -95,10 +93,10 @@ exports.createBudgetFromTemplate = async (req, res) => {
   const date = new Date();
   const currYear = date.getFullYear();
   const currMonth = date.getMonth()+1; // zero indexed (0-11)
+  const dateInteger = parseInt(''+currYear+currMonth);
   const newBudgetMonth = await db.budgetMonths.create({
     budget_id: newBudget.id,
-    year: currYear,
-    month: currMonth
+    date_integer: dateInteger
   });
   if (!newBudgetMonth) {
     console.log('[Budget Controller] Failed: Could not create new budgetMonth');
@@ -519,19 +517,21 @@ exports.getBudgetMonthSummary = async (req, res) => {
     return res.status(404).send('transaction income could not be found');
   }
 
-  const spentRes = await db.transactions.findAll({
-    attributes: [[sequelize.fn('SUM', sequelize.col('amount')), 'spent']], 
-    where: {
-        type: 'expense',
-        envelope_id: { [Op.or]: envelopeIds }
-    },
-    raw: true
-  });
-  if (spentRes[0].spent == null) {
-    console.log('[Group Controller] Failed: transaction spending could not be found');
-    return res.status(404).send('transaction spending could not be found');
+  let spentRes;
+  try {
+    spentRes = await db.transactions.findAll({
+      attributes: [[sequelize.fn('SUM', sequelize.col('amount')), 'spent']], 
+      where: {
+          type: 'expense',
+          envelope_id: { [Op.or]: envelopeIds }
+      },
+      raw: true
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send('could not get transaction spending');
   }
-
+  
   // get group summary data
 
   // for each defaultGroup...
@@ -561,7 +561,7 @@ exports.getBudgetMonthSummary = async (req, res) => {
           console.log('[Group Controller] Failed: envelope planned amounts could not be found');
           break;
         }
-        defaultGroups[i].planned = groupPlanned[0].planned;
+        defaultGroups[i].planned = parseInt(groupPlanned[0].planned);
 
     }
   } catch (err) {
@@ -587,7 +587,7 @@ exports.getBudgetMonthSummary = async (req, res) => {
         console.log('[Group Controller] Failed: transactions could not be found');
         break;
       }
-      defaultGroups[i].spent = groupExpenseSum[0].spent;;
+      defaultGroups[i].spent = parseInt(groupExpenseSum[0].spent);
       defaultGroups[i].remaining = defaultGroups[i].planned - defaultGroups[i].spent;
 
     }
@@ -597,10 +597,17 @@ exports.getBudgetMonthSummary = async (req, res) => {
   }
 
   // format result
-  const income = incomeRes[0].income; 
-  const budgeted = budgetedRes[0].budgeted; 
-  const received = receivedRes[0].received; 
-  const spent = spentRes[0].spent;
+  const income = parseInt(incomeRes[0].income); 
+  const budgeted = parseInt(budgetedRes[0].budgeted); 
+  const received = parseInt(receivedRes[0].received);
+
+  let spent;
+  if (!spentRes || spentRes[0].spent == null) {
+    spent = 0;
+  } else {
+    spent = parseInt(spentRes[0].spent);
+  }
+
   const leftToBudget = income - budgeted;
   const remaining = received - spent;
 
@@ -634,9 +641,11 @@ UPDATE A BUDGET OF THE AUTHENTICATED USER
 ----------------
 */
 exports.updateBudget = async (req, res) => {
+  const { budgetId } = req.params;
+  const { label } = req.body;
 
   // validate request
-  if (!req.params.budgetId || !req.body.label) {
+  if (!budgetId || !label) {
     console.log('[Budget Controller] budgetId and label required to update budget');
     return res.status(400).send('budgetId and label required to update budget');
   }
@@ -644,7 +653,7 @@ exports.updateBudget = async (req, res) => {
   // check if resource(s) referenced exist
   const budget = await db.budgets.findOne({
     where: {
-      id: req.params.budgetId
+      id: budgetId
     }
   });
   if (!budget) {
@@ -657,7 +666,7 @@ exports.updateBudget = async (req, res) => {
   res.locals.perms.map(perm => {
     budgetIdsPermitted.push(perm.budgetId);
   });
-  if (!budgetIdsPermitted.includes(req.params.budgetId)) {
+  if (!budgetIdsPermitted.includes(budgetId)) {
     console.log('[Budget Controller] Permission to the requested resource denied');
     return res.status(401).send('Permission to the requested resource denied');
   }
@@ -665,8 +674,8 @@ exports.updateBudget = async (req, res) => {
   // perform request
   console.log('\n[Budget Controller] Updating budgets...');
   const updateRes = await db.budgets.update(
-    { label: req.body.label },
-    { where: { id: req.params.budgetId }}
+    { label: label },
+    { where: { id: budgetId }}
   );
   if (updateRes != 1) { // not using !== because typeof updateRes is object with int
     console.log('[Budget Controller] Failed: The requested resource could not be updated');
@@ -683,18 +692,18 @@ DELETE A BUDGET OF THE AUTHENTICATED USER
 ----------------
 */
 exports.deleteBudget = async (req, res) => {
+  const { budgetId } = req.params;
 
   // validate request
-  if (!req.params.budgetId) {
+  if (!budgetId) {
     console.log('[Budget Controller] budgetId required to delete budget');
     return res.status(400).send('budgetId required to delete budget');
   }
-  //console.log('[Budget Controller] req.params.budgetId: '+req.params.budgetId);
 
   // check if resource(s) referenced exist
   const budget = await db.budgets.findOne({
     where: {
-      id: req.params.budgetId
+      id: budgetId
     }
   });
   if (!budget) {
@@ -708,7 +717,7 @@ exports.deleteBudget = async (req, res) => {
     budgetIdsPermitted.push(perm.budgetId);
   });
   //console.log('[Budget Controller] permBudgetIds: '+permBudgetIds);
-  if (!budgetIdsPermitted.includes(req.params.budgetId)) {
+  if (!budgetIdsPermitted.includes(budgetId)) {
     console.log('[Budget Controller] Permission to the requested resource denied');
     return res.status(401).send('Permission to the requested resource denied');
   }
@@ -717,7 +726,7 @@ exports.deleteBudget = async (req, res) => {
   console.log('\n[Budget Controller] Deleting budget...');
   const deleteRes = await db.budgets.destroy({
     where: {
-      id: req.params.budgetId
+      id: budgetId
     }
   });
   if (deleteRes != 1) { // not using !== because typeof deleteRes is object with int

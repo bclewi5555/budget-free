@@ -105,41 +105,7 @@ UPDATE SELF
 exports.updateUser = async (req, res) => {
   const { firstName, lastName, email, username, password, subscription, defaultBudgetId } = req.body;
 
-  // validate request
-  /*
-  if (!firstName && !lastName && !email && !username && !password && !subscription && !defaultBudgetId) {
-    console.log('[User Controller] Invalid Request: at least one of the following properties is required to update a user: firstName, lastName, email, userName, password, subscription, defaultBudgetId');
-    return res.status(400).send('at least one of the following properties is required to update a user: firstName, lastName, email, userName, password, subscription, defaultBudgetId');
-  }
-  
-  if (
-    (firstName && firstName.length > 255) || 
-    (lastName && lastName.length > 255) || 
-    (email && email.length > 255) || 
-    (username && username.length > 255) || 
-    (password && password.length > 255) || 
-    (defaultBudgetId && defaultBudgetId > 255)
-    ) {
-    console.log('[User Controller] Invalid Request: properties must not exceed 255 characters');
-    return res.status(400).send('properties must not exceed 255 characters');
-  }
-  if (
-    (firstName && firstName.length < 2) || 
-    (lastName && lastName.length < 2)
-    ) {
-    console.log('[User Controller] Invalid Request: length of firstName and lastName properties must be at least 2 characters');
-    return res.status(400).send('length of firstName and lastName properties must be at least 2 characters');
-  }
-  if ((email && email.length < 8) || 
-  (username && username.length < 8)) {
-    console.log('[User Controller] Invalid Request: length of email and username properties must be at least 8 characters');
-    return res.status(400).send('length of email and username properties must be at least 8 characters');
-  }
-  if (subscription && subscription !== true && subscription !== false) {
-    console.log('[User Controller] Invalid Request: subscription must be a boolean value');
-    return res.status(400).send('subscription must be a boolean value');
-  }
-  */
+  // request validation done by validateResource(userUpdateSchema) middleware and passes to next() if valid
 
   // check if resource(s) referenced exist
   let defaultBudget;
@@ -186,14 +152,10 @@ exports.updateUser = async (req, res) => {
       return res.status(400).send('The requested username and/or email is already associated with an account.');
     }
   }
-  
 
   // perform request
-
-  // Enrypt password
   let hash;
-  if (password) hash = await bcrypt.hash(req.body.password, 10);
-
+  if (password) hash = await bcrypt.hash(password, 10);
   const updateRes = await db.users.update(
     {
       first_name: firstName,
@@ -219,13 +181,14 @@ DELETE SELF
 ----------------
 */
 exports.deleteAccount = async (req, res) => {
+  const { userIdConfirmation } = req.params;
 
   // validate request
-  if (!req.params.userIdConfirmation) {
+  if (!userIdConfirmation) {
     console.log('[User Controller] Invalid Request: userIdConfirmation is required to delete a user');
     return res.status(400).send('userIdConfirmation is required to delete a user');
   }
-  if (req.session.passport.user !== req.params.userIdConfirmation) {
+  if (req.session.passport.user !== userIdConfirmation) {
     console.log('[User Controller] Invalid Request: userIdConfirmation must be the id of the authorized user');
     return res.status(400).send('userIdConfirmation must be the id of the authorized user');
   }
