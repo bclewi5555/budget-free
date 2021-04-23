@@ -1,13 +1,13 @@
 import * as React from 'react';
 import Paper from '@material-ui/core/Paper';
+/*
 import {
   Chart,
-  LineSeries,
   PieSeries,
   Title,
-} from '@devexpress/dx-react-chart-material-ui';
-
-import { Animation } from '@devexpress/dx-react-chart';
+} from 'chart.js';
+import { Animation } from 'chart.js';
+*/
 
 const data = [
   { region: 'Asia', val: 4119626293 },
@@ -18,7 +18,7 @@ const data = [
   { region: 'Oceania', val: 35104756 },
 ];
 
-export default class Demo extends React.PureComponent {
+export default class BudgetMonthSummary extends React.PureComponent {
   constructor(props) {
     super(props);
 
