@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import BudgetMonth from './BudgetMonth';
-//import StaticDatePicker from './StaticDatePicker';
+import StaticDatePicker from './testComponents/StaticDatePicker';
 //import SimmpleAccordion from "./SimpleAccordion"
 //import {createMuiTheme, ThemeProvider} from "@material-ui/core";
 //import Card from '@material-ui/core/Card'
 import { makeStyles } from '@material-ui/core/styles';
-//import Random from './Random';
+import Transaction from './detailListComponents/Transaction'
+
+
+
+
 
 const useStyles = makeStyles ({
   root: {
@@ -19,10 +23,15 @@ export default function Budget(props) {
   const classes = useStyles();
 
   return(
-    <div className = {classes.root}>
+    <div >
+       
       <BudgetMonth budgetMonthId={budgetMonthId} setBudgetMonthId={setBudgetMonthId}/>
-      {/* <StaticDatePicker/>
-      <Random/> */}
+      {/* <Random/> */}
+      <Transaction/>
+     
+      
+    
+     
     </div>
   );
 
