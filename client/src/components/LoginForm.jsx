@@ -147,12 +147,12 @@ export default function LoginForm(props) {
           <Grid container justify="flex-end">
             <Grid item xs>
               <Link component={RouterLink} to='/login' variant="body2">
-                Forgot password?
+                Forgot Password
               </Link>
             </Grid>
             <Grid item>
               <Link component={RouterLink} to='/signup' variant="body2">
-                {"Don't have an account? Sign Up"}
+                {"Sign Up"}
               </Link>
             </Grid>
           </Grid>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Demo from './Demo'
+import BudgetMonthSummary from './BudgetMonthSummary'
 //import DetailList from './detailListComponents/DetailList';
 import Button from "@material-ui/core/Button"
 
@@ -11,7 +11,7 @@ export default function BudgetMonth(props) {
 
   return(
     <div>
-      <Demo/>
+      <BudgetMonthSummary/>
      
       <EnvelopeGroupList budgetMonthId={props.budgetMonthId} envelopeSelection={envelopeSelection} setEnvelopeSelection={setEnvelopeSelection} />
       {/*<DetailList envelopeSelection={envelopeSelection} />*/}
