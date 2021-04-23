@@ -1,68 +1,29 @@
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
+import BudgetMonth from './BudgetMonth';
+//import StaticDatePicker from './StaticDatePicker';
+//import SimmpleAccordion from "./SimpleAccordion"
+//import {createMuiTheme, ThemeProvider} from "@material-ui/core";
+//import Card from '@material-ui/core/Card'
 import { makeStyles } from '@material-ui/core/styles';
-import { Redirect } from 'react-router-dom';
+//import Random from './Random';
 
-import AuthService from '../services/AuthService';
+const useStyles = makeStyles ({
+  root: {
+    height: "100vh",
+    background: "#eeeeee"
+  },
+});
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
-
-export default function SignupForm() {
+export default function Budget(props) {
+  const [budgetMonthId, setBudgetMonthId] = useState('1d8b021a-d5ac-4043-8038-5cca73346d61');
   const classes = useStyles();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [redirect, setRedirect] = useState('');
-
-  async function handleClick() {
-    setIsLoading(true);
-    try {
-      const res = await AuthService.logout();
-      if (res.status !== 200) {
-        console.log(res);
-      }
-      setRedirect('/login');
-    } catch (err) {
-      console.log(err);
-      setIsLoading(false);
-    }
-  }
-
-  if (redirect) {
-    return(
-      <Redirect to='/login' />
-    );
-  }
-
   return(
-    <div>
-    <Button
-      type="button"
-      onClick={handleClick}
-      fullWidth
-      variant="contained"
-      color="primary"
-      className={classes.submit}
-      disabled={isLoading}
-    >Logout</Button>
-      <h1>Budget</h1>
+    <div className = {classes.root}>
+      <BudgetMonth budgetMonthId={budgetMonthId} setBudgetMonthId={setBudgetMonthId}/>
+      {/* <StaticDatePicker/>
+      <Random/> */}
     </div>
   );
+
 }

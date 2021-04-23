@@ -38,6 +38,11 @@ const db = require('./models/db');
 // Route dependencies
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
+const budgetRouter = require('./routes/budget');
+const budgetMonthRouter = require('./routes/budgetMonth');
+const groupRouter = require('./routes/group');
+const envelopeRouter = require('./routes/envelope');
+const transactionRouter = require('./routes/transaction');
 
 /*
 ------------------------
@@ -45,11 +50,19 @@ Server Setup
 ------------------------
 */
 const app = express();
+function extendDefaultFields(defaults, session) {
+  return {
+    data: defaults.data,
+    expires: defaults.expires,
+    userId: session.userId
+  };
+}
 const sessionStore = new SequelizeStore({
   db: db.sequelize,
-  tableName: 'sessions',
+  table: 'sessions',
   checkExpirationInterval: process.env.SESSION_STORE_CLEANUP_INTERVAL, // 15 min
-  expiration: process.env.SESSION_STORE_EXPIRATION // 24 hrs
+  expiration: process.env.SESSION_STORE_EXPIRATION, // 24 hrs
+  extendDefaultFields: extendDefaultFields
 });
 configurePassport(passport);
 
@@ -114,12 +127,11 @@ app.use(flashMessageMiddleware.flashMessages);
 
 /*
 ------------------------
-Database Instantiation
+Database Instantiation With Sample Data
 ------------------------
 */
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Sequelize dropped and re-synced the database.');
-});
+const dbInit = require('./config/dbInit');
+dbInit.withSampleData(db);
 
 /*
 ------------------------
@@ -128,7 +140,13 @@ Route Configuration
 */
 // serve React static files
 app.get('/', express.static(path.join(__dirname, '../client/build')));
-app.use('/api/v1/user', userRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/budgets', budgetRouter);
+app.use('/api/v1/budget-months', budgetMonthRouter);
+app.use('/api/v1/envelope-groups', groupRouter);
+app.use('/api/v1/envelopes', envelopeRouter);
+app.use('/api/v1/transactions', transactionRouter);
+
 
 module.exports = app;

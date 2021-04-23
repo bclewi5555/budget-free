@@ -4,9 +4,6 @@ Authentication controller
 ======================================================
 */
 
-// Module dependencies
-const bcrypt = require('bcrypt');
-
 // Model dependencies
 const db = require('../models/db');
 
@@ -15,44 +12,83 @@ require('../config/auth');
 
 exports.login = (req, res) => {
   console.log('\n[Auth Controller] Issued Session ID: '+req.sessionID);
-  res.json({sessionID: req.sessionID});
+  return res.status(200).json({sessionId: req.sessionID});
 };
 
 exports.validateSession = async (req, res) => {
   if (!req.sessionID) {
-    return res.status(401);
+    return res.status(401); // unauthorized
   }
-  try {
 
-    // validate session
-    console.log('\n[Auth Controller] Validating session...');
-    const validSession = await db.sessions.findOne({
-      where: {sid: req.sessionID}
-    });
-    if (!validSession) {
-      return res.status(401).send('Invalid session');
-    }
-    console.log(validSession);
-    console.log('[Auth Controller] Session validated.');
-
-    // validate user
-    console.log('[Auth Controller] Validating user...');
-    const userID = validSession.data.passport.user;
-    console.log(userID);
-    const validUser = await db.users.findOne({
-      where: {id: userID}
-    });
-    if (!validUser) {
-      return res.status(401).send('Invalid user');
-    }
-    console.log('[Auth Controller] User validated.');
-
-    res.status(200).send('OK');
-
-  } catch(err) {
-    console.log(err.message);
-    res.status(500).json(err.message);
+  // validate session
+  console.log('\n[Auth Controller] Validating session...');
+  const validSession = await db.sessions.findOne({
+    where: { sid: req.sessionID }
+  });
+  if (!validSession) {
+    return res.status(401).send('Invalid session'); // unauthorized
   }
+  console.log(validSession);
+  console.log('[Auth Controller] Session validated.');
+
+  // validate user
+  console.log('[Auth Controller] Validating user...');
+  const userId = validSession.data.passport.user;
+  console.log(userId);
+  const validUser = await db.users.findOne({
+    where: { id: userId }
+  });
+  if (!validUser) {
+    return res.status(401).send('Invalid user'); // unauthorized
+  }
+  console.log('[Auth Controller] User validated.');
+
+  return res.status(200).send('OK');
+
+};
+
+exports.requireAuth = async (req, res, next) => {
+
+  // validate request
+  if (!req.sessionID) {
+    console.log('[Auth Controller] sessionID required');
+    return res.status(401); // unauthorized
+  }
+
+  // validate session
+  console.log('\n[Auth Controller] Checking authorization...');
+  const validSession = await db.sessions.findOne({
+    where: { sid: req.sessionID }
+  });
+  if (!validSession) {
+    console.log('[Auth Controller] Failed: Invalid session.');
+    return res.status(401).send(); // unauthorized
+  }
+  const sessionData = JSON.parse(validSession.data);
+  if (!sessionData.passport) {
+    console.log('[Auth Controller] Failed: Missing passport.');
+    return res.status(401).send(); // unauthorized
+  }
+  
+  // validate user
+  const userId = sessionData.passport.user;
+  if (!userId) {
+    console.log('[Auth Controller] Failed: Invalid passport.');
+    return res.status(401).send(); // unauthorized
+  }
+  const validUser = await db.users.findOne({
+    where: { id: userId }
+  });
+  if (!validUser) {
+    console.log('[Auth Controller] Failed: Invalid user.');
+    return res.status(404).send('Could not find the requested user');
+  }
+
+  res.locals.authUser = validUser;
+  res.locals.validSession = validSession;
+  console.log('[Auth Controller] Done: authorized.');
+  next();
+
 };
 
 exports.logout = (req, res) => {
@@ -60,121 +96,17 @@ exports.logout = (req, res) => {
     return res.status(500).send('No authenticated user to log out.');
   }
   try {
-    const destroyedSessionID = req.sessionID;
+    const destroyedSessionId = req.sessionID;
     console.log('\n[Auth Controller] Logging out...');
     req.logOut();
     req.session.destroy((err) => {
       console.log('[Auth Controller] Done: Logged out.');
-      console.log('[Auth Controller] Destroyed Session ID: '+destroyedSessionID);
-      res.json({destroyedSessionID: destroyedSessionID});
+      console.log('[Auth Controller] Destroyed Session ID: '+destroyedSessionId);
+      return res.status(200).json({destroyedSessionId: destroyedSessionId});
       //res.redirect('/login');
     });
   } catch(err) {
     console.error(err.message);
-    res.status(500).json(err.message);
+    return res.status(500).json(err.message);
   }
 };
-
-/* For views only
-exports.redirectAuthenticatedUsers = (req, res, next) => {
-  //console.log('\n[Auth Controller] Redirecting authenticated users...');
-  if (req.isAuthenticated()) {
-    console.log('[Auth Controller] You are already authenticated. Redirecting...');
-    return res.redirect('/');
-  }
-  //console.log('[Auth Controller] Done: No users to redirect.');
-  next();
-};
-*/
-
-exports.requireApiAuthentication = (req, res, next) => {
-  console.log('\n[Auth Controller] Authenticating...');
-  if (req.isAuthenticated()) {
-    console.log('[Auth Controller] Access Granted.');
-    return next();
-  }
-  console.log('[Auth Controller] Acces Denied.');
-  res.send({ 
-    error: {
-      message: '[Auth Controller] Acces Denied.'
-    }
-  });
-};
-
-/*
-exports.requireViewAuthentication = (req, res, next) => {
-  console.log('\n[Auth Controller] Authenticating...');
-  if (req.isAuthenticated()) {
-    console.log('[Auth Controller] Access Granted.');
-    return next();
-  }
-  console.log('[Auth Controller] Acces Denied. Redirecting...');
-  res.redirect('/login');
-};
-*/
-
-exports.signup = async (req, res) => {
-  console.log('\n[Auth Controller] Signing up...');
-  try {
-    //console.log(req.body);
-
-    // Validate Request
-    const validRequest = (req.body.firstName != null) 
-    && (req.body.lastName != null) 
-    && (req.body.email != null) 
-    && (req.body.username != null) 
-    && (req.body.password != null)
-    && (req.body.subscription != null);
-    //console.log(`validRequest: ${validRequest}`);
-    if (!validRequest) {
-      return res.status(400).send({
-        message: 'Invalid Request: Users must provide all required data fields to sign up.'
-      });
-    }
-
-    // Validate Availability of Credentials 
-    const credentialsTaken = await db.users.findOne({
-      where: {
-        [db.Sequelize.Op.or]: [
-          { username: req.body.username },
-          { email: req.body.email }
-        ]
-      }
-    });
-    if (credentialsTaken) {
-      console.log('The credentials provided are already associated with an account.');
-      return res.status(400).send({ message: 'The credentials provided are already associated with an account.' });
-    }
-    //console.log('The credentials provided are available.');
-
-    // Enrypt password
-    const hash = await bcrypt.hash(req.body.password, 10);
-    //console.log(`hashedPassword: ${hash}`);
-
-    // Create user object
-    const user = {
-      // id is autogenerated
-      email: req.body.email,
-      passwordHash: hash,
-      username: req.body.username,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      subscription: req.body.subscription
-    };
-    //console.log(`user: ${JSON.stringify(user)}`);
-
-    // Save user to database
-    const newUser = await db.users.create(user);
-    console.log('[Auth Controller] Done: Signed up new user.');
-    res.json({id: newUser.id});
-    // If successful, redirect to login page
-    //res.redirect('/login');
-
-  } catch (err) {
-    console.error(`[Auth Controller] Error: ${err.message}`);
-    res.status(500).json(err.message);
-    // If error, redirect back to signup page
-    //res.redirect('/register');
-  }
-
-}

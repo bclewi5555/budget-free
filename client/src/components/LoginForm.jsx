@@ -83,7 +83,7 @@ export default function LoginForm(props) {
   });
 
   if (redirect !== '') {
-    console.log('Redirect: '+redirect);
+    console.log('[LoginForm] Redirect: '+redirect);
     return (
       <Redirect to={redirect} />
     );

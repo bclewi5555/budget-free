@@ -6,15 +6,12 @@ Passport authentication API router
 
 // Module dependencies
 const express = require('express');
+const asyncHandler = require('express-async-handler');
 const passport = require('passport');
 const router = express.Router();
 
 // Controller dependencies
 const controller = require('../controllers/auth');
-
-router.post('/signup',
-  controller.signup
-);
 
 router.post('/login',
   passport.authenticate('local', {
@@ -26,7 +23,7 @@ router.post('/login',
 );
 
 router.post('/session',
-  controller.validateSession
+  asyncHandler(controller.validateSession)
 );
 
 router.post('/logout',

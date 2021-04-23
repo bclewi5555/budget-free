@@ -13,7 +13,7 @@ const AuthService = {
   async signup(user) {
     console.log('[AuthService] Signing up...');
     try {
-      const res = await axios.post('/api/v1/auth/signup',
+      const res = await axios.post('/api/v1/users/signup', // moved from auth to users
         {
           firstName: user.firstName,
           lastName: user.lastName,
@@ -71,7 +71,8 @@ const AuthService = {
         return false;
       }
       this._isAuth = true;
-      return res;
+      //return res;
+      return true;
     } catch (err) {
       console.log(err);
       this._isAuth = false;
@@ -88,10 +89,10 @@ const AuthService = {
         console.log(res);
         return false;
       }
-      const destroyedSessionID = sessionStorage.getItem('sid');
+      const destroyedSessionId = sessionStorage.getItem('sid');
       sessionStorage.removeItem('sid');
       this._isAuth = false;
-      console.log('[AuthService] Done: Destroyed Session ID: '+destroyedSessionID);
+      console.log('[AuthService] Done: Destroyed Session ID: '+destroyedSessionId);
       return res;
     } catch (err) {
       console.log(err);

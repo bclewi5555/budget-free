@@ -4,47 +4,35 @@ Transaction table model
 ======================================================
 */
 
-// Module dependencies
-const { DataTypes, Deferrable } = require("sequelize");
-
 module.exports = (sequelize, Sequelize) => {
   const Transaction = sequelize.define('transactions', {
     id: {
       primaryKey: true,
-      type: DataTypes.UUID,
+      type: Sequelize.DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4
     },
-    envelopeId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: 'envelopes',
-        key: 'id',
-        deferrable: Deferrable.INITIALLY_IMMEDIATE
-      }
-    },
-    type: {
-      type: DataTypes.STRING,
+    type: { // transfer?
+      type: Sequelize.DataTypes.STRING,
       allowNull: false
     },
     amount: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.DataTypes.INTEGER,
       allowNull: false
     },
     date: {
-      type: DataTypes.DATEONLY,
+      type: Sequelize.DataTypes.DATEONLY,
       allowNull: false
     },
     label: {
-      type: DataTypes.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: false
     },
-    referenceNumber: {
-      type: DataTypes.STRING,
+    reference_number: {
+      type: Sequelize.DataTypes.STRING,
       allowNull: true
     },
     notes: {
-      type: DataTypes.STRING,
+      type: Sequelize.DataTypes.STRING,
       allowNull: true
     }
   });
