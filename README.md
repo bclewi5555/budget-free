@@ -34,57 +34,6 @@ SESSION_STORE_EXPIRATION=86400000
 
 `npm run start`
 
-## Server API Reference
-
-### Signup
-`POST` `/signup`
-#### Request Body (JSON)
-```
-{
-    "email": "aa1@example.com",
-    "password": "password",
-    "username": "AlexaAllistair1",
-    "firstName": "Alexa",
-    "lastName": "Allistair"
-}
-```
-#### Example Response `200 OK`
-```
-{
-    "id": "26ef6595-7d14-402f-a616-e1f514b408c7",
-    "email": "aa1@example.com",
-    "passwordHash":
-"$2b$10$Zx4Xe6sPRq2W1jwGR2eFSefNkGKbza2dRFjMpOrFx1wm2X5oj5WCm",
-    "username": "AlexaAllistair1",
-    "firstName": "Alexa",
-    "lastName": "Allistair",
-    "updatedAt": "2021-02-24T03:12:17.140Z",
-    "createdAt": "2021-02-24T03:12:17.140Z"
-}
-```
-
-### Login
-`POST` `/login`
-#### Request Body (JSON)
-```
-{
-    "email": "aa1@example.com",
-    "password": "password"
-}
-```
-OR
-```
-{
-    "email": "AlexaAllistair1",
-    "password": "password"
-}
-```
-
-### Logout
-`POST` `/logout`
-
-For details, see `server > controller > auth.js` and `server > views`
-
 ## Project Description
 
 This project will be a free, open-source, and secure web-based application which can be run from a compatible browser on any device. The app will adopt the envelope system budgeting strategy (as opposed to “set and forget”) in order to empower users to better understand and control their finances. Users can organize monthly budgets with categories (Income, Food, Utilities, etc.), each customizable with a list of subcategories, also known as envelopes (Power, Water, Internet, ...) which transactions can be added to. Budget owners can invite others to join their budget and revoke shared access at any time, create dependent collaborators (children for example) as well as import or export their budget data.
