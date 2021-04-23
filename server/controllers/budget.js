@@ -5,7 +5,10 @@ Budget controller
 */
 
 // Model dependencies
+const { sequelize } = require('../models/db');
 const db = require('../models/db');
+const group = require('../models/group');
+
 /*
 Sequelize Operators for queries
 https://sequelize.org/master/variable/index.html#static-variable-Op
@@ -389,48 +392,239 @@ exports.getBudgets = async (req, res) => {
 
 /* 
 ----------------
-READ ALL DETAILS OF THE GIVEN BUDGET (DOWN TO EVERY TRANSACTION DETAIL)
+GET SUMMARY OF THE GIVEN BUDGET (FOR SUMMARY CHART)
 ----------------
 */
-exports.getBudgetDetails = async (req, res) => {
+exports.getBudgetMonthSummary = async (req, res) => {
+  const { budgetId, budgetMonthId } = req.params;
 
   // validate request
+  if (!budgetId) {
+    console.log('[Budget Controller] budgetId required to get budget summary');
+    return res.status(400).send('budgetId required to get budget summary');
+  }
+  if (!budgetMonthId) {
+    console.log('[Budget Controller] budgetMonthId required to get budget summary');
+    return res.status(400).send('budgetMonthId required to get budget summary');
+  }
 
   // check if resource(s) referenced exist
+  const budgetRes = await db.budgets.findOne({
+    where: {
+      id: budgetId
+    }
+  });
+  if (!budgetRes) {
+    console.log('[Budget Controller] Invalid Request: The requested resource could not be found');
+    return res.status(404).send();
+  }
+  const budgetMonthRes = await db.budgetMonths.findOne({
+    where: {
+      id: budgetMonthId
+    }
+  });
+  if (!budgetMonthRes) {
+    console.log('[Budget Controller] Invalid Request: The requested resource could not be found');
+    return res.status(404).send();
+  }
 
   // validate permissions
-  
-  // get budget
-  console.log('\n[Budget Controller] Getting budgets...');
-  if (res.locals.perms.length < 1) {
-    console.log('[Budget Controller] Done: No budgets');
-    return res.status(200).send([]);
-  }
-  const budgetIds = [];
+  const budgetIdsPermitted = [];
   res.locals.perms.map(perm => {
-    budgetIds.push(perm.budgetId);
+    budgetIdsPermitted.push(perm.budgetId);
   });
-  const budgetsRes = await db.budgets.findAll({
-    where: { 
-      id: { [Op.or]: budgetIds }
+  if (!budgetIdsPermitted.includes(budgetId)) {
+    console.log('[Budget Controller] Permission to the requested resource denied');
+    return res.status(401).send('Permission to the requested resource denied'); // unauthorized
+  }
+  
+  // perform request
+
+  // get summary data for budgetMonth
+  console.log('\n[Budget Controller] Getting budgetMonthSummary...');
+  const groupsRes = await db.groups.findAll(
+    { where: { budget_month_id: budgetMonthRes.id }}
+  );
+  if (!groupsRes) {
+    console.log('[Group Controller] Failed: groups could not be found');
+    return res.status(404).send('groups could not be found');
+  }
+  const defaultGroups = [], groupIds = [], incomeGroupIds = [], incomeEnvelopeIds = [];
+  groupsRes.map(group => {
+    if (group.type === 'default') { // exclude income group
+      groupIds.push(group.id); // for summary
+      defaultGroups.push({ 
+        id: group.id, // for each group
+        label: group.label,
+        planned: 0,
+        spent: 0,
+        remaining: 0,
+        envelopeIds: []
+      });
+    } else {
+      incomeGroupIds.push(group.id);
     }
   });
 
-  // get permissions
+  const envelopeIds = []; // for summary
+  const envelopesRes = await db.envelopes.findAll(
+    { where: { group_id: { [Op.or]: [groupIds, incomeGroupIds] }}}
+  );
+  if (!envelopesRes) {
+    console.log('[Group Controller] Failed: envelopes could not be found');
+    return res.status(404).send('envelopes could not be found');
+  }
+  envelopesRes.forEach(envelope => {
+    if (incomeGroupIds.includes(envelope.group_id)) {
+      incomeEnvelopeIds.push(envelope.id);
+    } else {
+      envelopeIds.push(envelope.id);
+    }
+  });
 
-  // get users (collaborators public data)
+  const incomeRes = await db.envelopes.findAll({
+    attributes: [[sequelize.fn('SUM', sequelize.col('amount_planned')), 'income']],
+    where: {
+      group_id: { [Op.or]: incomeGroupIds }
+    },
+    raw: true
+  });
+  if (incomeRes[0].income == null) {
+    console.log('[Group Controller] Failed: envelope planned income could not be found');
+    return res.status(404).send('envelope planned income could not be found');
+  }
 
-  // get budgetMonths
+  const budgetedRes = await db.envelopes.findAll({
+    attributes: [[sequelize.fn('SUM', sequelize.col('amount_planned')), 'budgeted']],
+    where: { 
+      group_id: { [Op.or]: groupIds }
+    },
+    raw: true
+  });
+  if (budgetedRes[0].budgeted == null) {
+    console.log('[Group Controller] Failed: envelope planned income could not be found');
+    return res.status(404).send('envelope planned income could not be found');
+  }
 
-  // get groups
+  const receivedRes = await db.transactions.findAll({
+    attributes: [[sequelize.fn('SUM', sequelize.col('amount')), 'received']],
+    where: {
+        type: 'income',
+        envelope_id: { [Op.or]: incomeEnvelopeIds }
+    },
+    raw: true
+  });
+  if (receivedRes[0].received == null) {
+    console.log('[Group Controller] Failed: transaction income could not be found');
+    return res.status(404).send('transaction income could not be found');
+  }
 
-  // get envelopes
+  const spentRes = await db.transactions.findAll({
+    attributes: [[sequelize.fn('SUM', sequelize.col('amount')), 'spent']], 
+    where: {
+        type: 'expense',
+        envelope_id: { [Op.or]: envelopeIds }
+    },
+    raw: true
+  });
+  if (spentRes[0].spent == null) {
+    console.log('[Group Controller] Failed: transaction spending could not be found');
+    return res.status(404).send('transaction spending could not be found');
+  }
 
-  // get transactions
+  // get group summary data
 
-  // format and concatenate result
+  // for each defaultGroup...
+  let groupEnvelopesRes, groupPlanned;
+  try {
+    for (let i = 0; i < defaultGroups.length; i++) {
+
+        // get the groups envelopeIds
+        groupEnvelopesRes = await db.envelopes.findAll(
+          { where: { group_id: defaultGroups[i].id } }
+        );
+        if (!groupEnvelopesRes) {
+          console.log('[Group Controller] Failed: envelope could not be found');
+          break;
+        }
+        groupEnvelopesRes.map(envelope => {
+          defaultGroups[i].envelopeIds.push(envelope.id);
+        });
+  
+        // get the group amount_planned sum
+        groupPlanned = await db.envelopes.findAll({
+          attributes: [[sequelize.fn('SUM', sequelize.col('amount_planned')), 'planned']],
+          where: { group_id: defaultGroups[i].id },
+          raw: true
+        });
+        if (groupPlanned.length < 1) {
+          console.log('[Group Controller] Failed: envelope planned amounts could not be found');
+          break;
+        }
+        defaultGroups[i].planned = groupPlanned[0].planned;
+
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).error(err);
+  }
+
+  // for each group (again)
+  let groupExpenseSum;
+  try {
+    for (let i = 0; i < defaultGroups.length; i++) {
+
+      // get the groups total expenditures (after all envelopeIds have been found)
+      groupExpenseSum = await db.transactions.findAll({
+        attributes: [[sequelize.fn('SUM', sequelize.col('amount')), 'spent']],
+        where: {
+          type: 'expense',
+          envelope_id: { [Op.or]: defaultGroups[i].envelopeIds }
+        },
+        raw: true
+      });
+      if (!groupExpenseSum) {
+        console.log('[Group Controller] Failed: transactions could not be found');
+        break;
+      }
+      defaultGroups[i].spent = groupExpenseSum[0].spent;;
+      defaultGroups[i].remaining = defaultGroups[i].planned - defaultGroups[i].spent;
+
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).error(err);
+  }
+
+  // format result
+  const income = incomeRes[0].income; 
+  const budgeted = budgetedRes[0].budgeted; 
+  const received = receivedRes[0].received; 
+  const spent = spentRes[0].spent;
+  const leftToBudget = income - budgeted;
+  const remaining = received - spent;
+
+  const groups = [];
+  defaultGroups.map(group => {
+    groups.push({
+      label: group.label,
+      planned: group.planned,
+      spent: group.spent,
+      remaining: group.remaining
+    });
+  });
+
+  const monthSummary = {
+    income: income,
+    budgeted: budgeted,
+    leftToBudget: leftToBudget,
+    received: received,
+    spent: spent,
+    remaining: remaining,
+    groups: groups
+  };
   console.log('[Budget Controller] Done');
-  return res.status(200).send(budgetsRes);
+  return res.status(200).send(monthSummary);
 
 };
 
@@ -446,7 +640,6 @@ exports.updateBudget = async (req, res) => {
     console.log('[Budget Controller] budgetId and label required to update budget');
     return res.status(400).send('budgetId and label required to update budget');
   }
-  //console.log('[Budget Controller] req.params.budgetId: '+req.params.budgetId);
 
   // check if resource(s) referenced exist
   const budget = await db.budgets.findOne({
@@ -464,7 +657,6 @@ exports.updateBudget = async (req, res) => {
   res.locals.perms.map(perm => {
     budgetIdsPermitted.push(perm.budgetId);
   });
-  //console.log('[Budget Controller] permBudgetIds: '+permBudgetIds);
   if (!budgetIdsPermitted.includes(req.params.budgetId)) {
     console.log('[Budget Controller] Permission to the requested resource denied');
     return res.status(401).send('Permission to the requested resource denied');

@@ -14,6 +14,11 @@ module.exports = (sequelize, Sequelize) => {
     label: {
       type: Sequelize.DataTypes.STRING,
       allowNull: false
+    },
+    type: {
+      type: Sequelize.DataTypes.STRING,
+      allowNull: true,
+      defaultValue: 'default'
     }
   });
 

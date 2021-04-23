@@ -47,31 +47,24 @@ router.get('/',
 );
 
 // TODO
-router.get('/:budgetId/permissions',
+router.get('/:budgetId/budget-months/:budgetMonthId/summary',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.requirePerms),
+  asyncHandler(controller.getBudgetMonthSummary)
+);
+
+// TODO
+router.get('/:budgetId/budget-months/:budgetMonthId/details',
+  asyncHandler(authController.requireAuth),
+  asyncHandler(permController.requirePerms),
+  asyncHandler(controller.getBudgetMonthDetails)
+);
+
+// TODO
+router.get('/permissions',
   asyncHandler(authController.requireAuth),
   asyncHandler(permController.requirePerms),
   asyncHandler(controller.getBudgetPermissions)
-);
-
-// TODO
-router.get('/:budgetId/summary',
-  asyncHandler(authController.requireAuth),
-  asyncHandler(permController.requirePerms),
-  asyncHandler(controller.getBudgetSummary)
-);
-
-// TODO
-router.get('/:budgetId/details',
-  asyncHandler(authController.requireAuth),
-  asyncHandler(permController.requirePerms),
-  asyncHandler(controller.getBudgetDetails)
-);
-
-// TODO
-router.get('/details',
-  asyncHandler(authController.requireAuth),
-  asyncHandler(permController.requirePerms),
-  asyncHandler(controller.getDefaultBudgetDetails)
 );
 
 router.put('/:budgetId',
