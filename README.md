@@ -12,20 +12,23 @@ This work in progress project will meet the need for a free and open-source pers
 
 4. Create a new environment config file named `.env` with the contents below, replacing `secret` with your actual postgres user password and session secret.
 ```
-PORT=3000
+PORT=4000
+REACT_APP_PORT=3000
 NODE_ENV=development
 
 PGPORT=5432
 PGUSER=postgres
 PGHOST=localhost
 PGDATABASE=budgetfree
-PGPASSWORD=secret
+PGPASSWORD=secretpassword
 
 SESSION_LIFETIME=3600000
 SESSION_SECRET=secret
 
 SESSION_STORE_CLEANUP_INTERVAL=900000
 SESSION_STORE_EXPIRATION=86400000
+
+PASSWORD_HASH_SAMPLE=$2b$10$Fm17EFryZ3p6IjDNCBVmAO1Gm6WMllECTe1UD1XY.GHvFopQFeKRa
 ```
 
 5. Start up an empty PosgreSQL database named `budgetfree` from the default user (`postgres`) on the default port (`5432`)
