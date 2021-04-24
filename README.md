@@ -28,7 +28,7 @@ SESSION_SECRET=secret
 SESSION_STORE_CLEANUP_INTERVAL=900000
 SESSION_STORE_EXPIRATION=86400000
 
-PASSWORD_HASH_SAMPLE=$2b$10$Fm17EFryZ3p6IjDNCBVmAO1Gm6WMllECTe1UD1XY.GHvFopQFeKRa
+PASSWORD_HASH_SAMPLE=<Redacted Sample Hash For Sample User>
 ```
 
 5. Start up an empty PosgreSQL database named `budgetfree` from the default user (`postgres`) on the default port (`5432`)
