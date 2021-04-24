@@ -6,8 +6,8 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { makeStyles } from '@material-ui/core/styles';
-import Envelope from '../envelopeGroupListComponents/Envelope';
-import Button from "@material-ui/core/Button";
+//import Envelope from '../envelopeGroupListComponents/Envelope';
+//import Button from "@material-ui/core/Button";
 
 
 const useStyles = makeStyles((theme) => ({

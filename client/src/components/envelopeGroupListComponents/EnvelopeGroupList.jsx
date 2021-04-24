@@ -2,13 +2,13 @@ import React, {useState} from 'react';
 import EnvelopeGroup from './EnvelopeGroup';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button"
-import EnvelopeList from './EnvelopeList'
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { v4 as uuidv4 } from 'uuid';
+//import EnvelopeList from './EnvelopeList'
+//import Accordion from '@material-ui/core/Accordion';
+//import AccordionSummary from '@material-ui/core/AccordionSummary';
+//import AccordionDetails from '@material-ui/core/AccordionDetails';
+//import Typography from '@material-ui/core/Typography';
+//import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+//import { v4 as uuidv4 } from 'uuid';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -88,7 +88,7 @@ export default function EnvelopeGroupList(props) {
 
   const classes = useStyles();
 
-  const [groups, setGroups] = useState([
+  const [groups] = useState([
     {
       id: '4c2d628d-6f5e-45d6-b661-b7d4e0e210b4',
       label: 'Income'

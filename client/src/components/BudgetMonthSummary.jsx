@@ -1,55 +1,31 @@
 import * as React from 'react';
 import Paper from '@material-ui/core/Paper';
-/*
-import {
-  Chart,
-  PieSeries,
-  Title,
-} from 'chart.js';
-import { Animation } from 'chart.js';
-*/
+import { Doughnut } from 'react-chartjs-2';
 
-const data = [
-  { region: 'Asia', val: 4119626293 },
-  { region: 'Africa', val: 1012956064 },
-  { region: 'Northern America', val: 344124520 },
-  { region: 'Latin America and the Caribbean', val: 590946440 },
-  { region: 'Europe', val: 727082222 },
-  { region: 'Oceania', val: 35104756 },
-];
+const data = {
+  labels: [
+    'Red',
+    'Blue',
+    'Yellow'
+  ],
+  datasets: [{
+    label: 'My First Dataset',
+    data: [300, 50, 100],
+    backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)'
+    ],
+    hoverOffset: 4
+  }]
+};
 
-export default class BudgetMonthSummary extends React.PureComponent {
-  constructor(props) {
-    super(props);
+export default function BudgetMonthSummary() {
 
-    this.state = {
-      data,
-    };
-  }
+  return (
+    <Paper>
+      <Doughnut data={data} />
+    </Paper>
+  );
 
-  render() {
-    const { data: chartData } = this.state;
-
-    return (
-      
-      <Paper>
-        <Chart width
-          data={chartData}
-        >
-          <PieSeries
-            valueField="val"
-            argumentField="region"
-            innerRadius={0.6}
-            
-          />
-
-       
-          <Title
-            text="Income"
-          />
-          <Animation />
-        </Chart>
-      </Paper>
-    );
-  }
 }

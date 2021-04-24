@@ -1,5 +1,5 @@
 import React  from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+//import { makeStyles } from '@material-ui/core/styles';
 import Envelope from './Envelope';
 import Button from '@material-ui/core/Button'
 import TableCell from '@material-ui/core/TableCell';
@@ -8,6 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 
+/*
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '25%',
@@ -28,17 +29,20 @@ const useStyles = makeStyles((theme) => ({
       
   }
 }));
+*/
 
+/*
 function clickHandler() {
   console.log("clicked")
   
 }
+*/
 
 //import EnvelopeService from '../../services/EnvelopeService';
 
 // Dynamically renders all envelopes in the current Group > BudgetMonth > Budget > User.
 export default function EnvelopeList(props) {
-  const classes = useStyles();
+  //const classes = useStyles();
   //const [envelopes, setEnvelopes] = useState(envelopeData);
 
   let envelopes = [];
