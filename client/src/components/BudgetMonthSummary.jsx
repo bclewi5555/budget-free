@@ -2,15 +2,32 @@ import * as React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { Doughnut } from 'react-chartjs-2';
 
+const rawData = {
+  "income": 250000,
+  "budgeted": 40000,
+  "leftToBudget": 210000,
+  "received": 150000,
+  "spent": 23000,
+  "remaining": 127000,
+  "groups": [
+      {
+          "label": "Food",
+          "planned": 40000,
+          "spent": 23000,
+          "remaining": 17000
+      }
+  ]
+};
+
 const data = {
   labels: [
-    'Red',
-    'Blue',
-    'Yellow'
+    'Food',
+    'Housing',
+    'Transportation'
   ],
   datasets: [{
     label: 'My First Dataset',
-    data: [300, 50, 100],
+    data: [40000, 150000, 20000],
     backgroundColor: [
       'rgb(255, 99, 132)',
       'rgb(54, 162, 235)',
