@@ -106,7 +106,8 @@ exports.createBudgetFromTemplate = async (req, res) => {
   // create groups
   const newIncomeGroup = await db.groups.create({
     budget_month_id: newBudgetMonth.id,
-    label: 'Income'
+    label: 'Income',
+    type: 'income'
   });
   const newTaxesGroup = await db.groups.create({
     budget_month_id: newBudgetMonth.id,
@@ -148,14 +149,6 @@ exports.createBudgetFromTemplate = async (req, res) => {
     budget_month_id: newBudgetMonth.id,
     label: 'Health'
   });
-  const newRecreationGroup = await db.groups.create({
-    budget_month_id: newBudgetMonth.id,
-    label: 'Recreation'
-  });
-  const newDebtGroup = await db.groups.create({
-    budget_month_id: newBudgetMonth.id,
-    label: 'Debt'
-  });
   if (
     !newIncomeGroup ||
     !newTaxesGroup ||
@@ -167,9 +160,7 @@ exports.createBudgetFromTemplate = async (req, res) => {
     !newInsuranceGroup ||
     !newSavingsGroup ||
     !newPersonalGroup ||
-    !newHealthGroup ||
-    !newRecreationGroup ||
-    !newDebtGroup
+    !newHealthGroup
     ) {
     console.log('[Budget Controller] Failed: Could not create new groups');
     return res.status(500).error('Could not create new groups');
@@ -199,38 +190,25 @@ exports.createBudgetFromTemplate = async (req, res) => {
     group_id: newTaxesGroup.id,
     type: 'sinking',
     label: 'Tax Prep Fees',
-    amount_planned: MONTHLY_INCOME / 20 / 12
+    amount_planned: MONTHLY_INCOME / 100
   });
   const newMedicalInsuranceEnvelope = await db.envelopes.create({
     group_id: newInsuranceGroup.id,
     type: 'default',
     label: 'Medical Insurance',
-    amount_planned: MONTHLY_INCOME / 20 / 5
+    amount_planned: MONTHLY_INCOME / 20
   });
   const newAutoInsuranceEnvelope = await db.envelopes.create({
     group_id: newInsuranceGroup.id,
     type: 'default',
     label: 'Auto Insurance',
-    amount_planned: MONTHLY_INCOME / 20 / 5
-  });
-  const newLifeInsuranceEnvelope = await db.envelopes.create({
-    group_id: newInsuranceGroup.id,
-    type: 'default',
-    label: 'Life Insurance',
-    amount_planned: MONTHLY_INCOME / 20 / 5
+    amount_planned: MONTHLY_INCOME / 20
   });
   const newRentersInsuranceEnvelope = await db.envelopes.create({
     group_id: newInsuranceGroup.id,
     type: 'sinking',
     label: 'Renters Insurance',
-    amount_planned: MONTHLY_INCOME / 20 / 5,
-    notes: 'paid annually'
-  });
-  const newIdTheftProtectionEnvelope = await db.envelopes.create({
-    group_id: newInsuranceGroup.id,
-    type: 'sinking',
-    label: 'Identity Theft Protection',
-    amount_planned: MONTHLY_INCOME / 20 / 5,
+    amount_planned: MONTHLY_INCOME / 100,
     notes: 'paid annually'
   });
   const newEmergencyFundEnvelope = await db.envelopes.create({
@@ -243,7 +221,7 @@ exports.createBudgetFromTemplate = async (req, res) => {
     group_id: newGivingGroup.id,
     type: 'sinking',
     label: 'Charity',
-    amount_planned: MONTHLY_INCOME / 10
+    amount_planned: MONTHLY_INCOME / 20
   });
   const newGasEnvelope = await db.envelopes.create({
     group_id: newTransportationGroup.id,
@@ -267,61 +245,49 @@ exports.createBudgetFromTemplate = async (req, res) => {
     group_id: newUtilitiesGroup.id,
     type: 'default',
     label: 'Power',
-    amount_planned: MONTHLY_INCOME / 20 / 4
+    amount_planned: MONTHLY_INCOME / 20
   });
   const newWaterSewerEnvelope = await db.envelopes.create({
     group_id: newUtilitiesGroup.id,
     type: 'default',
     label: 'Water/Sewer',
-    amount_planned: MONTHLY_INCOME / 20 / 4
+    amount_planned: MONTHLY_INCOME / 40
   });
   const newInternetEnvelope = await db.envelopes.create({
     group_id: newUtilitiesGroup.id,
     type: 'default',
     label: 'Internet',
-    amount_planned: MONTHLY_INCOME / 20 / 4
+    amount_planned: MONTHLY_INCOME / 20
   });
   const newCellPhoneEnvelope = await db.envelopes.create({
     group_id: newUtilitiesGroup.id,
     type: 'default',
     label: 'Cell Phone',
-    amount_planned: MONTHLY_INCOME / 20 / 4
+    amount_planned: MONTHLY_INCOME / 20
   });
   const newGroceriesEnvelope = await db.envelopes.create({
     group_id: newFoodGroup.id,
     type: 'default',
     label: 'Groceries',
-    amount_planned: MONTHLY_INCOME / 10
+    amount_planned: MONTHLY_INCOME / 20
   });
   const newRestaurantsEnvelope = await db.envelopes.create({
     group_id: newFoodGroup.id,
     type: 'default',
     label: 'Restaurants',
-    amount_planned: MONTHLY_INCOME / 20
+    amount_planned: MONTHLY_INCOME / 50
   });
   const newHSAEnvelope = await db.envelopes.create({
     group_id: newHealthGroup.id,
     type: 'sinking',
     label: 'Health Savings Account',
-    amount_planned: MONTHLY_INCOME / 20
-  });
-  const newSelfDefenseMembershipEnvelope = await db.envelopes.create({
-    group_id: newRecreationGroup.id,
-    type: 'default',
-    label: 'Self Defense Membership',
     amount_planned: MONTHLY_INCOME / 40
   });
   const newClothingEnvelope = await db.envelopes.create({
     group_id: newPersonalGroup.id,
     type: 'sinking',
     label: 'Clothing',
-    amount_planned: MONTHLY_INCOME / 40
-  });
-  const newBooksEnvelope = await db.envelopes.create({
-    group_id: newPersonalGroup.id,
-    type: 'sinking',
-    label: 'Books',
-    amount_planned: MONTHLY_INCOME / 40
+    amount_planned: MONTHLY_INCOME / 100
   });
   if (
     !newPaycheck1Envelope ||
@@ -330,9 +296,7 @@ exports.createBudgetFromTemplate = async (req, res) => {
     !newTaxPrepFeesEnvelope ||
     !newMedicalInsuranceEnvelope ||
     !newAutoInsuranceEnvelope ||
-    !newLifeInsuranceEnvelope ||
     !newRentersInsuranceEnvelope ||
-    !newIdTheftProtectionEnvelope ||
     !newEmergencyFundEnvelope ||
     !newCharityEnvelope ||
     !newGasEnvelope ||
@@ -345,9 +309,7 @@ exports.createBudgetFromTemplate = async (req, res) => {
     !newGroceriesEnvelope ||
     !newRestaurantsEnvelope ||
     !newHSAEnvelope ||
-    !newSelfDefenseMembershipEnvelope ||
-    !newClothingEnvelope ||
-    !newBooksEnvelope
+    !newClothingEnvelope
     ) {
     console.log('[Budget Controller] Failed: Could not create new envelopes');
     return res.status(500).error('Could not create new envelopes');
@@ -406,6 +368,7 @@ exports.getBudgetMonthSummary = async (req, res) => {
     return res.status(400).send('budgetMonthId required to get budget summary');
   }
 
+
   // check if resource(s) referenced exist
   const budgetRes = await db.budgets.findOne({
     where: {
@@ -426,6 +389,7 @@ exports.getBudgetMonthSummary = async (req, res) => {
     return res.status(404).send();
   }
 
+
   // validate permissions
   const budgetIdsPermitted = [];
   res.locals.perms.map(perm => {
@@ -436,10 +400,12 @@ exports.getBudgetMonthSummary = async (req, res) => {
     return res.status(401).send('Permission to the requested resource denied'); // unauthorized
   }
   
-  // perform request
 
-  // get summary data for budgetMonth
+  // perform request
   console.log('\n[Budget Controller] Getting budgetMonthSummary...');
+
+
+  // groups
   const groupsRes = await db.groups.findAll(
     { where: { budget_month_id: budgetMonthRes.id }}
   );
@@ -447,11 +413,11 @@ exports.getBudgetMonthSummary = async (req, res) => {
     console.log('[Group Controller] Failed: groups could not be found');
     return res.status(404).send('groups could not be found');
   }
-  const defaultGroups = [], groupIds = [], incomeGroupIds = [], incomeEnvelopeIds = [];
+  const groupData = [], groupIds = [], incomeGroupIds = [];
   groupsRes.map(group => {
     if (group.type === 'default') { // exclude income group
       groupIds.push(group.id); // for summary
-      defaultGroups.push({ 
+      groupData.push({ 
         id: group.id, // for each group
         label: group.label,
         planned: 0,
@@ -464,7 +430,9 @@ exports.getBudgetMonthSummary = async (req, res) => {
     }
   });
 
-  const envelopeIds = []; // for summary
+
+  // envelopes
+  const envelopeIds = [], incomeEnvelopeIds = []; // for summary
   const envelopesRes = await db.envelopes.findAll(
     { where: { group_id: { [Op.or]: [groupIds, incomeGroupIds] }}}
   );
@@ -480,6 +448,7 @@ exports.getBudgetMonthSummary = async (req, res) => {
     }
   });
 
+  // income
   const incomeRes = await db.envelopes.findAll({
     attributes: [[sequelize.fn('SUM', sequelize.col('amount_planned')), 'income']],
     where: {
@@ -487,11 +456,18 @@ exports.getBudgetMonthSummary = async (req, res) => {
     },
     raw: true
   });
-  if (incomeRes[0].income == null) {
+  if (!incomeRes) {
     console.log('[Group Controller] Failed: envelope planned income could not be found');
     return res.status(404).send('envelope planned income could not be found');
   }
-
+  let income;
+  if (incomeRes[0].income == null) {
+    income = 0;
+  } else {
+    income = parseInt(incomeRes[0].income);
+  }
+  
+  // budgeted
   const budgetedRes = await db.envelopes.findAll({
     attributes: [[sequelize.fn('SUM', sequelize.col('amount_planned')), 'budgeted']],
     where: { 
@@ -499,11 +475,19 @@ exports.getBudgetMonthSummary = async (req, res) => {
     },
     raw: true
   });
-  if (budgetedRes[0].budgeted == null) {
+  let budgeted;
+  if (!budgetedRes) {
     console.log('[Group Controller] Failed: envelope planned income could not be found');
     return res.status(404).send('envelope planned income could not be found');
   }
+  if (budgetedRes[0].budgeted == null) {
+    budgeted = 0;
+  } else {
+    budgeted = parseInt(budgetedRes[0].budgeted);
+  }
 
+
+  // received
   const receivedRes = await db.transactions.findAll({
     attributes: [[sequelize.fn('SUM', sequelize.col('amount')), 'received']],
     where: {
@@ -512,14 +496,20 @@ exports.getBudgetMonthSummary = async (req, res) => {
     },
     raw: true
   });
-  if (receivedRes[0].received == null) {
+  if (!receivedRes) {
     console.log('[Group Controller] Failed: transaction income could not be found');
     return res.status(404).send('transaction income could not be found');
   }
+  let received;
+  if (receivedRes[0].received == null) {
+    received = 0;
+  } else received = parseInt(receivedRes[0].received);
 
-  let spentRes;
+
+  // spent
+  let spent;
   try {
-    spentRes = await db.transactions.findAll({
+    const spentRes = await db.transactions.findAll({
       attributes: [[sequelize.fn('SUM', sequelize.col('amount')), 'spent']], 
       where: {
           type: 'expense',
@@ -527,41 +517,50 @@ exports.getBudgetMonthSummary = async (req, res) => {
       },
       raw: true
     });
+    if (spentRes[0].spent == null) {
+      spent = 0;
+    } else {
+      spent = parseInt(spentRes[0].spent);
+    }
   } catch (err) {
     console.error(err);
     return res.status(500).send('could not get transaction spending');
   }
   
-  // get group summary data
 
   // for each defaultGroup...
   let groupEnvelopesRes, groupPlanned;
   try {
-    for (let i = 0; i < defaultGroups.length; i++) {
+    for (let i = 0; i < groupData.length; i++) {
+      const group = groupData[i];
 
         // get the groups envelopeIds
         groupEnvelopesRes = await db.envelopes.findAll(
-          { where: { group_id: defaultGroups[i].id } }
+          { where: { group_id: group.id } }
         );
         if (!groupEnvelopesRes) {
           console.log('[Group Controller] Failed: envelope could not be found');
           break;
         }
         groupEnvelopesRes.map(envelope => {
-          defaultGroups[i].envelopeIds.push(envelope.id);
+          group.envelopeIds.push(envelope.id);
         });
   
         // get the group amount_planned sum
         groupPlanned = await db.envelopes.findAll({
           attributes: [[sequelize.fn('SUM', sequelize.col('amount_planned')), 'planned']],
-          where: { group_id: defaultGroups[i].id },
+          where: { group_id: group.id },
           raw: true
         });
-        if (groupPlanned.length < 1) {
+        if (!groupPlanned) {
           console.log('[Group Controller] Failed: envelope planned amounts could not be found');
           break;
         }
-        defaultGroups[i].planned = parseInt(groupPlanned[0].planned);
+        if (groupPlanned[0].planned == null) {
+          group.planned = 0;
+        } else {
+          group.planned = parseInt(groupPlanned[0].planned);
+        }
 
     }
   } catch (err) {
@@ -572,14 +571,15 @@ exports.getBudgetMonthSummary = async (req, res) => {
   // for each group (again)
   let groupExpenseSum;
   try {
-    for (let i = 0; i < defaultGroups.length; i++) {
+    for (let i = 0; i < groupData.length; i++) {
+      const group = groupData[i];
 
       // get the groups total expenditures (after all envelopeIds have been found)
       groupExpenseSum = await db.transactions.findAll({
         attributes: [[sequelize.fn('SUM', sequelize.col('amount')), 'spent']],
         where: {
           type: 'expense',
-          envelope_id: { [Op.or]: defaultGroups[i].envelopeIds }
+          envelope_id: { [Op.or]: group.envelopeIds }
         },
         raw: true
       });
@@ -587,8 +587,12 @@ exports.getBudgetMonthSummary = async (req, res) => {
         console.log('[Group Controller] Failed: transactions could not be found');
         break;
       }
-      defaultGroups[i].spent = parseInt(groupExpenseSum[0].spent);
-      defaultGroups[i].remaining = defaultGroups[i].planned - defaultGroups[i].spent;
+      if (groupExpenseSum[0].spent == null) {
+        group.spent = 0;
+      } else {
+        group.spent = parseInt(groupExpenseSum[0].spent);
+      }
+      group.remaining = group.planned - group.spent;
 
     }
   } catch (err) {
@@ -596,23 +600,14 @@ exports.getBudgetMonthSummary = async (req, res) => {
     return res.status(500).error(err);
   }
 
-  // format result
-  const income = parseInt(incomeRes[0].income); 
-  const budgeted = parseInt(budgetedRes[0].budgeted); 
-  const received = parseInt(receivedRes[0].received);
-
-  let spent;
-  if (!spentRes || spentRes[0].spent == null) {
-    spent = 0;
-  } else {
-    spent = parseInt(spentRes[0].spent);
-  }
 
   const leftToBudget = income - budgeted;
   const remaining = received - spent;
+  
 
+  // format result
   const groups = [];
-  defaultGroups.map(group => {
+  groupData.map(group => {
     groups.push({
       label: group.label,
       planned: group.planned,
@@ -620,7 +615,6 @@ exports.getBudgetMonthSummary = async (req, res) => {
       remaining: group.remaining
     });
   });
-
   const monthSummary = {
     income: income,
     budgeted: budgeted,
