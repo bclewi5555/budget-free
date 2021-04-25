@@ -36,8 +36,8 @@ export default function Envelope(props) {
 
 
   return (
-    <div >
-    <TableRow component="div" onClick={handleClickOpen}>
+    
+    <TableRow className={classes.root} onClick={handleClickOpen}>
 
    
       <TableCell >
@@ -77,10 +77,8 @@ export default function Envelope(props) {
           </TableCell>
         )
       }
-     
+     <DetailDialog setOpen={setOpen} open={open}/>
     </TableRow>
-    <DetailDialog setOpen={setOpen} open={open}/>
-    </div>
   
 
   );
