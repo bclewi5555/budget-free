@@ -53,7 +53,11 @@ export default function EnvelopeGroup(props) {
         <Typography className={classes.title}>{props.label}</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <EnvelopeList groupId={props.groupId} className={classes.title} envelopeView={props.envelopeView} setEvelopeView={props.setEvelopeView}/>
+        <EnvelopeList 
+        groupId={props.groupId} 
+        className={classes.title} 
+        envelopeView={props.envelopeView} 
+        setEvelopeView={props.setEvelopeView}/>
 
        
         {/* <Envelope className></Envelope> */}
