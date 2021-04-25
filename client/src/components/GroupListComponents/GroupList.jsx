@@ -119,7 +119,7 @@ export default function EnvelopeGroupList(props) {
       {groups.map(group => { return (<Group
         budgetMonthId={props.budgetMonthId}
         key={group.id}
-        groupID={group.id}
+        groupId={group.id}
         label={group.label}
         envelopeSelection={props.envelopeSelection}
         setEnvelopeSelection={props.setEnvelopeSelection}

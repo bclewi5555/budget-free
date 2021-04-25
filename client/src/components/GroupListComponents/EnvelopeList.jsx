@@ -114,42 +114,72 @@ export default function EnvelopeList(props) {
   
 
   return (
-<div>
-    <Table>
+    <div>
+      <Table>
 
 
-      <TableHead >
-        <TableRow >
-          <TableCell  > Label </TableCell>
-          <TableCell > Planned </TableCell>
-          <TableCell  >
-            <SelectEnvelope envelopeView={props.envelopeView} setEnvelopeView={props.setEnvelopeView} />
-          </TableCell>
-        </TableRow >
-      </TableHead>
+        <TableHead >
+          <TableRow >
+            <TableCell  > Label </TableCell>
+            <TableCell > Planned </TableCell>
+            <TableCell  >
+              <SelectEnvelope envelopeView={props.envelopeView} setEnvelopeView={props.setEnvelopeView} />
+            </TableCell>
+          </TableRow >
+        </TableHead>
+
+        {props.groupId === '86d86f8d-d4ad-4ffe-9191-3f4aed7cd330' ? // food
+            (<TableBody>
+              <Envelope
+                label="Groceries"
+                planned={200}
+                spent={100}
+                remaining={100}
+                envelopeView={props.envelopeView}
+              />
+              <Envelope
+                label="Restaurants"
+                planned={100}
+                spent={60}
+                remaining={40}
+                envelopeView={props.envelopeView}
+              />
+            </TableBody>)
+            :
+            (<TableBody>
+              <Envelope
+                label="Paycheck 1"
+                planned={1000}
+                received={1000}
+                envelopeView={props.envelopeView}
+              />
+              <Envelope
+                label="Paycheck 2"
+                planned={1000}
+                received={0}
+                envelopeView={props.envelopeView}
+              />
+              <Envelope
+                label="Bonus"
+                planned={500}
+                received={0}
+                envelopeView={props.envelopeView}
+              />
+            </TableBody>)
+          }
+        
+        
+
+        
 
 
-      <TableBody>
-      <Envelope
-          label="Groceries"
-          planned={300}
-          spent={100}
-          envelopeView={props.envelopeView}
-        />
 
 
-      </TableBody>
+      </Table>
 
-      
-      
+      <Button color="primary" className={classes.buttonSize} >Add Envelope </Button>
 
-
-
-    </Table>
-
-<Button color="primary" className={classes.buttonSize} >Add Envelope </Button>
-
-</div>
+    </div>
 
 
   );
