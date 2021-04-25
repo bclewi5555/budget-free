@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import EnvelopeGroup from './EnvelopeGroup';
+import Group from './Group';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button"
 //import EnvelopeList from './EnvelopeList'
@@ -57,6 +57,7 @@ const validationSchema = yup.object({
 
 export default function EnvelopeGroupList(props) {
   const [open, setOpen] = React.useState(false);
+  const [envelopeView, setEnvelopeView] = useState("remaining");
   
   const formik = useFormik({
     initialValues: {
@@ -115,13 +116,15 @@ export default function EnvelopeGroupList(props) {
 
   return (
     <div >
-      {groups.map(group => { return (<EnvelopeGroup
+      {groups.map(group => { return (<Group
         budgetMonthId={props.budgetMonthId}
         key={group.id}
         groupID={group.id}
         label={group.label}
         envelopeSelection={props.envelopeSelection}
         setEnvelopeSelection={props.setEnvelopeSelection}
+        envelopeView={envelopeView}
+        setEnvelopeView={setEnvelopeView}
       />)})}
      <form onSubmit={formik.handleSubmit} className={classes.form}>
        <Button variant="outlined" color="primary" onClick={handleClickOpen}>
@@ -163,7 +166,7 @@ export default function EnvelopeGroupList(props) {
         </DialogActions>
       </Dialog>
       {/* <Alert onClose={() => {}}>This is a success alert — check it out!</Alert> */}
-      <Alert severity="error"
+      {/* <Alert severity="error"
         action={
           <Button color="inherit" size="small">
             UNDO
@@ -175,7 +178,7 @@ export default function EnvelopeGroupList(props) {
          This is an error alert — <strong>check it out!</strong>
         
         
-      </Alert>
+      </Alert> */}
       </form>
       
     </div>

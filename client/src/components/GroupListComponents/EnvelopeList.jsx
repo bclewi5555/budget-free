@@ -1,5 +1,5 @@
-import React  from 'react';
-//import { makeStyles } from '@material-ui/core/styles';
+import React, {useState} from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Envelope from './Envelope';
 import Button from '@material-ui/core/Button'
 import TableCell from '@material-ui/core/TableCell';
@@ -7,42 +7,31 @@ import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
+import SelectEnvelope from './SelectEnvelope';
 
-/*
+
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '25%',
-   padding: '30px',
-   
+    size: 'small'
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(20),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
-  divPadding: {
-      padding: '30px',
-  },
-  envelopeGroup: {
-      marginTop: '30px',
-      marginBottom:'30px',
-      
-      
+  
+  buttonSize: {
+    size: 'large',
+    display: 'flex',
+    color: 'primary'
   }
 }));
-*/
 
-/*
-function clickHandler() {
-  console.log("clicked")
-  
-}
-*/
+
+
+
+
 
 //import EnvelopeService from '../../services/EnvelopeService';
 
 // Dynamically renders all envelopes in the current Group > BudgetMonth > Budget > User.
 export default function EnvelopeList(props) {
-  //const classes = useStyles();
+  const classes = useStyles();
   //const [envelopes, setEnvelopes] = useState(envelopeData);
 
   let envelopes = [];
@@ -132,14 +121,13 @@ export default function EnvelopeList(props) {
   
 
   return (
-    <div className >
-      <Table class size="medium" >
+    
+      <Table class size="small" >
         <TableHead >
           <TableRow>
           <TableCell> Label </TableCell>
             <TableCell> Planned </TableCell>
-            <TableCell> Spent </TableCell>
-            <TableCell> Remaining </TableCell>
+            <SelectEnvelope envelopeView={props.envelopeView} setEnvelopeView={props.setEnvelopeView}/>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -151,13 +139,19 @@ export default function EnvelopeList(props) {
               envelope={envelope}
             />)
           })}
+          <Envelope
+          label="Groceries"
+          planned={300}
+          spent={100}
+          envelopeView={props.envelopeView}
+          />
         </TableBody>
-        <Envelope className></Envelope>
+        
 
-        <Button color="primary" variant='contained' >Add Envelope </Button>
+        <Button className={classes.buttonSize} >Add Envelope </Button>
       </Table>
 
 
-    </div>
+    
   );
 }
