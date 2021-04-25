@@ -27,8 +27,8 @@ export default function Budget(props) {
     <div >
        
       <BudgetMonth budgetMonthId={budgetMonthId} setBudgetMonthId={setBudgetMonthId}/>
-      {/* <Random/> */}
-      <Transaction/>
+    
+      
      
       
     

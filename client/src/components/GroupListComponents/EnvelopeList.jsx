@@ -12,14 +12,7 @@ import SelectEnvelope from './SelectEnvelope';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    size: 'small'
   },
-  
-  buttonSize: {
-    size: 'large',
-    display: 'flex',
-    color: 'primary'
-  }
 }));
 
 
@@ -121,37 +114,43 @@ export default function EnvelopeList(props) {
   
 
   return (
-    
-      <Table class size="small" >
-        <TableHead >
-          <TableRow>
-          <TableCell> Label </TableCell>
-            <TableCell> Planned </TableCell>
-            <SelectEnvelope envelopeView={props.envelopeView} setEnvelopeView={props.setEnvelopeView}/>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {envelopes.map((envelope) => {
-            return (<Envelope
-              key={envelope.id}
-              // label={envelope.label}
-              // amountPlanned={envelope.amount_planned}
-              envelope={envelope}
-            />)
-          })}
-          <Envelope
+<div>
+    <Table>
+
+
+      <TableHead >
+        <TableRow >
+          <TableCell  > Label </TableCell>
+          <TableCell > Planned </TableCell>
+          <TableCell  >
+            <SelectEnvelope envelopeView={props.envelopeView} setEnvelopeView={props.setEnvelopeView} />
+          </TableCell>
+        </TableRow >
+      </TableHead>
+
+
+      <TableBody>
+      <Envelope
           label="Groceries"
           planned={300}
           spent={100}
           envelopeView={props.envelopeView}
-          />
-        </TableBody>
-        
-
-        <Button className={classes.buttonSize} >Add Envelope </Button>
-      </Table>
+        />
 
 
-    
+      </TableBody>
+
+      
+      
+
+
+
+    </Table>
+
+<Button color="primary" className={classes.buttonSize} >Add Envelope </Button>
+
+</div>
+
+
   );
 }

@@ -15,6 +15,7 @@ export default function SelectEnvelope(props) {
   return (
     <div className={classes.root} >
       <Select
+        size="small"
         value={props.envelopeView}
         onChange={handleChange}
         displayEmpty
@@ -22,7 +23,7 @@ export default function SelectEnvelope(props) {
       >
       Home
         {/* TODO: Dynamically load a list of MenuItems below from API */}
-        <MenuItem value={'remaining'}>Remaining</MenuItem>
+        <MenuItem size="small" value={'remaining'}>Remaining</MenuItem>
         <MenuItem value={'spent'}>Spent</MenuItem>
       </Select>
     </div>
