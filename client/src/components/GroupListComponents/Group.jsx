@@ -44,7 +44,12 @@ export default function EnvelopeGroup(props) {
    
   return (
    
-    <Accordion  className={`${classes.root} ${classes.envelopeGroup} ${classes.borderColor}`}>
+    <Accordion 
+      className={`
+        ${classes.root}
+        ${classes.envelopeGroup}
+      `}
+    >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"

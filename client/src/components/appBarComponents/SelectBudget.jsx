@@ -3,7 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 
-const useStyles = makeStyles((theme) => ({ }));
+const useStyles = makeStyles((theme) => ({
+  select: {
+    color: '#FFF'
+  }
+}));
 
 export default function SelectBudget(props) {
   const classes = useStyles();
@@ -15,6 +19,7 @@ export default function SelectBudget(props) {
   return (
     <div className={classes.root} >
       <Select
+        className={classes.select}
         value={props.budgetId}
         onChange={handleChange}
         displayEmpty

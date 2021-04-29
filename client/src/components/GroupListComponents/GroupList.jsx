@@ -18,7 +18,6 @@ import TextField from '@material-ui/core/TextField';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import EnvelopeGroupService from '../../services/EnvelopeGroupService';
-import { Alert, AlertTitle } from '@material-ui/lab';
 
 // Dynamically renders all groups in the current BudgetMonth > Budget > User.
 const useStyles = makeStyles((theme) => ({
@@ -49,10 +48,6 @@ const validationSchema = yup.object({
     .required('Group Name Required'),
   
 });
-
-
-
-
 
 
 export default function EnvelopeGroupList(props) {
@@ -127,8 +122,8 @@ export default function EnvelopeGroupList(props) {
         setEnvelopeView={setEnvelopeView}
       />)})}
      <form onSubmit={formik.handleSubmit} className={classes.form}>
-       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-       Add New Group
+       <Button variant="contained" color="primary" onClick={handleClickOpen}>
+       Add Group
       </Button>
       <Dialog open={open}  aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">New Group</DialogTitle>

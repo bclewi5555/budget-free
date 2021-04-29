@@ -6,7 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 //import BudgetMonthNav from './BudgetMonthNav';
-import BasicDatePicker from './BasicDatePicker'
+import BudgetMonthPicker from './appBarComponents/BudgetMonthPicker'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,7 +31,7 @@ export default function TopAppBar(props) {
           {/* <BudgetMonthNav/> */}
           <SelectBudget  budgetId={props.budgetId} setBudgetId={props.setBudgetId} />
           <Typography variant="h6" className={classes.title}>
-          <BasicDatePicker/>
+          <BudgetMonthPicker/>
           </Typography>
           
           <LogoutButton />

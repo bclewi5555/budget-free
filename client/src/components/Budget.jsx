@@ -5,7 +5,7 @@ import BudgetMonth from './BudgetMonth';
 //import {createMuiTheme, ThemeProvider} from "@material-ui/core";
 //import Card from '@material-ui/core/Card'
 //import { makeStyles } from '@material-ui/core/styles';
-import Transaction from './detailListComponents/Transaction'
+// import Transaction from './detailListComponents/Transaction'
 
 
 

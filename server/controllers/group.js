@@ -20,7 +20,7 @@ CREATE NEW GROUP IN THE GIVEN BUDGET MONTH
 ----------------
 */
 exports.createGroup = async (req, res) => {
-  const { budgetMonthId, type, label } = req.body;
+  let { budgetMonthId, type, label } = req.body;
 
   // validate request
   if (!budgetMonthId || !label) {
